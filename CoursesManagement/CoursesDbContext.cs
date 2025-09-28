@@ -13,7 +13,7 @@ namespace CoursesManagement
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
-            // default schema keeps everything under "users"
+            // default schema keeps everything under "courses"
             mb.HasDefaultSchema("courses");
 
         }
