@@ -1,0 +1,15 @@
+# -------------------------------
+# CODEOWNERS for CodelineOnline
+# -------------------------------
+
+# Default fallback owner
+*                                       @EngKarimSalah
+
+# Services owned by team leaders (individuals)
+AuthenticationManagement/**             @Moha2000-dev
+UserManagement/**                       @mohammedyk7
+CoursesManagement/**                    @N6q
+ReportsManagements/**                   @Moha2000-dev @mohammed-alshabibi
+
+# Shared utilities
+CodelineOnline.Utilities/**             @CodelineDotNetBatches/platform-team
