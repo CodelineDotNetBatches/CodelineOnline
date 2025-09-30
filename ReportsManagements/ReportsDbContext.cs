@@ -11,8 +11,11 @@ namespace ReportsManagements
         public ReportsDbContext(DbContextOptions<ReportsDbContext> options)
         : base(options)
         { }
+        public DbSet<Models.Branch> Branches { get; set; }
+        public DbSet<Models.Geolocation> Geolocations { get; set; }
+        public DbSet<Models.BranchReport> BranchReports { get; set; }
 
-       
+
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
