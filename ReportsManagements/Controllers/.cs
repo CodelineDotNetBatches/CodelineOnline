@@ -14,7 +14,6 @@ namespace ReportsManagements.Controllers
             _repository = fileStorageRepository;
         }
 
-
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
