@@ -10,6 +10,7 @@ namespace ReportsManagements.Models
         public int TotalSessions { get; set; }
         public int TotalStudents { get; set; }
         public int AttendanceRate { get; set; }
+        public int TotalInstructors { get; set; }
 
         // Foreign Key
         [ForeignKey("Branch")]
