@@ -7,6 +7,10 @@ namespace ReportsManagements.Models
     {
         [Key]
         public int GeolocationId { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
         [Required]
         public string Latitude { get; set; }
         [Required]
