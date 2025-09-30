@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReportsManagements.Models;
+using System.Reflection.Emit;
 
 namespace ReportsManagements
 {
@@ -14,11 +15,36 @@ namespace ReportsManagements
         public DbSet<Models.Branch> Branches { get; set; }
         public DbSet<Models.Geolocation> Geolocations { get; set; }
         public DbSet<Models.BranchReport> BranchReports { get; set; }
+        public DbSet<Models.AttendanceRecord> AttendanceRecord { get; set; }
 
 
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
+            // for AttendanceRecord 
+            mb.Entity<AttendanceRecord>().HasKey(a => a.AttId);
+            base.OnModelCreating(mb);
+
+            mb.Entity<AttendanceRecord>().HasKey(a => a.AttId);
+
+            mb.Entity<AttendanceRecord>()
+                .HasOne(a => a.Geolocation)
+                .WithMany(g => g.AttendanceRecords)
+                .HasForeignKey(a => a.GeolocationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            mb.Entity<AttendanceRecord>()
+                .HasOne(a => a.CapturedPhoto)
+                .WithMany()
+                .HasForeignKey(a => a.CapturedPhotoId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            mb.Entity<AttendanceRecord>()
+                .HasOne(a => a.ReasonCode)
+                .WithMany()
+                .HasForeignKey(a => a.ReasonCodeId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             // default schema keeps everything under "users"
             mb.HasDefaultSchema("reports");
 

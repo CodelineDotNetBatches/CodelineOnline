@@ -15,5 +15,6 @@ namespace ReportsManagements.Models
         // Foreign Key
         [ForeignKey("Branch")]
         public int BranchId { get; set; }
+        public ICollection<AttendanceRecord> AttendanceRecords { get; set; } = new List<AttendanceRecord>();
     }
 }

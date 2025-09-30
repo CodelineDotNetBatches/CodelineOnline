@@ -1,4 +1,7 @@
-﻿namespace ReportsManagements.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ReportsManagements.Models
 {
     public class AttendanceRecord
     {
@@ -8,12 +11,21 @@
         public DateTime CheckIn { get; set; }
         public DateTime CheckOut { get; set; }
         public string Status { get; set; } // e.g., Present, Absent, Late
+        [ForeignKey("ReasonCode")]
         public int ReasonCodeId { get; set; } // e.g., Sick, Vacation
-        public int CapturedPhotoId { get; set; } // Reference to photo
+        public ReasonCode? ReasonCode { get; set; }
+
+        [ForeignKey("CapturedPhoto")]
+        public int CapturedPhotoId { get; set; }
+        public FileStorage? CapturedPhoto { get; set; }
+        // Reference to photo
         //FaceMatchScore
         public double FaceMatchScore { get; set; } // Confidence score for face recognition
         //LivenessScore, GeolocationId, ReviewStatus, CreatedAt, CreatedBy, UploadedAt, UploadedBy.
         public double LivenessScore { get; set; } // Confidence score for liveness detection
+        [ForeignKey("Geolocation")]
+        public Geolocation Geolocation { get; set; } = null!;
+
         public int GeolocationId { get; set; } // Reference to geolocation data
         public string ReviewStatus { get; set; } // e.g., Pending, Approved, Rejected
         public DateTime CreatedAt { get; set; } = DateTime.Now;
