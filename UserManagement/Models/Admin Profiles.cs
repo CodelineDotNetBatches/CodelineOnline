@@ -23,6 +23,10 @@ namespace UserManagement.Models
         [ForeignKey("Admin_Profile")] // Declares AdminId as a Foreign Key linked to AdminProfile
         public int AdminId { get; set; } // References the Admin who owns this Responsibility
 
+        // Navigation property back to AdminProfile
+        public Admin_Profile AdminProfile { get; set; }
+
+
 
     }
 }
