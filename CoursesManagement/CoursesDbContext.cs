@@ -16,6 +16,7 @@ namespace CoursesManagement
             // default schema keeps everything under "courses"
             mb.HasDefaultSchema("courses");
 
+
         }
 
     }
