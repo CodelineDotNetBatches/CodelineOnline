@@ -22,7 +22,6 @@
     <Folder Include="Controllers\" />
     <Folder Include="Services\" />
     <Folder Include="SeedData\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
