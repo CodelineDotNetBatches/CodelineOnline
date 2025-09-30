@@ -10,5 +10,11 @@ namespace UserManagement.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)] // Manual entry for AdminId
 
         public int AdminId { get; set; }
+
+        // Navigation property for related responsibilities
+        // One Admin can have many Responsibilities
+        public ICollection<Responsibility> Responsibilitys {  get; set; }
+
+
     }
 }
