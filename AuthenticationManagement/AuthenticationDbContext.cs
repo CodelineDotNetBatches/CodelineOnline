@@ -7,7 +7,10 @@ namespace AuthenticationManagement
         public AuthenticationDbContext(DbContextOptions<AuthenticationDbContext> options)
         : base(options)
         { }
-
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="mb"></param>
       
 
         protected override void OnModelCreating(ModelBuilder mb)
