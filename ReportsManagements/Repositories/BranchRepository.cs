@@ -3,7 +3,7 @@ using ReportsManagements.Models;
 
 namespace ReportsManagements.Repositories
 {
-    public class BranchRepository
+    public class BranchRepository : IBranchRepository
     {
         private readonly ReportsDbContext _context;
         public BranchRepository(ReportsDbContext context)
@@ -12,7 +12,7 @@ namespace ReportsManagements.Repositories
         }
 
         // Retrieves all Branch records from the database asynchronously
-        public async Task<IEnumerable<Branch>> GetAllAsync()=>
+        public async Task<IEnumerable<Branch>> GetAllAsync() =>
              (IEnumerable<Branch>)await _context.Branches.ToListAsync();
         // Get by id method
         public async Task<Branch?> GetByIdAsync(int id)
@@ -50,7 +50,7 @@ namespace ReportsManagements.Repositories
                 // For soft delete, we set IsActive to false instead of removing the record
                 _context.Branches.Remove(branch);
                 await _context.SaveChangesAsync();
-               
+
             }
         }
     }
