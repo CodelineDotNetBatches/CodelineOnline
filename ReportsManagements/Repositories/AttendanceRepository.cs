@@ -13,7 +13,7 @@ namespace ReportsManagements.Repositories
             _context = context;
         }
 
-        public async Task<AttendanceRecord?> GetByIdAsync(Guid id) =>
+        public async Task<AttendanceRecord?> GetByIdAsync(int id) =>
          await _context.Set<AttendanceRecord>().FindAsync(id);
 
         public async Task<IEnumerable<AttendanceRecord>> GetByStudentAndSessionAsync(int studentId, int sessionId) =>
@@ -34,7 +34,7 @@ namespace ReportsManagements.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(int id)
         {
             var record = await _context.Set<AttendanceRecord>().FindAsync(id);
             if (record != null)
