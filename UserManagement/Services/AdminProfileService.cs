@@ -26,7 +26,10 @@ namespace UserManagement.Services
             return _repository.GetAllAdmins();
         }
 
+        // Get AdminProfile by Id (sync)
 
+        public Admin_Profile GetAdminById(int id)
+        {
 
-    }
+        }
 }
