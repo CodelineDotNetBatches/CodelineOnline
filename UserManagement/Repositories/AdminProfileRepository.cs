@@ -10,6 +10,7 @@ namespace UserManagement.Repositories
         private readonly IMemoryCache _memoryCache;  // In-Memory Cache
         private readonly IDistributedCache _distributedCache;  // Distributed Cache
 
+        private const string CacheKey = "AdminProfiles"; // Key for caching
 
         public AdminProfileRepository(UsersDbContext context) // Constructor injection of DbContext
         {
