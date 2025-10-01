@@ -23,6 +23,11 @@ namespace UserManagement.Repositories
 
         //Get all AdminProfiles(sync) using IQueryable for extensibility
         public IQueryable<Admin_Profile> GetAllAdmins()
+        {
+            // Try to get data from Memory Cache
+            if (!_memoryCache.TryGetValue(CacheKey, out List<AdminProfile> admins))
+            {
+            }
 
     }
 }
