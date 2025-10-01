@@ -58,6 +58,12 @@ namespace UserManagement.Repositories
 
         public async Task<IEnumerable<Admin_Profile>> GetAllAdminsAsync()
         {
+            // Try Distributed Cache first
+            var cachedAdmins = await _distributedCache.GetStringAsync(CacheKey);
 
+            if (!string.IsNullOrEmpty(cachedAdmins))
+            {
+                return JsonConvert.DeserializeObject<List<Admin_Profile>>(cachedAdmins);
+            }
         }
 }
