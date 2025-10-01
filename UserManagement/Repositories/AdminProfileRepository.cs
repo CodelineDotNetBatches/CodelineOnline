@@ -31,6 +31,8 @@ namespace UserManagement.Repositories
 
                 _memoryCache.Set(CacheKey, admins); // Save to Memory Cache
             }
+
+            return admins.AsQueryable(); // Return as IQueryable
         }
     }
 }
