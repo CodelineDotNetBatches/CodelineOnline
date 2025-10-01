@@ -14,7 +14,8 @@ namespace ReportsManagements
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Geolocation> Geolocations { get; set; }
         public DbSet<BranchReport> BranchReports { get; set; }
-
+        public DbSet<CourseReport> CourseReports { get; set; }
+        public DbSet<TrainerReport> TrainerReports { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReportsManagements;
 
@@ -11,9 +12,11 @@ using ReportsManagements;
 namespace ReportsManagements.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    partial class ReportsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251001102132_Add-TrainerReport+CourseReport")]
+    partial class AddTrainerReportCourseReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

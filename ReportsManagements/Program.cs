@@ -33,7 +33,7 @@ namespace ReportsManagements
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            
 
             app.MapControllers();
 
