@@ -27,6 +27,7 @@ namespace UserManagement.Controllers
         public ActionResult<IQueryable<Admin_Profile>> GetAllAdmins()
         {
             var admins = _service.GetAllAdmins();      // Call service to get admins
+            return Ok(admins);                         // Return 200 OK with data
         }
 
 }
