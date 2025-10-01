@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 using UserManagement.Models;
 
 namespace UserManagement.Repositories
@@ -12,17 +13,16 @@ namespace UserManagement.Repositories
 
         private const string CacheKey = "AdminProfiles"; // Key for caching
 
-        public AdminProfileRepository(UsersDbContext context) // Constructor injection of DbContext
+
+        public AdminProfileRepository(UsersDbContext context, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             _context = context;
+            _memoryCache = memoryCache;
+            _distributedCache = distributedCache;
         }
 
+        //Get all AdminProfiles(sync) using IQueryable for extensibility
+        public IQueryable<Admin_Profile> GetAllAdmins()
 
-        public IEnumerable<AdminProfile> GetAll()
-        {
-            return _context.AdminProfiles
-                           .Include(a => a.Responsibilities) // Eager load Responsibilities
-                           .ToList();
-        }
     }
 }
