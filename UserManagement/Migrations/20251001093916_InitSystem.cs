@@ -35,17 +35,35 @@ namespace UserManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Skills",
+                schema: "users",
+                columns: table => new
+                {
+                    SkillId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SkillName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SkillLevel = table.Column<int>(type: "int", nullable: false),
+                    MonthsOfExperience = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Skills", x => x.SkillId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Trainees",
                 schema: "users",
                 columns: table => new
                 {
                     TraineeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GithubUsername = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EducationalBackground = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TraineeCV = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EducationalBackground = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExperienceLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LearningObjectives = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ExperienceLevel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TraineeCV = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -79,6 +97,33 @@ namespace UserManagement.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TraineeSkills",
+                schema: "users",
+                columns: table => new
+                {
+                    TraineeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SkillId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TraineeSkills", x => new { x.TraineeId, x.SkillId });
+                    table.ForeignKey(
+                        name: "FK_TraineeSkills_Skills_SkillId",
+                        column: x => x.SkillId,
+                        principalSchema: "users",
+                        principalTable: "Skills",
+                        principalColumn: "SkillId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TraineeSkills_Trainees_TraineeId",
+                        column: x => x.TraineeId,
+                        principalSchema: "users",
+                        principalTable: "Trainees",
+                        principalColumn: "TraineeId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 schema: "users",
                 table: "Batches",
@@ -92,11 +137,11 @@ namespace UserManagement.Migrations
             migrationBuilder.InsertData(
                 schema: "users",
                 table: "Trainees",
-                columns: new[] { "TraineeId", "EducationalBackground", "ExperienceLevel", "GithubUsername", "LearningObjectives", "ProfileImage", "TraineeCV" },
+                columns: new[] { "TraineeId", "EducationalBackground", "Email", "ExperienceLevel", "GithubUsername", "LearningObjectives", "Name", "ProfileImage", "TraineeCV" },
                 values: new object[,]
                 {
-                    { new Guid("33333333-3333-3333-3333-333333333333"), "BSc Computer Science", "Beginner", "ahmed-dev", "Learn backend development", "ahmed.png", "ahmed_cv.pdf" },
-                    { new Guid("44444444-4444-4444-4444-444444444444"), "MSc Data Science", "Intermediate", "fatima-coder", "Advance SQL skills", "fatima.png", "fatima_cv.pdf" }
+                    { new Guid("33333333-3333-3333-3333-333333333333"), "BSc Computer Science", null, "Beginner", "ahmed-dev", "Learn backend development", null, "ahmed.png", "ahmed_cv.pdf" },
+                    { new Guid("44444444-4444-4444-4444-444444444444"), "MSc Data Science", null, "Intermediate", "fatima-coder", "Advance SQL skills", null, "fatima.png", "fatima_cv.pdf" }
                 });
 
             migrationBuilder.InsertData(
@@ -115,6 +160,12 @@ namespace UserManagement.Migrations
                 schema: "users",
                 table: "BatchTrainees",
                 column: "TraineeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TraineeSkills_SkillId",
+                schema: "users",
+                table: "TraineeSkills",
+                column: "SkillId");
         }
 
         /// <inheritdoc />
@@ -125,7 +176,15 @@ namespace UserManagement.Migrations
                 schema: "users");
 
             migrationBuilder.DropTable(
+                name: "TraineeSkills",
+                schema: "users");
+
+            migrationBuilder.DropTable(
                 name: "Batches",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "Skills",
                 schema: "users");
 
             migrationBuilder.DropTable(

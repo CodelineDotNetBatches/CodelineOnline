@@ -16,7 +16,7 @@ namespace UserManagement.Repositories
             _db = context;
         }
 
-        public async Task<IEnumerable<Skill>> GetSkillsByTraineeAsync(int traineeId)
+        public async Task<IEnumerable<Skill>> GetSkillsByTraineeAsync(Guid traineeId)
         {
             return await _db.TraineeSkills
                 .Where(ts => ts.TraineeId == traineeId)
@@ -24,7 +24,7 @@ namespace UserManagement.Repositories
                 .ToListAsync();
         }
 
-        public async Task AssignSkillToTraineeAsync(int traineeId, int skillId)
+        public async Task AssignSkillToTraineeAsync(Guid traineeId, int skillId)
         {
             var traineeSkill = new TraineeSkill
             {

@@ -12,7 +12,7 @@ using UserManagement;
 namespace UserManagement.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20251001034059_InitSystem")]
+    [Migration("20251001093916_InitSystem")]
     partial class InitSystem
     {
         /// <inheritdoc />
@@ -113,6 +113,29 @@ namespace UserManagement.Migrations
                         });
                 });
 
+            modelBuilder.Entity("UserManagement.Models.Skill", b =>
+                {
+                    b.Property<int>("SkillId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"));
+
+                    b.Property<int>("MonthsOfExperience")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkillLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SkillName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SkillId");
+
+                    b.ToTable("Skills", "users");
+                });
+
             modelBuilder.Entity("UserManagement.Models.Trainee", b =>
                 {
                     b.Property<Guid>("TraineeId")
@@ -120,11 +143,12 @@ namespace UserManagement.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EducationalBackground")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExperienceLevel")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GithubUsername")
@@ -132,6 +156,9 @@ namespace UserManagement.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LearningObjectives")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfileImage")
@@ -167,6 +194,21 @@ namespace UserManagement.Migrations
                         });
                 });
 
+            modelBuilder.Entity("UserManagement.Models.TraineeSkill", b =>
+                {
+                    b.Property<Guid>("TraineeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TraineeId", "SkillId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("TraineeSkills", "users");
+                });
+
             modelBuilder.Entity("UserManagement.Models.BatchTrainee", b =>
                 {
                     b.HasOne("UserManagement.Models.Batch", "Batch")
@@ -186,14 +228,40 @@ namespace UserManagement.Migrations
                     b.Navigation("Trainee");
                 });
 
+            modelBuilder.Entity("UserManagement.Models.TraineeSkill", b =>
+                {
+                    b.HasOne("UserManagement.Models.Skill", "Skill")
+                        .WithMany("TraineeSkills")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UserManagement.Models.Trainee", "Trainee")
+                        .WithMany("TraineeSkills")
+                        .HasForeignKey("TraineeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Skill");
+
+                    b.Navigation("Trainee");
+                });
+
             modelBuilder.Entity("UserManagement.Models.Batch", b =>
                 {
                     b.Navigation("BatchTrainees");
                 });
 
+            modelBuilder.Entity("UserManagement.Models.Skill", b =>
+                {
+                    b.Navigation("TraineeSkills");
+                });
+
             modelBuilder.Entity("UserManagement.Models.Trainee", b =>
                 {
                     b.Navigation("BatchTrainees");
+
+                    b.Navigation("TraineeSkills");
                 });
 #pragma warning restore 612, 618
         }
