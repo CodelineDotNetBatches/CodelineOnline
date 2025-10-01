@@ -95,5 +95,8 @@ namespace UserManagement.Repositories
         {
             await _context.AdminProfiles.AddAsync(admin);
             await _context.SaveChangesAsync();
+
+            // Clear distributed cache
+            await _distributedCache.RemoveAsync(CacheKey);
         }
 }
