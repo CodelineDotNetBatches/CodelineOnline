@@ -39,6 +39,7 @@ namespace UserManagement.Controllers
         {
             var admin = _service.GetAdminById(id);       // Call service 
             if (admin == null)                          // if Not found 
+                return NotFound();                      // return 404 
 
         }
 
