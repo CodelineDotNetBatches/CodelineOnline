@@ -1,4 +1,5 @@
-﻿using UserManagement.Repositories;
+﻿using UserManagement.Models;
+using UserManagement.Repositories;
 
 namespace UserManagement.Services
 {
@@ -12,8 +13,19 @@ namespace UserManagement.Services
             _repository = repository; // Store reference for use in methods
         }
 
+        // -------------------
+        // SYNC METHODS
+        // -------------------
+
+        //Get all AdminProfile (sync)
+        /// Uses IQueryable for flexibility in filtering
+
+        public IQueryable<Admin_Profile> GetAllAdmins()
+        {
 
 
 
-    }
+
+
+        }
 }
