@@ -1,4 +1,4 @@
-﻿using CoursesManagement.Models;
+﻿
 using Microsoft.EntityFrameworkCore;
 
 namespace CoursesManagement
@@ -9,7 +9,7 @@ namespace CoursesManagement
         : base(options) 
         { }
 
-       public DbSet<Course> Courses { get; set; }
+       
 
         protected override void OnModelCreating(ModelBuilder mb)
         {

@@ -2,6 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using UserManagement;
 using UserManagement.Repositories;
 using UserManagement.Services;
+using UserManagement.Controllers;
+using UserManagement.DTOs;
+using UserManagement.Models;
+using UserManagement.SeedData;
+using UserManagement.Repositories;
+using UserManagement.Services;
 using UserManagement.Mapping;
 using UserManagement;
 
@@ -13,9 +19,21 @@ namespace CodeLine_Online
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // ========================================
-            // 1. Database Context
-            // ========================================
+
+
+            // Register repositories
+            builder.Services.AddScoped<ITraineeRepository, TraineeRepository>();
+            builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+
+            // Register services
+            builder.Services.AddScoped<ITraineeService, TraineeService>();
+            builder.Services.AddScoped<IBatchService, BatchService>();
+
+
+
+
+
+            // Add services to the container.
             builder.Services.AddDbContext<UsersDbContext>(options =>
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("Default"),
