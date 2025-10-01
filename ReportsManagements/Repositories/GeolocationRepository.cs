@@ -40,7 +40,7 @@ namespace ReportsManagements.Repositories
         {
             var geolocation = await _context.Geolocations.FindAsync(id);
             if (geolocation != null) return false;
-
+            return false;
             _context.Geolocations.Remove(geolocation);
             await _context.SaveChangesAsync();
             return true;
