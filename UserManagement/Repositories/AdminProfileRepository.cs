@@ -27,12 +27,23 @@ namespace UserManagement.Repositories
             // Try to get data from Memory Cache
             if (!_memoryCache.TryGetValue(CacheKey, out List<Admin_Profile> admins))
             {
-                admins = _context.AdminProfile.Tolist(); // Load from DB (sync)
+                admins = _context.AdminProfiles.Tolist(); // Load from DB (sync)
 
                 _memoryCache.Set(CacheKey, admins); // Save to Memory Cache
             }
 
             return admins.AsQueryable(); // Return as IQueryable
         }
+
+
+        //Get AdminProfile by Id (sync)
+        public Admin_Profile GetAdminById(int id)
+        {
+            return _context.AdminProfiles.FirstOrDefault(a => a.AdminId == id);
+        }
+
+
+
+
     }
 }
