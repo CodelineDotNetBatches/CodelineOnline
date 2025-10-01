@@ -15,11 +15,16 @@ namespace UserManagement.Controllers
             _service = service; // Store reference for later use
         }
 
+        // -------------------
+        // SYNC ENDPOINTS
+        // -------------------
 
+        //Get all Admin Profile (sync)
 
+        [HttpGet("sync/all")]        // GET api/AdminProfile/sync/all 
 
 
     }
 
-    }
+}
 }
