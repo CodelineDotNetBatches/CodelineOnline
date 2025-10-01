@@ -8,7 +8,7 @@
         /// <summary>
         /// Unique identifier for the category.
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid CategoryId { get; set; }
 
         /// <summary>
         /// Name of the category.
