@@ -48,8 +48,9 @@ namespace UserManagement.Services
         // Returns IEnumerable since data is materialized
         public async Task<IEnumerable<Admin_Profile>> GetAllAdminsAsync()
         {
-
-
-
+            return await _repository.GetAllAdminsAsync(); // Calls repository async method
         }
+
+
+    }
 }
