@@ -20,6 +20,7 @@ namespace ReportsManagements
             // default schema keeps everything under "users"
             mb.HasDefaultSchema("reports");
 
+            // Seed initial data for ReasonCodes
             mb.Entity<ReasonCode>().HasData(
                 new ReasonCode { ReasonCodeId = 1, Code = "LATE", Name = "Late", Category = "Attendance", IsActive = true },
                 new ReasonCode { ReasonCodeId = 2, Code = "SICK", Name = "Sick", Category = "Health", IsActive = true },

@@ -2,6 +2,7 @@
 
 namespace ReportsManagements.Models
 {
+    // Model representing a reason code entity
     public class ReasonCode
     {
         [Key]
