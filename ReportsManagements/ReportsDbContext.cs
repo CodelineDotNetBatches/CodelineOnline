@@ -25,8 +25,6 @@ namespace ReportsManagements
             mb.Entity<AttendanceRecord>().HasKey(a => a.AttId);
             base.OnModelCreating(mb);
 
-            mb.Entity<AttendanceRecord>().HasKey(a => a.AttId);
-
             mb.Entity<AttendanceRecord>()
                 .HasOne(a => a.Geolocation)
                 .WithMany(g => g.AttendanceRecords)
@@ -37,7 +35,7 @@ namespace ReportsManagements
                 .HasOne(a => a.CapturedPhoto)
                 .WithMany()
                 .HasForeignKey(a => a.CapturedPhotoId)
-                .OnDelete(DeleteBehavior.SetNull);
+               .OnDelete(DeleteBehavior.Cascade);
 
             mb.Entity<AttendanceRecord>()
                 .HasOne(a => a.ReasonCode)
@@ -45,8 +43,14 @@ namespace ReportsManagements
                 .HasForeignKey(a => a.ReasonCodeId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            mb.Entity<Geolocation>()
+           .Property(g => g.RediusMeters)
+          .HasPrecision(18, 2);
+
+
             // default schema keeps everything under "users"
             mb.HasDefaultSchema("reports");
+            mb.Entity<Geolocation>().ToTable("Geolocations");
 
         }
     }

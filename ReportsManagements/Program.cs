@@ -1,35 +1,42 @@
-
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReportsManagements.Mapping;
 using ReportsManagements.Models;
 using ReportsManagements.Repositories;
+using ReportsManagements.SeedData;
 using ReportsManagements.Services;
 
 namespace ReportsManagements
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // ====== Services ======
+            builder.Services.AddScoped<IAttendanceRecordService, AttendanceRecordService>();
+            builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
-            // Add services to the container(Dbcontext).
+            // DbContext
             builder.Services.AddDbContext<ReportsDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
-                sql => sql.MigrationsHistoryTable("__Migrations_App")));
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("Default"),
+                    sql => sql.MigrationsHistoryTable("__Migrations_App")
+                )
+            );
 
+            // Controllers & Swagger
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
-            // builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+            // AutoMapper
+            builder.Services.AddAutoMapper(typeof(AttendanceMapping)); 
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // ====== Middleware ======
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -40,49 +47,15 @@ namespace ReportsManagements
             app.UseAuthorization();
             app.MapControllers();
 
-            //
-            using var scope = app.Services.CreateScope(); var context = scope.ServiceProvider.GetRequiredService<ReportsDbContext>(); if (!context.Geolocations.Any()) { context.Geolocations.Add(new Geolocation { Latitude = "23.6", Longitude = "58.5" }); context.SaveChanges(); }
-            if (!context.FileStorages.Any())
+            // ====== Seed Data ======
+            using (var scope = app.Services.CreateScope())
             {
-                context.FileStorages.Add(new ReportsManagements.Models.FileStorage
-                {
-                    FileName = "test.jpg",
-                    Url = "/uploads/test.jpg",
-                    UploadedAt = DateTime.UtcNow,
-                    UploadedBy = "System"
-                });
-
-                // Minimal API CRUD Endpoints
-                app.MapPost("/api/v1/attendance", async (AttendanceRecord record, IAttendanceRecordService service) =>
-            {
-                var created = await service.CreateAsync(record);
-                return Results.Created($"/api/v1/attendance/{created.AttId}", created);
-            });
-
-                app.MapGet("/api/v1/attendance/{id}", async (int id, IAttendanceRecordService service) =>
-                {
-                    var record = await service.GetByIdAsync(id);
-                    return record != null ? Results.Ok(record) : Results.NotFound();
-                });
-
-                app.MapPut("/api/v1/attendance/{id}", async (int id, AttendanceRecord updated, IAttendanceRecordService service) =>
-                {
-                    var record = await service.UpdateAsync(id, updated);
-                    return record != null ? Results.Ok(record) : Results.NotFound();
-                });
-
-                app.MapDelete("/api/v1/attendance/{id}", async (int id, IAttendanceRecordService service) =>
-                {
-                    var deleted = await service.DeleteAsync(id);
-                    return deleted ? Results.NoContent() : Results.NotFound();
-                });
-
-
-                //run app
-
-
-                app.Run();
+                var context = scope.ServiceProvider.GetRequiredService<ReportsDbContext>();
+                DatabaseSeeder.Seed(context);
             }
+
+            // Run App
+            app.Run();
         }
     }
 }
