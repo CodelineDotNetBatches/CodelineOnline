@@ -39,4 +39,17 @@ namespace UserManagement.Services
         {
             _repository.AddAdmin(admin); // Calls repository sync method
         }
+
+        // -------------------
+        // ASYNC METHODS
+        // -------------------
+
+        // Get AdminProfile by Id (async)
+        // Returns IEnumerable since data is materialized
+        public async Task<IEnumerable<Admin_Profile>> GetAllAdminsAsync()
+        {
+
+
+
+        }
 }
