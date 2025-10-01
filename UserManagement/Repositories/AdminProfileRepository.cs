@@ -21,6 +21,10 @@ namespace UserManagement.Repositories
             _distributedCache = distributedCache;
         }
 
+        // -------------------
+        // SYNC METHODS
+        // -------------------
+
         //Get all AdminProfiles(sync) using IQueryable for extensibility
         public IQueryable<Admin_Profile> GetAllAdmins()
         {
@@ -53,8 +57,10 @@ namespace UserManagement.Repositories
         }
 
 
-
-        // Get all AdminProfiles (sync) with Distributed Caching 
+        //-------------------
+        // ASYNC METHODS
+        //-------------------
+        // Get all AdminProfiles (async) with Distributed Caching 
 
         public async Task<IEnumerable<Admin_Profile>> GetAllAdminsAsync()
         {
@@ -77,5 +83,11 @@ namespace UserManagement.Repositories
             return admins;
         }
 
+
+        // Get AdminProfile by Id (async)
+        public async Task<Admin_Profile> GetAdminByIdAsync(int id)
+        {
+            return await _context.AdminProfiles.FirstOrDefaultAsync(a => a.AdminId == id);
+        }
     }
 }
