@@ -3,11 +3,11 @@ using CoursesManagement.Repos;
 using CoursesManagement;
 using Microsoft.EntityFrameworkCore;
 
-public class CourseRepository : GenericRepository<Course>, ICourseRepository
+public class CourseRepo : GenericRepo<Course>, ICourseRepo
 {
     private readonly CoursesDbContext _context;
 
-    public CourseRepository(CoursesDbContext context) : base(context)
+    public CourseRepo(CoursesDbContext context) : base(context)
     {
         _context = context;
     }

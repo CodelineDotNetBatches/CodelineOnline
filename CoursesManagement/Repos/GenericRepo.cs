@@ -3,12 +3,12 @@
 namespace CoursesManagement.Repos
 {
     // T is a placeholder for any class (entity) you pass in, like Student, Course, Instructor, etc ...
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepo<T> : IGenericRepo<T> where T : class
     {
         private readonly CoursesDbContext _context; // EF DbContext (database session) ...
         private readonly DbSet<T> _dbSet; // Represents a database table for entity T ...
 
-        public GenericRepository(CoursesDbContext context)
+        public GenericRepo(CoursesDbContext context)
         {
             _context = context;
             _dbSet = context.Set<T>(); // Get the DbSet<T> for the entity (like Students, Courses, etc.) ...
