@@ -45,4 +45,13 @@ namespace UserManagement.Controllers
         }
 
 
+        // Add new Admine Profile (sync)
+
+        [HttpGet("sync/add")]                 // POST api/Admin Profile /sync /add 
+
+        public IActionResult AddAdmin([FromBody] Admin_Profile admin)
+        {
+            _service.AddAdmin(admin);                  // Call service to add admin
+        }
+
 }
