@@ -30,5 +30,14 @@ namespace UserManagement.Controllers
             return Ok(admins);                         // Return 200 OK with data
         }
 
-}
+
+        // Get Admin Profile by Id (sync)
+
+        [HttpGet("sync/{id}")]                    // GET api/AdminProfile/sync/5
+
+        public ActionResult<Admin_Profile> GetAdminById(int id)
+        {
+        }
+
+
 }
