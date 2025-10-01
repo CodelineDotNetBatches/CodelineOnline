@@ -16,7 +16,7 @@ namespace AuthenticationManagement.Services
             _roles = roles;
             _token = token;
         }
-
+        // register user
         public async Task<AuthResponseDto?> RegisterAsync(RegisterDto dto)
         {
             // unique email check
