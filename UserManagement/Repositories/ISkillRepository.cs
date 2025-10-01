@@ -7,8 +7,8 @@ namespace UserManagement.Repositories
 {
     public interface ISkillRepository : IRepository<Skill>
     {
-        Task<IEnumerable<Skill>> GetSkillsByTraineeAsync(int traineeId);
+        Task<IEnumerable<Skill>> GetSkillsByTraineeAsync(Guid traineeId);
 
-        Task AssignSkillToTraineeAsync(int traineeId, int skillId);
+        Task AssignSkillToTraineeAsync(Guid traineeId, int skillId);
     }
 }
