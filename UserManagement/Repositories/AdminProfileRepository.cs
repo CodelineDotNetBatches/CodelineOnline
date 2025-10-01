@@ -65,5 +65,10 @@ namespace UserManagement.Repositories
             {
                 return JsonConvert.DeserializeObject<List<Admin_Profile>>(cachedAdmins);
             }
+
+            // If not cached, load from DB
+            var admins = await _context.AdminProfiles.ToListAsync();
         }
+
+    }
 }
