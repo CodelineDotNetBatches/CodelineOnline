@@ -38,6 +38,7 @@ namespace UserManagement.Controllers
         public ActionResult<Admin_Profile> GetAdminById(int id)
         {
             var admin = _service.GetAdminById(id);       // Call service 
+            if (admin == null)                          // if Not found 
 
         }
 
