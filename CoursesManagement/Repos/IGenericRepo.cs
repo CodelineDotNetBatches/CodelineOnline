@@ -1,6 +1,7 @@
-﻿namespace CoursesManagement.Repos
+﻿using Microsoft.EntityFrameworkCore;
+namespace CoursesManagement.Repos
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepo<T> where T : class
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task<T?> GetByIdAsync(int id);
