@@ -6,7 +6,8 @@
 
 namespace ReportsManagements.Repositories
 {
-    public interface IReasonCode
+    // Interface defining CRUD operations for ReasonCode
+    public interface IReasonCodeRepository
     {
         Task AddAsync(Models.ReasonCode reasonCode);
         Task DeleteAsync(int id);

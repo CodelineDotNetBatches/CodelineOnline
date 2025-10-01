@@ -6,7 +6,8 @@
 
 namespace ReportsManagements.Repositories
 {
-    public interface IFileStorage
+    // Interface defining CRUD operations for file storage
+    public interface IFileStorageRepository
     {
         Task AddAsync(Models.FileStorage file);
         Task DeleteAsync(int id);
