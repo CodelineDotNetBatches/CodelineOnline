@@ -9,6 +9,17 @@ namespace UserManagement.Controllers
     {
         private readonly AdminProfileService _service;  // Reference to service Layer 
 
+        // Constructor injection: The service is injected by dependency injection (DI)
+        public AdminProfileController(AdminProfileService service)
+        {
+            _service = service; // Store reference for later use
+        }
+
+
+
+
+
+    }
 
     }
 }
