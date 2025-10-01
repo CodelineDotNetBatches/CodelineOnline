@@ -2,6 +2,10 @@
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using UserManagement.Models;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+
+
 
 namespace UserManagement.Repositories
 {
@@ -31,7 +35,7 @@ namespace UserManagement.Repositories
             // Try to get data from Memory Cache
             if (!_memoryCache.TryGetValue(CacheKey, out List<Admin_Profile> admins))
             {
-                admins = _context.AdminProfiles.Tolist(); // Load from DB (sync)
+                admins = _context.AdminProfiles.ToList(); // Load from DB (sync)
 
                 _memoryCache.Set(CacheKey, admins); // Save to Memory Cache
             }
@@ -69,18 +73,18 @@ namespace UserManagement.Repositories
 
             if (!string.IsNullOrEmpty(cachedAdmins))
             {
-                return JsonConvert.DeserializeObject<List<Admin_Profile>>(cachedAdmins);
+                return JsonSerializer.Deserialize<List<Admin_Profile>>(cachedAdmins);
             }
 
             // If not cached, load from DB
             var admins = await _context.AdminProfiles.ToListAsync();
 
-            //Save in distributed cache 
-
-            var serializedData = JsonConvert.SerializeObject(admins);
+            // Save in distributed cache 
+            var serializedData = JsonSerializer.Serialize(admins);
             await _distributedCache.SetStringAsync(CacheKey, serializedData);
 
             return admins;
+
         }
 
 
