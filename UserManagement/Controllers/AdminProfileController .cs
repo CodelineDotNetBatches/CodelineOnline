@@ -79,5 +79,16 @@ namespace UserManagement.Controllers
                 return NotFound();                     // Return 404
             return Ok(admin);                          // Return 200 OK
         }
+
+
+        // Add new AdminProfile (async)
+
+        [HttpPost("async/add")]                        // POST api/AdminProfile/async/add
+                                                      
+        public async Task<IActionResult> AddAdminAsync([FromBody] Admin_Profile admin)
+        {
+            await _service.AddAdminAsync(admin);       // Call async service to add admin
+            return CreatedAtAction(nameof(GetAdminByIdAsync), new { id = admin.AdminId }, admin);   // Returns 201 Created with location header pointing to new admin
+        }
     }
 }
