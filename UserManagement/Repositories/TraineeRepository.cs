@@ -1,4 +1,5 @@
 ﻿using UserManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace UserManagement.Repositories
 {
@@ -7,12 +8,13 @@ namespace UserManagement.Repositories
     /// </summary>
     public class TraineeRepository : ITraineeRepository
     {
-        private readonly CoursesDbContext _context;
+        private readonly UsersDbContext _context;
 
-        public TraineeRepository(CoursesDbContext context)
+        public TraineeRepository(UsersDbContext context)
         {
             _context = context;
         }
+
 
         public async Task<IEnumerable<Trainee>> GetAllAsync()
         {

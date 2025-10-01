@@ -1,4 +1,5 @@
 ﻿using UserManagement.Models;
+using Microsoft.EntityFrameworkCore;   // 👈 Needed for ToListAsync(), FindAsync(), etc.
 
 namespace UserManagement.Repositories
 {

@@ -13,7 +13,6 @@
         public string? Timeline { get; set; }
         public string? Description { get; set; }
 
-        // Navigation: many-to-many with Users (Trainees)
         public ICollection<BatchTrainee> BatchTrainees { get; set; } = new List<BatchTrainee>();
     }
 
