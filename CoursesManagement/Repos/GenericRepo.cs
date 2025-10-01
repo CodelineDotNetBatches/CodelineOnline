@@ -5,12 +5,12 @@ namespace CoursesManagement.Repos
     // T is a placeholder for any class (entity) you pass in, like Student, Course, Instructor, etc ...
     public class GenericRepo<T> : IGenericRepo<T> where T : class
     {
- CourseServices
+
 
 
         protected readonly CoursesDbContext _context;// EF DbContext (database session) ...
         protected readonly DbSet<T> _dbSet;// Represents a database table for entity T ...
- CourseManagement
+
 
         public GenericRepo(CoursesDbContext context)
         {
