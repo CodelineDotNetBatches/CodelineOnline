@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UserManagement.Models;
 using UserManagement.Services;
 
 namespace UserManagement.Controllers
@@ -23,8 +24,10 @@ namespace UserManagement.Controllers
 
         [HttpGet("sync/all")]        // GET api/AdminProfile/sync/all 
 
-
-    }
+        public ActionResult<IQueryable<Admin_Profile>> GetAllAdmins()
+        {
+            var admins = _service.GetAllAdmins();      // Call service to get admins
+        }
 
 }
 }
