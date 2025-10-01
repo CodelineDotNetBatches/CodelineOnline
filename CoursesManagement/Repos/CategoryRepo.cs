@@ -3,9 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoursesManagement.Repos
 {
-    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
+    public class CategoryRepository : GenericRepo<Category>, ICategoryRepository
     {
-        public CategoryRepository(CoursesDbContext context) : base(context) { }
+        protected readonly CoursesDbContext _ctx;
+
+        public CategoryRepository(CoursesDbContext context) : base(context)
+        {
+            _ctx = context;
+        }
 
         public async Task<Category?> GetCategoryWithCoursesAsync(Guid id)
         {
@@ -13,5 +18,7 @@ namespace CoursesManagement.Repos
                 .Include(c => c.Courses)
                 .FirstOrDefaultAsync(c => c.CategoryId == id);
         }
+
+        public async Task SaveAsync() => await _context.SaveChangesAsync();
     }
 }
