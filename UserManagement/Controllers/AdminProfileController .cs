@@ -52,6 +52,7 @@ namespace UserManagement.Controllers
         public IActionResult AddAdmin([FromBody] Admin_Profile admin)
         {
             _service.AddAdmin(admin);                  // Call service to add admin
+            return CreatedAtAction(nameof(GetAdminById), new { id = admin.AdminId }, admin); // Returns 201 Created with location header pointing to new admin 
         }
 
 }
