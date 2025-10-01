@@ -52,5 +52,12 @@ namespace UserManagement.Repositories
             _memoryCache.Remove(CacheKey); // Clear cache after insert
         }
 
-    }
+
+
+        // Get all AdminProfiles (sync) with Distributed Caching 
+
+        public async Task<IEnumerable<Admin_Profile>> GetAllAdminsAsync()
+        {
+
+        }
 }
