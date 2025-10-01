@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using UserManagement.Models;
 
 namespace UserManagement.Repositories
@@ -7,6 +8,7 @@ namespace UserManagement.Repositories
     {
         private readonly UsersDbContext _context; // Database context
         private readonly IMemoryCache _memoryCache;  // In-Memory Cache
+        private readonly IDistributedCache _distributedCache;  // Distributed Cache
 
 
         public AdminProfileRepository(UsersDbContext context) // Constructor injection of DbContext
