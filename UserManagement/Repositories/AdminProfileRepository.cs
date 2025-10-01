@@ -68,6 +68,13 @@ namespace UserManagement.Repositories
 
             // If not cached, load from DB
             var admins = await _context.AdminProfiles.ToListAsync();
+
+            //Save in distributed cache 
+
+            var serializedData = JsonConvert.SerializeObject(admins);
+            await _distributedCache.SetStringAsync(CacheKey, serializedData);
+
+            return admins;
         }
 
     }
