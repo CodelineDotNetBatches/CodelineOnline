@@ -30,6 +30,7 @@ namespace UserManagement.Services
 
         public Admin_Profile GetAdminById(int id)
         {
-
+            return _repository.GetAdminById(id); // Calls repository sync method 
         }
+    }
 }
