@@ -23,7 +23,8 @@ namespace CoursesManagement.Models
         public LevelType CourseLevel { get; set; }
 
         //public int Duration { get; set; }
-        //public decimal Price { get; set; }
+        [Required]
+        public decimal Price { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Foreign Keys and Navigation Properties ...
