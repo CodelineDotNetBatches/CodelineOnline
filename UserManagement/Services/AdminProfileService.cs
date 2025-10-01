@@ -32,5 +32,11 @@ namespace UserManagement.Services
         {
             return _repository.GetAdminById(id); // Calls repository sync method 
         }
-    }
+
+        // Add new AdminProfile (sync)
+
+        public void AddAdmin(Admin_Profile admin)
+        {
+            _repository.AddAdmin(admin); // Calls repository sync method
+        }
 }
