@@ -4,8 +4,8 @@ namespace CoursesManagement.Repos
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly CoursesDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly CoursesDbContext _context;
+        protected readonly DbSet<T> _dbSet;
 
         public GenericRepository(CoursesDbContext context)
         {
