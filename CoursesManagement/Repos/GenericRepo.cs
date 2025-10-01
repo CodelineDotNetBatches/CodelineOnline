@@ -2,21 +2,27 @@
 
 namespace CoursesManagement.Repos
 {
+    // T is a placeholder for any class (entity) you pass in, like Student, Course, Instructor, etc ...
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly CoursesDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        private readonly CoursesDbContext _context; // EF DbContext (database session) ...
+        private readonly DbSet<T> _dbSet; // Represents a database table for entity T ...
 
         public GenericRepository(CoursesDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>();
+            _dbSet = context.Set<T>(); // Get the DbSet<T> for the entity (like Students, Courses, etc.) ...
         }
 
+        //Get all records from the table (asynchronously) ...
         public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
+        //Get one record by primary key (assumes entity has a single int Id key) ...
         public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+        //Add a new record to the DbSet (not saved yet, SaveChanges() needed) ...
         public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
+        //Update an existing entity (marks it as Modified in EF Core tracking) ...
         public void Update(T entity) => _dbSet.Update(entity);
+        //Delete an entity (marks it for deletion) ...
         public void Delete(T entity) => _dbSet.Remove(entity);
     }
 }
