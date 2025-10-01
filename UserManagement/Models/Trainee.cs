@@ -11,7 +11,11 @@ namespace UserManagement.Models
         public string? TraineeCV { get; set; }
         public string? LearningObjectives { get; set; }
         public string ExperienceLevel { get; set; } = default!;
+        public int TraineeId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         public ICollection<BatchTrainee> BatchTrainees { get; set; } = new List<BatchTrainee>();
+        public ICollection<TraineeSkill>? TraineeSkills { get; set; }
     }
 }

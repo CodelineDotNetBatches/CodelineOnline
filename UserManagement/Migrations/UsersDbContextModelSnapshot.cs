@@ -24,14 +24,20 @@ namespace UserManagement.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("UserManagement.Models.Batch", b =>
+            modelBuilder.Entity("UserManagement.Models.Skill", b =>
                 {
                     b.Property<Guid>("BatchId")
+                    b.Property<int>("SkillId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"));
 
+                    b.Property<int>("MonthsOfExperience")
+                        .HasColumnType("int");
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
@@ -39,7 +45,10 @@ namespace UserManagement.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+                    b.Property<int>("SkillLevel")
+                        .HasColumnType("int");
 
+                    b.Property<string>("SkillName")
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -51,8 +60,10 @@ namespace UserManagement.Migrations
                     b.Property<string>("Timeline")
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("SkillId");
                     b.HasKey("BatchId");
 
+                    b.ToTable("Skills", "users");
                     b.ToTable("Batches", "users");
 
                     b.HasData(
@@ -112,35 +123,53 @@ namespace UserManagement.Migrations
 
             modelBuilder.Entity("UserManagement.Models.Trainee", b =>
                 {
+                    b.Property<int>("TraineeId")
                     b.Property<Guid>("TraineeId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TraineeId"));
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Email")
                     b.Property<string>("EducationalBackground")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Name")
                     b.Property<string>("ExperienceLevel")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("TraineeId");
                     b.Property<string>("GithubUsername")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.ToTable("Trainees", "users");
+                });
                     b.Property<string>("LearningObjectives")
                         .HasColumnType("nvarchar(max)");
 
+            modelBuilder.Entity("UserManagement.Models.TraineeSkill", b =>
+                {
+                    b.Property<int>("TraineeId")
+                        .HasColumnType("int");
                     b.Property<string>("ProfileImage")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
                     b.Property<string>("TraineeCV")
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("TraineeId", "SkillId");
                     b.HasKey("TraineeId");
 
+                    b.HasIndex("SkillId");
                     b.ToTable("Trainees", "users");
 
+                    b.ToTable("TraineeSkills", "users");
                     b.HasData(
                         new
                         {
@@ -164,8 +193,12 @@ namespace UserManagement.Migrations
                         });
                 });
 
+            modelBuilder.Entity("UserManagement.Models.TraineeSkill", b =>
             modelBuilder.Entity("UserManagement.Models.BatchTrainee", b =>
                 {
+                    b.HasOne("UserManagement.Models.Skill", "Skill")
+                        .WithMany("TraineeSkills")
+                        .HasForeignKey("SkillId")
                     b.HasOne("UserManagement.Models.Batch", "Batch")
                         .WithMany("BatchTrainees")
                         .HasForeignKey("BatchId")
@@ -173,23 +206,28 @@ namespace UserManagement.Migrations
                         .IsRequired();
 
                     b.HasOne("UserManagement.Models.Trainee", "Trainee")
+                        .WithMany("TraineeSkills")
                         .WithMany("BatchTrainees")
                         .HasForeignKey("TraineeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Skill");
                     b.Navigation("Batch");
 
                     b.Navigation("Trainee");
                 });
 
+            modelBuilder.Entity("UserManagement.Models.Skill", b =>
             modelBuilder.Entity("UserManagement.Models.Batch", b =>
                 {
+                    b.Navigation("TraineeSkills");
                     b.Navigation("BatchTrainees");
                 });
 
             modelBuilder.Entity("UserManagement.Models.Trainee", b =>
                 {
+                    b.Navigation("TraineeSkills");
                     b.Navigation("BatchTrainees");
                 });
 #pragma warning restore 612, 618

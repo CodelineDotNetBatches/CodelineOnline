@@ -8,7 +8,12 @@ namespace UserManagement
     {
         public UsersDbContext(DbContextOptions<UsersDbContext> options)
             : base(options) { }
+        public UsersDbContext(DbContextOptions<UsersDbContext> options)
+            : base(options)
+        {
+        }
 
+        // Entities
         public DbSet<Trainee> Trainees { get; set; }
         public DbSet<Batch> Batches { get; set; }
         public DbSet<BatchTrainee> BatchTrainees { get; set; }
@@ -40,6 +45,13 @@ namespace UserManagement
                 entity.HasOne(bt => bt.Batch)
                       .WithMany(b => b.BatchTrainees)
                       .HasForeignKey(bt => bt.BatchId);
+        public DbSet<Skill> Skills { get; set; }
+        public DbSet<TraineeSkill> TraineeSkills { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder mb)
+        {
+            // Default schema keeps everything under "users"
+            mb.HasDefaultSchema("users");
 
                 entity.HasOne(bt => bt.Trainee)
                       .WithMany(t => t.BatchTrainees)
@@ -47,6 +59,19 @@ namespace UserManagement
             });
             // 👇 Call external seed data
             modelBuilder.SeedData();
+            //  many-to-many (Trainee <-> Skill)
+            mb.Entity<TraineeSkill>()
+              .HasKey(ts => new { ts.TraineeId, ts.SkillId });
+
+            mb.Entity<TraineeSkill>()
+              .HasOne(ts => ts.Trainee)
+              .WithMany(t => t.TraineeSkills)
+              .HasForeignKey(ts => ts.TraineeId);
+
+            mb.Entity<TraineeSkill>()
+              .HasOne(ts => ts.Skill)
+              .WithMany(s => s.TraineeSkills)
+              .HasForeignKey(ts => ts.SkillId);
         }
     }
 }
