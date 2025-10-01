@@ -44,10 +44,10 @@ namespace ReportsManagements.Repositories
         {
             // Find the branch by id
             var branch = await _context.Branches.FindAsync(id);
-            // If found, remove it from the DbSet
+            // If found,remove it from the DbSet
             if (branch != null)
             {
-                // For soft delete, we set IsActive to false instead of removing the record
+                // For soft delete,we set IsActive to false instead of removing the record
                 _context.Branches.Remove(branch);
                 await _context.SaveChangesAsync();
 
