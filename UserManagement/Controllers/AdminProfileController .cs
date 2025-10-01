@@ -69,5 +69,15 @@ namespace UserManagement.Controllers
             return Ok(admins);                         // Return 200 OK
         }
 
+        // Get AdminProfile by Id (async) 
+
+        [HttpGet("async/{id}")]                // GET api/Admin Profile/async/5 
+        public async Task<ActionResult<Admin_Profile>> GetAdminByIdAsync(int id)
+        {
+            var admin = await _service.GetAdminByIdAsync(id); // Call async service method
+            if (admin == null)                         // If not found
+                return NotFound();                     // Return 404
+            return Ok(admin);                          // Return 200 OK
+        }
     }
 }
