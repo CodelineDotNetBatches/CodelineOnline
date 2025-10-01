@@ -25,8 +25,9 @@ namespace UserManagement.Repositories
         public IQueryable<Admin_Profile> GetAllAdmins()
         {
             // Try to get data from Memory Cache
-            if (!_memoryCache.TryGetValue(CacheKey, out List<AdminProfile> admins))
+            if (!_memoryCache.TryGetValue(CacheKey, out List<Admin_Profile> admins))
             {
+                admins = _context.AdminProfile.Tolist(); // Load from DB (sync)
             }
 
     }
