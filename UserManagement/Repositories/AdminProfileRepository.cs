@@ -28,7 +28,9 @@ namespace UserManagement.Repositories
             if (!_memoryCache.TryGetValue(CacheKey, out List<Admin_Profile> admins))
             {
                 admins = _context.AdminProfile.Tolist(); // Load from DB (sync)
-            }
 
+                _memoryCache.Set(CacheKey, admins); // Save to Memory Cache
+            }
+        }
     }
 }
