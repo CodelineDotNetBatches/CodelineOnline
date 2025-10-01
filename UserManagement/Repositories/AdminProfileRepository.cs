@@ -43,7 +43,14 @@ namespace UserManagement.Repositories
         }
 
 
+        // Add new AdminProfile (sync) 
 
+        public void AddAdmin(Admin_Profile admin)
+        {
+            _context.AdminProfiles.Add(admin);
+            _context.SaveChanges();
+            _memoryCache.Remove(CacheKey); // Clear cache after insert
+        }
 
     }
 }
