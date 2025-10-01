@@ -52,5 +52,12 @@ namespace UserManagement.Services
         }
 
 
+        // Get AdminProfile by Id (async) 
+        public async Task<Admin_Profile> GetAdminByIdAsync(int id)
+        {
+            // Calls repository async method
+            return await _repository.GetAdminByIdAsync(id);
+        }
+
     }
 }
