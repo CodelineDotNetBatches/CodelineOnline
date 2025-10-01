@@ -47,7 +47,7 @@ namespace UserManagement.Controllers
 
         // Add new Admine Profile (sync)
 
-        [HttpGet("sync/add")]                 // POST api/Admin Profile /sync /add 
+        [HttpPost("sync/add")]                 // POST api/Admin Profile /sync /add 
 
         public IActionResult AddAdmin([FromBody] Admin_Profile admin)
         {
@@ -55,4 +55,19 @@ namespace UserManagement.Controllers
             return CreatedAtAction(nameof(GetAdminById), new { id = admin.AdminId }, admin); // Returns 201 Created with location header pointing to new admin 
         }
 
+        // -------------------
+        // ASYNC ENDPOINTS
+        // -------------------
+
+
+        // Get all Admin Profile (async)
+
+        [HttpGet("async/all")]             // GET api/AdminProfile/async/all
+        public async Task<ActionResult<IEnumerable<Admin_Profile>>> GetAllAdminsAsync()
+        {
+            var admins = await _service.GetAllAdminsAsync(); // Call async service method
+            return Ok(admins);                         // Return 200 OK
+        }
+
+    }
 }
