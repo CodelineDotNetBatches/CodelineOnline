@@ -1,4 +1,5 @@
-﻿namespace CoursesManagement.Repos
+﻿using Microsoft.EntityFrameworkCore;
+namespace CoursesManagement.Repos
 {
     public interface IGenericRepository<T> where T : class
     {
