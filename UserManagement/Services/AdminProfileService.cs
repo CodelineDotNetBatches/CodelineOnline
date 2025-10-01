@@ -22,10 +22,11 @@ namespace UserManagement.Services
 
         public IQueryable<Admin_Profile> GetAllAdmins()
         {
-
-
-
-
-
+            // Calls repository sync method 
+            return _repository.GetAllAdmins();
         }
+
+
+
+    }
 }
