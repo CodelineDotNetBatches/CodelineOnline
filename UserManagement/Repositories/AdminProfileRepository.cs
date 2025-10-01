@@ -89,5 +89,11 @@ namespace UserManagement.Repositories
         {
             return await _context.AdminProfiles.FirstOrDefaultAsync(a => a.AdminId == id);
         }
-    }
+
+        // Add new AdminProfile (async)
+        public async Task AddAdminAsync(Admin_Profile admin)
+        {
+            await _context.AdminProfiles.AddAsync(admin);
+            await _context.SaveChangesAsync();
+        }
 }
