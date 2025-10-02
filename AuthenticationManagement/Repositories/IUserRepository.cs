@@ -2,5 +2,7 @@
 
 namespace AuthenticationManagement.Repositories
 {
-    public interface IUserRepository : IGenericRepository<User> { }
+    public interface IUserRepository : IGenericRepository<User> {
+        Task<User?> GetByEmailAsync(string email);
+    }
 }
