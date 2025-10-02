@@ -12,7 +12,7 @@ public interface IReportsService
 
     IEnumerable<TrainerReport> QueryTrainers(PagingQuery q);
     IEnumerable<CourseReport> QueryCourses(PagingQuery q);
-
+    ReportOverviewDto Overview();
     IEnumerable<TrainerReport> AllTrainers();
     IEnumerable<CourseReport> AllCourses();
 }
