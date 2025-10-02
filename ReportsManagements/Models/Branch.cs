@@ -5,9 +5,12 @@ namespace ReportsManagements.Models
     public class Branch
     {
         [Key]
-        public int Id { get; set; }
+        public int BranchId { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Address { get; set; }
+
         public bool IsActive { get; set; }= true;
     }
 }
