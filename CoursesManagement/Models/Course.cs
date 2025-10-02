@@ -1,49 +1,60 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace CoursesManagement.Models
 {
-    /// <summary>
-    /// Represents a course within a category.
-    /// </summary>
-    /// <summary>
-    /// Represents a course within a category.
-    /// </summary>
+    public enum LevelType
+    {
+        Beginner,
+        Intermediate,
+        Advanced
+    }
     public class Course
     {
-        /// <summary>
-        /// Unique identifier for the course.
-        /// </summary>
-        public Guid Id { get; set; }
+        [Key]
+        public Guid CourseId { get; set; }
 
-        /// <summary>
-        /// Title of the course.
-        /// </summary>
-        public string Title { get; set; } = default!;
+        [Required, MaxLength(200)]
+        public string CourseName { get; set; } = default!;
 
-        /// <summary>
-        /// Foreign key to the parent category.
-        /// </summary>
-        public Guid CategoryId { get; set; }
+        [MaxLength(1000)]
+        public string? CourseDescription { get; set; }
+        [Required]
+        public LevelType CourseLevel { get; set; }
 
-        /// <summary>
-        /// Reference to the parent category.
-        /// </summary>
+        //public int Duration { get; set; }
+        [Required]
+        public decimal Price { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // Foreign Keys and Navigation Properties ...
+
+        //every course belongs to one category ... one to many relationship
+        public int CategoryId { get; set; }
+        [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; } = default!;
 
-        /// <summary>
-        /// Lessons in this course.
-        /// </summary>
-        public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+        //every course is belongs to many programs ... many to many relationship ...
+        //public ICollection<Programs> Programs { get; set; } = new List<Programs>();
+        //every course has many enrollments ... many to many relationship ...
+        //public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        //every course has many notification ... one to many relationship ...
+        //public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+        //every course has many UserProgress ... many to many relationship ...
+        //public ICollection<UserProgress> UserProgresses { get; set; } = new List<UserProgress>();
+        //every course has many lessons ... one to many relationship ...
+        //public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+        //every course has many assignments ... one to many relationship ...
+        //public ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
+        //every course has many reviews ... one to many relationship ...
+        //public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        //every course has many quizzes ... one to many relationship ...
+        //public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
-        /// <summary>
-        /// Reviews submitted by users for this course.
-        /// </summary>
-        public ICollection<Review> Reviews { get; set; } = new List<Review>();
-
-        /// <summary>
-        /// Enrollments in this course.
-        /// </summary>
-        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        // Instructor of the course ... many to one relationship ...
+        //public int InstructorId { get; set; }
+        //[ForeignKey(nameof(InstructorId))]
+        //public Instructor Instructor { get; set; } = default!;
 
         /// <summary>
         /// Assignments belonging to this course.
