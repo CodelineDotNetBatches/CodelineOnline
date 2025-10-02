@@ -2,6 +2,7 @@
 using ReportsManagements.DTOs;
 using ReportsManagements.Models;
 using ReportsManagements.Repositories;
+using ReportsManagements.DTOs;
 
 namespace ReportsManagements.Services;
 
@@ -72,4 +73,35 @@ public class ReportsService : IReportsService
 
     public IEnumerable<TrainerReport> AllTrainers() => _trainerRepo.Query().ToList();
     public IEnumerable<CourseReport> AllCourses() => _courseRepo.Query().ToList();
+
+    public ReportOverviewDto Overview()
+    {
+        var trainers = _trainerRepo.Query();
+        var courses = _courseRepo.Query();
+
+        var totalTrainers = trainers.Select(t => t.TrainerId).Distinct().Count();
+        var totalCourses = courses.Select(c => c.CourseId).Distinct().Count();
+
+        // نحسب متوسط الحضور من بيانات المدربين إن وُجدت، وإلا من الكورسات
+        var avgFromTrainers = trainers.Any()
+            ? trainers.Average(t => (double)t.AttendanceRate)
+            : (double?)null;
+
+        var avgFromCourses = courses.Any()
+            ? courses.Average(c => (double)c.AverageAttendanceRate)
+            : (double?)null;
+
+        double avg = avgFromTrainers ?? avgFromCourses ?? 0.0;
+
+        return new ReportOverviewDto(
+            TotalCourses: totalCourses,
+            TotalTrainers: totalTrainers,
+            AvgAttendanceRate: Math.Round(avg, 3),
+            GeneratedAtUtc: DateTime.UtcNow
+        );
+    }
+
+
+
 }
+
