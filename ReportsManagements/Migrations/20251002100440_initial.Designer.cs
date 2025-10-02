@@ -12,8 +12,8 @@ using ReportsManagements;
 namespace ReportsManagements.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    [Migration("20251001120914_AddNewFields")]
-    partial class AddNewFields
+    [Migration("20251002100440_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,74 @@ namespace ReportsManagements.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ReportsManagements.Models.AttendanceRecord", b =>
+                {
+                    b.Property<int>("AttId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttId"));
+
+                    b.Property<int?>("CapturedPhotoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CheckIn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CheckOut")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("FaceMatchScore")
+                        .HasColumnType("float");
+
+                    b.Property<int>("GeolocationId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("LivenessScore")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("ReasonCodeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReviewStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UploadedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AttId");
+
+                    b.HasIndex("CapturedPhotoId");
+
+                    b.HasIndex("GeolocationId");
+
+                    b.HasIndex("ReasonCodeId");
+
+                    b.ToTable("AttendanceRecord", "reports");
+                });
 
             modelBuilder.Entity("ReportsManagements.Models.Branch", b =>
                 {
@@ -158,6 +226,7 @@ namespace ReportsManagements.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("RediusMeters")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("GeolocationId");
@@ -191,6 +260,32 @@ namespace ReportsManagements.Migrations
                     b.HasKey("ReasonCodeId");
 
                     b.ToTable("ReasonCodes", "reports");
+
+                    b.HasData(
+                        new
+                        {
+                            ReasonCodeId = 1,
+                            Category = "Attendance",
+                            Code = "LATE",
+                            IsActive = true,
+                            Name = "Late"
+                        },
+                        new
+                        {
+                            ReasonCodeId = 2,
+                            Category = "Health",
+                            Code = "SICK",
+                            IsActive = true,
+                            Name = "Sick"
+                        },
+                        new
+                        {
+                            ReasonCodeId = 3,
+                            Category = "System",
+                            Code = "TECH",
+                            IsActive = true,
+                            Name = "Technical Issue"
+                        });
                 });
 
             modelBuilder.Entity("ReportsManagements.Models.TrainerReport", b =>
@@ -219,6 +314,36 @@ namespace ReportsManagements.Migrations
                     b.HasKey("TrainerReportId");
 
                     b.ToTable("TrainerReports", "reports");
+                });
+
+            modelBuilder.Entity("ReportsManagements.Models.AttendanceRecord", b =>
+                {
+                    b.HasOne("ReportsManagements.Models.FileStorage", "CapturedPhoto")
+                        .WithMany()
+                        .HasForeignKey("CapturedPhotoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ReportsManagements.Models.Geolocation", "Geolocation")
+                        .WithMany("AttendanceRecords")
+                        .HasForeignKey("GeolocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReportsManagements.Models.ReasonCode", "ReasonCode")
+                        .WithMany()
+                        .HasForeignKey("ReasonCodeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("CapturedPhoto");
+
+                    b.Navigation("Geolocation");
+
+                    b.Navigation("ReasonCode");
+                });
+
+            modelBuilder.Entity("ReportsManagements.Models.Geolocation", b =>
+                {
+                    b.Navigation("AttendanceRecords");
                 });
 #pragma warning restore 612, 618
         }
