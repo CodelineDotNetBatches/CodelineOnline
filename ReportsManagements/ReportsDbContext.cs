@@ -10,21 +10,14 @@ namespace ReportsManagements
         public ReportsDbContext(DbContextOptions<ReportsDbContext> options)
         : base(options)
         { }
-<<<<<<< HEAD
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Geolocation> Geolocations { get; set; }
         public DbSet<BranchReport> BranchReports { get; set; }
         public DbSet<CourseReport> CourseReports { get; set; }
         public DbSet<TrainerReport> TrainerReports { get; set; }
-
-=======
-        public DbSet<Models.Branch> Branches { get; set; }
-        public DbSet<Models.Geolocation> Geolocations { get; set; }
-        public DbSet<Models.BranchReport> BranchReports { get; set; }
         public DbSet<ReasonCode> ReasonCodes { get; set; }
         public DbSet<FileStorage> FileStorages { get; set; }
->>>>>>> ReasonAndFiles
-        public DbSet<Models.AttendanceRecord> AttendanceRecord { get; set; }
+        public DbSet<AttendanceRecord> AttendanceRecord { get; set; }
 
 
 
