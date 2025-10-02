@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 namespace CoursesManagement.Models
 {
     /// <summary>
-    /// Represents a student's enrollment in a course (optionally under a program).
+    /// Represents a student's enrollment in a course.
     /// </summary>
-    [Index(nameof(UserId), nameof(CourseId), nameof(ProgramId), IsUnique = true, Name = "IX_Enrollment_User_Course_Program")]
+    [Index(nameof(UserId), nameof(CourseId), IsUnique = true, Name = "IX_Enrollment_UserId_CourseId")]
     public class Enrollment
     {
         /// <summary>
@@ -18,51 +18,64 @@ namespace CoursesManagement.Models
         public Guid EnrollmentId { get; set; }
 
         /// <summary>
-        /// Date when the enrollment was created.
-        /// </summary>
-        [Required]
-        public DateTime EnrolledAt { get; set; } = DateTime.UtcNow;
-
-        /// <summary>
-        /// Foreign key to the enrolled user (student/trainee).
+        /// Foreign key to the enrolled user (student).
         /// </summary>
         [Required]
         public Guid UserId { get; set; }
 
         /// <summary>
-        /// Reference navigation property to the enrolled user.
+        /// Navigation property for the enrolled user.
         /// </summary>
         [ForeignKey(nameof(UserId))]
         public User User { get; set; } = default!;
 
         /// <summary>
-        /// Foreign key to the course.
+        /// Foreign key to the course being enrolled in.
         /// </summary>
         [Required]
         public Guid CourseId { get; set; }
 
         /// <summary>
-        /// Reference navigation property to the enrolled course.
+        /// Navigation property for the course.
         /// </summary>
         [ForeignKey(nameof(CourseId))]
         public Course Course { get; set; } = default!;
 
         /// <summary>
-        /// Optional foreign key to the program (if enrollment is tracked under a program).
+        /// Optional foreign key to the program (if enrollment is part of a program).
         /// </summary>
         public Guid? ProgramId { get; set; }
 
         /// <summary>
-        /// Reference navigation property to the program.
+        /// Navigation property for the program.
         /// </summary>
         [ForeignKey(nameof(ProgramId))]
         public Programs? Program { get; set; }
 
         /// <summary>
-        /// Current enrollment status (Active, Completed, Dropped, etc.).
+        /// Date and time when the enrollment was created.
+        /// </summary>
+        [Required]
+        public DateTime EnrolledAt { get; set; } = DateTime.UtcNow;
+
+        /// <summary>
+        /// Current enrollment status (e.g., Active, Completed, Dropped).
         /// </summary>
         [Required]
         [StringLength(50)]
         public string Status { get; set; } = "Active";
+
+        /// <summary>
+        /// Optional grade achieved in the course (0-100).
+        /// </summary>
+        [Range(0, 100)]
+        public decimal? Grade { get; set; }
+
+        /// <summary>
+        /// Optional reason for the most recent status change.
+        /// (e.g., "Dropped due to non-payment", "Completed with certificate").
+        /// </summary>
+        [StringLength(250)]
+        public string? StatusChangeReason { get; set; }
     }
 }
