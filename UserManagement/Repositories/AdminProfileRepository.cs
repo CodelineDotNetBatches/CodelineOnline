@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UserManagement.Repositories
 {
-    public class AdminProfileRepository 
+    public class AdminProfileRepository : IAdminProfileRepository
     {
         private readonly UsersDbContext _context; // Database context
         private readonly IMemoryCache _memoryCache;  // In-Memory Cache
