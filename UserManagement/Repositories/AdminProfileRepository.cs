@@ -68,6 +68,15 @@ namespace UserManagement.Repositories
             _context.SaveChanges();                          // Save to DB
         }
 
+        //update an existing Responsibility (Sync).
+
+        public void UpdateResponsibility(Responsibility responsibility)
+        {
+            _context.Responsibilities.Update(responsibility); // Update record
+            _context.SaveChanges();                           // Save changes
+        }
+
+
         //-------------------
         // ASYNC METHODS
         //-------------------
