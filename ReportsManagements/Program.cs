@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReportsManagements.Mapping;
 using ReportsManagements.Models;
 using ReportsManagements.Repositories;
 using ReportsManagements.SeedData;
 using ReportsManagements.Services;
+
+
 
 namespace ReportsManagements
 {
@@ -14,6 +16,8 @@ namespace ReportsManagements
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var context = ReasonAndFileSeedData.CreateInMemoryDbContext();
+            builder.Services.AddSingleton(context);
             // ====== Services ======
             builder.Services.AddScoped<IAttendanceRecordService, AttendanceRecordService>();
             builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
@@ -26,7 +30,14 @@ namespace ReportsManagements
                 )
             );
 
-            // Controllers & Swagger
+            builder.Services.AddSingleton<IReasonCodeRepository>(new ReasonCodeRepository(context));
+            builder.Services.AddSingleton<IFileStorageRepository>(new FileStorageRepository(context));
+
+            // ????? Repositories ?? Singleton
+            builder.Services.AddSingleton<IBranchRepository>(new BranchRepository(context));
+            builder.Services.AddSingleton<IGeolocationRepository>(new GeolocationRepository(context));
+
+            // ????? Controllers
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -36,7 +47,7 @@ namespace ReportsManagements
 
             var app = builder.Build();
 
-            // ====== Middleware ======
+            // Swagger ??? ?? ???????
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -47,15 +58,26 @@ namespace ReportsManagements
             app.UseAuthorization();
             app.MapControllers();
 
-            // ====== Seed Data ======
-            using (var scope = app.Services.CreateScope())
+            await PrintSeedData(context);
+
+            app.Run();
+        }
+
+        private static async Task PrintSeedData(ReportsDbContext context)
+        {
+            var allReasons = await context.ReasonCodes.ToListAsync();
+            Console.WriteLine("Reason Codes:");
+            foreach (var r in allReasons)
             {
-                var context = scope.ServiceProvider.GetRequiredService<ReportsDbContext>();
-                DatabaseSeeder.Seed(context);
+                Console.WriteLine($"{r.ReasonCodeId} - {r.Name} ({r.Code}) - {r.Category}");
             }
 
-            // Run App
-            app.Run();
+            var allFiles = await context.FileStorages.ToListAsync();
+            Console.WriteLine("\nFile Storage:");
+            foreach (var f in allFiles)
+            {
+                Console.WriteLine($"{f.FileStorageId} - {f.FileName} - {f.Url} - Uploaded by {f.UploadedBy}");
+            }
         }
     }
 }

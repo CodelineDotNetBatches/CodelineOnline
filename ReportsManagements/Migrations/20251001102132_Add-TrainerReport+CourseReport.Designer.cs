@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReportsManagements;
 
@@ -11,9 +12,11 @@ using ReportsManagements;
 namespace ReportsManagements.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    partial class ReportsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251001102132_Add-TrainerReport+CourseReport")]
+    partial class AddTrainerReportCourseReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,85 +26,13 @@ namespace ReportsManagements.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ReportsManagements.Models.AttendanceRecord", b =>
             modelBuilder.Entity("ReportsManagements.Models.Branch", b =>
                 {
-                    b.Property<int>("AttId")
-<<<<<<< HEAD
                     b.Property<int>("BranchId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttId"));
-
-                    b.Property<int?>("CapturedPhotoId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CheckIn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CheckOut")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("FaceMatchScore")
-                        .HasColumnType("float");
-
-                    b.Property<int>("GeolocationId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("LivenessScore")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("ReasonCodeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReviewStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SessionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UploadedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AttId");
-
-                    b.HasIndex("CapturedPhotoId");
-
-                    b.HasIndex("GeolocationId");
-
-                    b.HasIndex("ReasonCodeId");
-
-                    b.ToTable("AttendanceRecord", "reports");
-                });
-
-            modelBuilder.Entity("ReportsManagements.Models.Branch", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
->>>>>>> ReasonAndFiles
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BranchId"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -114,11 +45,7 @@ namespace ReportsManagements.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-<<<<<<< HEAD
                     b.HasKey("BranchId");
-=======
-                    b.HasKey("Id");
->>>>>>> ReasonAndFiles
 
                     b.ToTable("Branches", "reports");
                 });
@@ -151,7 +78,6 @@ namespace ReportsManagements.Migrations
                     b.ToTable("BranchReports", "reports");
                 });
 
-<<<<<<< HEAD
             modelBuilder.Entity("ReportsManagements.Models.CourseReport", b =>
                 {
                     b.Property<int>("CourseReportId")
@@ -162,9 +88,6 @@ namespace ReportsManagements.Migrations
 
                     b.Property<decimal>("AverageAttendanceRate")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
 
                     b.Property<int>("TotalSessions")
                         .HasColumnType("int");
@@ -177,8 +100,6 @@ namespace ReportsManagements.Migrations
                     b.ToTable("CourseReports", "reports");
                 });
 
-=======
->>>>>>> ReasonAndFiles
             modelBuilder.Entity("ReportsManagements.Models.FileStorage", b =>
                 {
                     b.Property<int>("FileStorageId")
@@ -229,15 +150,11 @@ namespace ReportsManagements.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-<<<<<<< HEAD
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-=======
->>>>>>> ReasonAndFiles
                     b.Property<decimal>("RediusMeters")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("GeolocationId");
@@ -271,33 +188,18 @@ namespace ReportsManagements.Migrations
                     b.HasKey("ReasonCodeId");
 
                     b.ToTable("ReasonCodes", "reports");
-<<<<<<< HEAD
                 });
 
-            modelBuilder.Entity("ReportsManagements.Models.AttendanceRecord", b =>
             modelBuilder.Entity("ReportsManagements.Models.TrainerReport", b =>
                 {
                     b.Property<int>("TrainerReportId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-                    b.HasOne("ReportsManagements.Models.FileStorage", "CapturedPhoto")
-                        .WithMany()
-                        .HasForeignKey("CapturedPhotoId")
-                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ReportsManagements.Models.Geolocation", "Geolocation")
-                        .WithMany("AttendanceRecords")
-                        .HasForeignKey("GeolocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrainerReportId"));
 
                     b.Property<decimal>("AttendanceRate")
                         .HasColumnType("decimal(18,2)");
-                    b.HasOne("ReportsManagements.Models.ReasonCode", "ReasonCode")
-                        .WithMany()
-                        .HasForeignKey("ReasonCodeId")
-                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
@@ -310,44 +212,10 @@ namespace ReportsManagements.Migrations
 
                     b.Property<int>("TrainerId")
                         .HasColumnType("int");
-                    b.Navigation("CapturedPhoto");
 
-                    b.Navigation("Geolocation");
                     b.HasKey("TrainerReportId");
 
-                    b.Navigation("ReasonCode");
-                });
                     b.ToTable("TrainerReports", "reports");
-=======
-
-                    b.HasData(
-                        new
-                        {
-                            ReasonCodeId = 1,
-                            Category = "Attendance",
-                            Code = "LATE",
-                            IsActive = true,
-                            Name = "Late"
-                        },
-                        new
-                        {
-                            ReasonCodeId = 2,
-                            Category = "Health",
-                            Code = "SICK",
-                            IsActive = true,
-                            Name = "Sick"
-                        },
-                        new
-            modelBuilder.Entity("ReportsManagements.Models.Geolocation", b =>
-                        {
-                    b.Navigation("AttendanceRecords");
-                            ReasonCodeId = 3,
-                            Category = "System",
-                            Code = "TECH",
-                            IsActive = true,
-                            Name = "Technical Issue"
-                        });
->>>>>>> ReasonAndFiles
                 });
 #pragma warning restore 612, 618
         }

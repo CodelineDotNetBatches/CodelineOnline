@@ -2,7 +2,8 @@
 
 namespace ReportsManagements.Models
 {
-    public class FileStorage
+    // Model representing a file storage entity
+    public class FileStorage 
     {
         [Key]
         public int FileStorageId { get; set; }
