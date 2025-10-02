@@ -1,4 +1,9 @@
-﻿using UserManagement.Models;
+﻿using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using UserManagement.DTOs;
+using UserManagement.Models;
 using UserManagement.Repositories;
 
 namespace UserManagement.Services
@@ -6,38 +11,42 @@ namespace UserManagement.Services
     public class AdminProfileService : IAdminProfileService
     {
         private readonly AdminProfileRepository _repository; // Reference to repository
+        private readonly IMapper _mapper;                    // Reference to AutoMapper
 
-        // Constructor injection: Repository is passed in from Dependency Injection (DI)
-        public AdminProfileService(AdminProfileRepository repository)
+        // Constructor injection: Repository + IMapper are injected by Dependency Injection
+        public AdminProfileService(AdminProfileRepository repository, IMapper mapper)
         {
-            _repository = repository; // Store reference for use in methods
+            _repository = repository;
+            _mapper = mapper;
         }
 
         // -------------------
         // SYNC METHODS
         // -------------------
 
-        //Get all AdminProfile (sync)
+        //Get all AdminProfile (sync) and return DTOs
         /// Uses IEnumerable since the data is already materialized
 
-        public IEnumerable<Admin_Profile> GetAllAdmins()
+        public IEnumerable<AdminProfileDTO> GetAllAdmins()
         {
-            // Calls repository sync method and materializes data immediately
-            return _repository.GetAllAdmins().ToList();
+            var admins = _repository.GetAllAdmins().ToList();       // Get entities
+            return _mapper.Map<IEnumerable<AdminProfileDTO>>(admins); // Map to DTOs
         }
 
         // Get AdminProfile by Id (sync)
 
-        public Admin_Profile GetAdminById(int id)
+        public AdminProfileDTO GetAdminById(int id)
         {
-            return _repository.GetAdminById(id); // Calls repository sync method 
+            var admin = _repository.GetAdminById(id);              // Get entity
+            return _mapper.Map<AdminProfileDTO>(admin);            // Map to DTO
         }
 
         // Add new AdminProfile (sync)
 
-        public void AddAdminProfile(Admin_Profile admin)
+        public void AddAdminProfile(AdminProfileDTO adminDto)
         {
-            _repository.AddAdminProfile(admin); // Calls repository sync method
+            var adminEntity = _mapper.Map<Admin_Profile>(adminDto); // Map DTO -> Entity
+            _repository.AddAdminProfile(adminEntity);               // Save to DB
         }
 
         // Add a new Responsibility (sync)
@@ -60,29 +69,30 @@ namespace UserManagement.Services
         // ASYNC METHODS
         // -------------------
 
-        // Get AdminProfile by Id (async)
+        // Get AdminProfile by Id (async) and return DTOs
         // Returns IEnumerable since data is materialized
-        public async Task<IEnumerable<Admin_Profile>> GetAllAdminsAsync()
+        public async Task<IEnumerable<AdminProfileDTO>> GetAllAdminsAsync()
         {
-            return await _repository.GetAllAdminsAsync(); // Calls repository async method
+            var admins = await _repository.GetAllAdminsAsync();         // Get entities
+            return _mapper.Map<IEnumerable<AdminProfileDTO>>(admins);   // Map to DTOs
         }
 
 
         // Get AdminProfile by Id (async) 
-        public async Task<Admin_Profile> GetAdminByIdAsync(int id)
+        public async Task<AdminProfileDTO> GetAdminByIdAsync(int id)
         {
-            // Calls repository async method
-            return await _repository.GetAdminByIdAsync(id);
+            var admin = await _repository.GetAdminByIdAsync(id);        // Get entity
+            return _mapper.Map<AdminProfileDTO>(admin);                 // Map to DTO
         }
+
 
 
         //Add new AdminProfile (async)
-        public async Task AddAdminAsync(Admin_Profile admin)
+        public async Task AddAdminAsync(AdminProfileDTO adminDto)
         {
-            // Calls repository async method
-            await _repository.AddAdminProfileAsync(admin);
+            var adminEntity = _mapper.Map<Admin_Profile>(adminDto);     // Map DTO -> Entity
+            await _repository.AddAdminProfileAsync(adminEntity);        // Save to DB
         }
-
         // Add a new Responsibility (async).
 
         public async Task AddResponsibilityAsync(Responsibility responsibility)
