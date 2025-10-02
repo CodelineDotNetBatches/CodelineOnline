@@ -53,11 +53,27 @@ namespace UserManagement.Repositories
 
         // Add new AdminProfile (sync) 
 
-        public void AddAdmin(Admin_Profile admin)
+        public void AddAdminProfile(Admin_Profile admin)
         {
             _context.AdminProfiles.Add(admin);
             _context.SaveChanges();
             _memoryCache.Remove(CacheKey); // Clear cache after insert
+        }
+
+
+        //Add a new  Responsibility (sync)
+        public void AddResponsibility(Responsibility responsibility)
+        {
+            _context.Responsibilities.Add(responsibility);   // Add new record
+            _context.SaveChanges();                          // Save to DB
+        }
+
+        //update an existing Responsibility (Sync).
+
+        public void UpdateResponsibility(Responsibility responsibility)
+        {
+            _context.Responsibilities.Update(responsibility); // Update record
+            _context.SaveChanges();                           // Save changes
         }
 
 
@@ -66,26 +82,31 @@ namespace UserManagement.Repositories
         //-------------------
         // Get all AdminProfiles (async) with Distributed Caching 
 
-        public async Task<IEnumerable<Admin_Profile>> GetAllAdminsAsync()
+        public async Task<IQueryable<Admin_Profile>> GetAllAdminsAsync()
         {
             // Try Distributed Cache first
             var cachedAdmins = await _distributedCache.GetStringAsync(CacheKey);
 
+            List<Admin_Profile> admins;
+
             if (!string.IsNullOrEmpty(cachedAdmins))
             {
-                return JsonSerializer.Deserialize<List<Admin_Profile>>(cachedAdmins);
+                admins = JsonSerializer.Deserialize<List<Admin_Profile>>(cachedAdmins);
+            }
+            else
+            {
+                // If not cached, load from DB
+                admins = await _context.AdminProfiles.ToListAsync();
+
+                // Save in distributed cache 
+                var serializedData = JsonSerializer.Serialize(admins);
+                await _distributedCache.SetStringAsync(CacheKey, serializedData);
             }
 
-            // If not cached, load from DB
-            var admins = await _context.AdminProfiles.ToListAsync();
-
-            // Save in distributed cache 
-            var serializedData = JsonSerializer.Serialize(admins);
-            await _distributedCache.SetStringAsync(CacheKey, serializedData);
-
-            return admins;
-
+            // Convert List to IQueryable before returning
+            return admins.AsQueryable();
         }
+
 
 
         // Get AdminProfile by Id (async)
@@ -95,7 +116,7 @@ namespace UserManagement.Repositories
         }
 
         // Add new AdminProfile (async)
-        public async Task AddAdminAsync(Admin_Profile admin)
+        public async Task AddAdminProfileAsync(Admin_Profile admin)
         {
             await _context.AdminProfiles.AddAsync(admin);
             await _context.SaveChangesAsync();
@@ -104,6 +125,21 @@ namespace UserManagement.Repositories
             await _distributedCache.RemoveAsync(CacheKey);
         }
 
+        // Add a new  Responsibility (ASync).
+
+        public async Task AddResponsibilityAsync(Responsibility responsibility)
+        {
+            await _context.Responsibilities.AddAsync(responsibility); // Add new record asynchronously
+            await _context.SaveChangesAsync();                        // Save to DB
+        }
+
+        // update an existing Responsibility (Async).
+
+        public async Task UpdateResponsibilityAsync(Responsibility responsibility)
+        {
+            _context.Responsibilities.Update(responsibility);  // Update record
+            await _context.SaveChangesAsync();                 // Save changes
+        }
     }
 
 }

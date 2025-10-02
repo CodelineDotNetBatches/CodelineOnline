@@ -25,6 +25,7 @@ namespace UserManagement
 
         public DbSet<Responsibility> Responsibilities { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder mb)
         {
             // Default schema

@@ -23,6 +23,9 @@ namespace UserManagement.Models
         [ForeignKey("Admin_Profile")] // Declares AdminId as a Foreign Key linked to AdminProfile
         public int AdminId { get; set; } // References the Admin who owns this Responsibility
 
+        [StringLength(500, ErrorMessage = "Responsibility details cannot exceed 500 characters")]
+        public string ResponsibilityDetails { get; set; } // Extra details or notes about the responsibility
+
         // Navigation 
         public Admin_Profile AdminProfile { get; set; }
 

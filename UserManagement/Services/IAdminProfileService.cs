@@ -1,14 +1,19 @@
-﻿using UserManagement.Models;
+﻿using UserManagement.DTOs;
+using UserManagement.Models;
 
 namespace UserManagement.Services
 {
     public interface IAdminProfileService
     {
-        void AddAdmin(Admin_Profile admin);
-        Task AddAdminAsync(Admin_Profile admin);
-        Admin_Profile GetAdminById(int id);
-        Task<Admin_Profile> GetAdminByIdAsync(int id);
-        IQueryable<Admin_Profile> GetAllAdmins();
-        Task<IEnumerable<Admin_Profile>> GetAllAdminsAsync();
+        Task AddAdminAsync(AdminProfileDTO adminDto);
+        void AddAdminProfile(AdminProfileDTO adminDto);
+        void AddResponsibility(Responsibility responsibility);
+        Task AddResponsibilityAsync(Responsibility responsibility);
+        AdminProfileDTO GetAdminById(int id);
+        Task<AdminProfileDTO> GetAdminByIdAsync(int id);
+        IEnumerable<AdminProfileDTO> GetAllAdmins();
+        Task<IEnumerable<AdminProfileDTO>> GetAllAdminsAsync();
+        void UpdateResponsibility(Responsibility responsibility);
+        Task UpdateResponsibilityAsync(Responsibility responsibility);
     }
 }
