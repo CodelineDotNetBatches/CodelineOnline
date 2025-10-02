@@ -2,7 +2,7 @@
 
 namespace CoursesManagement.Repos
 {
-    public interface ICategoryRepository : IGenericRepo<Category>
+    public interface ICategoryRepo : IGenericRepo<Category>
     {
         Task<Category?> GetCategoryWithCoursesAsync(Guid id);
         Task SaveAsync();

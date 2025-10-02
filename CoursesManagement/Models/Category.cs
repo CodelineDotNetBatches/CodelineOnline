@@ -1,34 +1,49 @@
-﻿namespace CoursesManagement.Models
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace CoursesManagement.Models
 {
     /// <summary>
-    /// Represents a course category under a program.
+    /// Represents a category that groups related courses under programs.
     /// </summary>
     public class Category
     {
-        /// <summary>
-        /// Unique identifier for the category.
-        /// </summary>
+        // ======================
+        // Primary Key
+        // ======================
+
+        [Key]
         public Guid CategoryId { get; set; }
 
-        /// <summary>
-        /// Name of the category.
-        /// </summary>
-        public string Name { get; set; } = default!;
+        // ======================
+        // Required Fields
+        // ======================
+
+        [Required, MaxLength(200)]
+        public string CategoryName { get; set; } = null!;
+
+        [MaxLength(500)]
+        public string? CategoryDescription { get; set; }
+
+        // ======================
+        // Timestamps
+        // ======================
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // ======================
+        // Relationships
+        // ======================
 
         /// <summary>
-        /// Foreign key to the parent program.
+        /// Navigation property: many-to-many relationship with Programs.
         /// </summary>
-        public Guid ProgramsId { get; set; }
+        public ICollection<Programs> Programs { get; set; } = new List<Programs>();
 
         /// <summary>
-        /// Reference to the parent program.
-        /// </summary>
-        public Programs Programs { get; set; } = default!;
-
-        /// <summary>
-        /// Courses within this category.
+        /// Navigation property: one-to-many relationship with Courses.
         /// </summary>
         public ICollection<Course> Courses { get; set; } = new List<Course>();
     }
-
 }
