@@ -16,5 +16,5 @@ public class CategoryDto
     /// <summary>
     /// Courses under this category.
     /// </summary>
-    public List<CourseDto> Courses { get; set; } = new();
+    public List<CourseListDto> Courses { get; set; } = new();
 }
