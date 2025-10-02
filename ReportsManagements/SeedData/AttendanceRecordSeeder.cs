@@ -87,7 +87,7 @@ namespace ReportsManagements.SeedData
                     }
                 );
 
-
+                context.SaveChanges();
             }
         }
     }
