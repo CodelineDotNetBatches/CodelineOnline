@@ -51,7 +51,7 @@ namespace UserManagement.Controllers
         }
 
         [HttpPost("assign")]
-        public async Task<IActionResult> Assign(int traineeId, int skillId)
+        public async Task<IActionResult> Assign(Guid traineeId, int skillId)
         {
             await _skillService.AssignSkillToTraineeAsync(traineeId, skillId);
             return Ok("Skill assigned to trainee.");

@@ -9,6 +9,6 @@ namespace UserManagement.Services
         Task AddSkillAsync(SkillDto skillDto);
         Task UpdateSkillAsync(SkillDto skillDto);
         Task DeleteSkillAsync(int id);
-        Task AssignSkillToTraineeAsync(int traineeId, int skillId);
+        Task AssignSkillToTraineeAsync(Guid traineeId, int skillId);
     }
 }
