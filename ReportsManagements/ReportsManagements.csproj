@@ -20,8 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Mapping\" />
-    <Folder Include="Mapping\" />
     <Folder Include="Services\" />
 
   </ItemGroup>
