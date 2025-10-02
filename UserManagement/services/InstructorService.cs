@@ -97,7 +97,7 @@ namespace UserManagement.Services
             _mapper.Map(dto, entity);
             _repo.Update(entity);
             await _repo.SaveAsync(ct);
-            _cache.Remove(AllInstructorsCacheKey);
+            _cache.Remove(AllInstructorsCacheKey); // invalidate cache
             return _mapper.Map<InstructorReadDto>(entity);
         }
 
@@ -106,7 +106,7 @@ namespace UserManagement.Services
             var entity = await _repo.GetAsync(id, ct) ?? throw new KeyNotFoundException($"Instructor {id} not found");
             _repo.Remove(entity);
             await _repo.SaveAsync(ct);
-            _cache.Remove(AllInstructorsCacheKey);
+            _cache.Remove(AllInstructorsCacheKey); // invalidate cache
         }
     }
 
