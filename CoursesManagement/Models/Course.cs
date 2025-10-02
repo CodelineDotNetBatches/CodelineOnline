@@ -55,6 +55,16 @@ namespace CoursesManagement.Models
         //[ForeignKey(nameof(InstructorId))]
         //public Instructor Instructor { get; set; } = default!;
 
+        /// <summary>
+        /// Assignments belonging to this course.
+        /// </summary>
+        public ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
 
+        /// <summary>
+        /// Certificates issued after course completion.
+        /// </summary>
+        public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
     }
+
+
 }
