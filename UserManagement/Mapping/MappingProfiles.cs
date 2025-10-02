@@ -4,9 +4,9 @@ using UserManagement.DTOs;
 
 namespace UserManagement.Mapping
 {
-    public class MappingProfiles : Profile
+    public class SkillTraineeMappingProfiles : Profile
     {
-        public MappingProfiles()
+        public SkillTraineeMappingProfiles()
         {
             CreateMap<Skill, SkillDto>().ReverseMap();
             CreateMap<TraineeSkill, TraineeSkillDto>().ReverseMap();

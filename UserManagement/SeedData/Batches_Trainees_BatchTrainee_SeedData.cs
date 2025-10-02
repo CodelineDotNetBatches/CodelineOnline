@@ -3,9 +3,9 @@ using UserManagement.Models;
 
 namespace UserManagement.SeedData
 {
-    public static class ModelBuilderExtensions
+    public static class Batches_Trainees_BatchTrainee_SeedData
     {
-        public static void SeedData(this ModelBuilder modelBuilder)
+        public static void BatchesTraineesBatchTraineeSeedData(this ModelBuilder modelBuilder)
         {
             // ✅ Use fixed GUIDs (instead of Guid.NewGuid)
             var batch1Id = Guid.Parse("11111111-1111-1111-1111-111111111111");

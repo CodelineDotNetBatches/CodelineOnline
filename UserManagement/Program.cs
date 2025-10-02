@@ -6,9 +6,8 @@ using UserManagement.Services;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection; // for extension method
 using UserManagement.mapping;
+using UserManagement.Caching;
 
-using UserManagement.Repositories;
-using UserManagement.Services;
 using UserManagement.Controllers;
 using UserManagement.DTOs;
 using UserManagement.Models;
@@ -26,82 +25,89 @@ namespace CodeLine_Online
         {
             var builder = WebApplication.CreateBuilder(args);
 
-
-
-            // Register repositories
-            builder.Services.AddScoped<ITraineeRepository, TraineeRepository>();
-            builder.Services.AddScoped<IBatchRepository, BatchRepository>();
-
-            // Register services
-            builder.Services.AddScoped<ITraineeService, TraineeService>();
-            builder.Services.AddScoped<IBatchService, BatchService>();
-
-
-
-
+            // ========================================
+            // 1. Database Context
+            // ========================================
 
             // Add services to the container.
+            //options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
+            //sql => sql.MigrationsHistoryTable("__Migrations_App")));
+
+
+
+
             builder.Services.AddDbContext<UsersDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
-            sql => sql.MigrationsHistoryTable("__Migrations_App")));
 
-            builder.Services.AddAutoMapper(
-                typeof(AvailabilityMappingProfile).Assembly,
-                typeof(InstructorMappingProfile).Assembly
-            );
+            options.UseSqlServer(
+                            builder.Configuration.GetConnectionString("Default"),
+                            sql => sql.MigrationsHistoryTable("__Migrations_App", "user_management")
 
-            //builder.Services.AddAutoMapper(typeof(Program));
-
-
-
-            builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
-            builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
-            builder.Services.AddScoped<IInstructorService, InstructorService>();
-            builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("Default"),
-                    sql => sql.MigrationsHistoryTable("__Migrations_App", "user_management")
-                )
-            );
+            ));
 
             // ========================================
-            // 2. Register Repositories
+            // 2. Caching: In-Memory
+            // ==========================================
+
+            builder.Services.AddMemoryCache();
+            builder.Services.AddScoped<ICacheService, MemoryCacheService>();
+
+            // ========================================
+            // 3. Register Repositories
             // ========================================
             builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+            builder.Services.AddScoped<ITraineeRepository, TraineeRepository>();
+            builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+            builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+            builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
 
             // If you add a generic repository:
             // builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
             // ========================================
-            // 3. Register Services
+            // 4. Register Services
             // ========================================
             builder.Services.AddScoped<ISkillService, SkillService>();
+            builder.Services.AddScoped<ITraineeService, TraineeService>();
+            builder.Services.AddScoped<IBatchService, BatchService>();
+            builder.Services.AddScoped<IInstructorService, InstructorService>();
+            builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
 
             // ========================================
-            // 4. AutoMapper
+            // 5. AutoMapper
             // ========================================
-            builder.Services.AddAutoMapper(typeof(MappingProfiles));
+            //builder.Services.AddAutoMapper(typeof(SkillTraineeMappingProfiles));
+
+            builder.Services.AddAutoMapper(
+                typeof(AvailabilityMappingProfile).Assembly,
+                typeof(InstructorMappingProfile).Assembly,
+                typeof(SkillTraineeMappingProfiles).Assembly
+            );
 
             // ========================================
-            // 5. Controllers + Swagger
+            // 6. Controllers + Swagger 
             // ========================================
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddMemoryCache();
+            // ========================================
+            // 7. Error Handling Middleware
+            //===================================
+
+
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
 
+            // ========================================
+            // 8. Build the app
+            // ========================================
+
             var app = builder.Build();
-
-
-            app.UseMiddleware<ErrorHandlingMiddleware>();
 
 
             // Configure the HTTP request pipeline.
 
             // ========================================
-            // 6. Configure Middleware Pipeline
+            // 1. Configure Middleware Pipeline
             // ========================================
             if (app.Environment.IsDevelopment())
             {
@@ -111,6 +117,8 @@ namespace CodeLine_Online
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.MapControllers();
 

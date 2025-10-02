@@ -9,8 +9,10 @@ namespace UserManagement
     {
         public UsersDbContext(DbContextOptions<UsersDbContext> options)
             : base(options) { }
+        // ===============================================       
+        // DbSet
+        // =======================================
 
-        // Entities
         public DbSet<Trainee> Trainees { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Availability> Availabilities { get; set; }
@@ -18,7 +20,6 @@ namespace UserManagement
         public DbSet<BatchTrainee> BatchTrainees { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<TraineeSkill> TraineeSkills { get; set; }
-
 
         public DbSet<Admin_Profile> AdminProfiles { get; set; }
 
@@ -29,22 +30,16 @@ namespace UserManagement
         {
             // Default schema
             mb.HasDefaultSchema("users");
+            // ==========================================
 
-            /// Instructor entity configuration
+            // 1. nstructor entity configuration
+
+            //==========================================
 
             // Unique GitHub username if provided
             mb.Entity<Instructor>()
             .HasIndex(i => i.GithubUserName)
             .IsUnique();
-
-            //mb.Entity<Instructor>()
-            //    .ToTable(t => t.HasCheckConstraint(
-            //    "CK_Instructor_ExperienceLevel",
-            //    "Experience_Level in ('Junior','Mid','Senior','Lead')"));
-            //mb.Entity<Instructor>()
-            //    .ToTable(t => t.HasCheckConstraint(
-            //    "CK_Instructor_TeachingStyle",
-            //    "Teaching_Style in ('Project-based','Theory-first','Hands-on','Lecture','Discussion')"));
 
             // optional: index for specialization + experience
             mb.Entity<Instructor>()
@@ -59,25 +54,17 @@ namespace UserManagement
             mb.Entity<Instructor>()
                 .Property(x => x.Teaching_Style).HasConversion<int>();
 
+            // ===========================================
 
+            // 2. Availability entity configuration
 
-            /// Availability entity configuration
+            // ===========================================
 
             // Availability composite key
             mb.Entity<Availability>()
             .HasKey(a => new { a.InstructorId, a.avilabilityId });
 
-            //// Validate day_of_week by check constraint (SQL Server / PostgreSQL)
-            //mb.Entity<Availability>()
-            //.ToTable(t => t.HasCheckConstraint(
-            //"CK_Availability_DayOfWeek",
-            //"day_of_week in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')"));
-
-            //mb.Entity<Availability>()
-            //    .ToTable(t => t.HasCheckConstraint(
-            //        "CK_Availability_AvailStatus",
-            //        "Avail_Status in ('Active','Inactive','Complete','Busy')"));
-
+          
             mb.Entity<Availability>()
                 .HasIndex(a => a.Avail_Status);
 
@@ -89,15 +76,10 @@ namespace UserManagement
             mb.Entity<Availability>()
                 .Property(x => x.day_of_week).HasConversion<int>();
 
+            // ================================================
+            // 3. Batch entity configuration
 
-            // Seed data for Instructors
-
-
-
-            InstructorsSeedData.InstructorsSeed(mb);
-            AvailabilitiesSeedData.AvailabilitiesSeed(mb);
-
-            // Batch config
+            // ================================================
             mb.Entity<Batch>(entity =>
             {
                 entity.HasKey(b => b.BatchId);
@@ -105,12 +87,20 @@ namespace UserManagement
                 entity.Property(b => b.Status).HasMaxLength(50);
             });
 
+            // ==================================================
+            // 4. Trainee entity configuration
+            // ==================================================
+
             // Trainee config
             mb.Entity<Trainee>(entity =>
             {
                 entity.HasKey(t => t.TraineeId);
                 entity.Property(t => t.GithubUsername).IsRequired();
             });
+
+            // ==================================================
+            // 5. BatchTrainee entity configuration
+            // ==================================================
 
             // BatchTrainee config (composite PK)
             mb.Entity<BatchTrainee>(entity =>
@@ -126,6 +116,10 @@ namespace UserManagement
                       .HasForeignKey(bt => bt.TraineeId);
             });
 
+            // ==================================================
+            // 6. TraineeSkill entity configuration
+            // ==================================================
+
             // TraineeSkill config (many-to-many Trainee <-> Skill)
             mb.Entity<TraineeSkill>(entity =>
             {
@@ -140,8 +134,17 @@ namespace UserManagement
                       .HasForeignKey(ts => ts.SkillId);
             });
 
-            // Call external seed data
-            mb.SeedData();
+
+
+            // ==============================================
+            // Seed data 
+
+            //====================================
+
+            InstructorsSeedData.InstructorsSeed(mb);
+            AvailabilitiesSeedData.AvailabilitiesSeed(mb);
+            // Batches + Trainees + BatchTrainee
+            Batches_Trainees_BatchTrainee_SeedData.BatchesTraineesBatchTraineeSeedData(mb);
         }
     }
 }
