@@ -33,8 +33,8 @@ namespace ReportsManagements.Models
         public string ReviewStatus { get; set; }="pending"; // e.g., Pending, Approved, Rejected
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string CreatedBy { get; set; } = "";
-        public DateTime UploadedAt { get; set; } 
-      public string  UploadedBy { get; set; } = "";
+        public DateTime? UploadedAt { get; set; } 
+      public string?  UploadedBy { get; set; } = "";
 
 
     }
