@@ -11,8 +11,8 @@ namespace ReportsManagements.SeedData
             if (!context.Geolocations.Any())
             {
                 context.Geolocations.AddRange(
-                    new Geolocation { Latitude = "23.6", Longitude = "58.5", IsActive = true, RediusMeters = 100 },
-                    new Geolocation { Latitude = "23.7", Longitude = "58.6", IsActive = true, RediusMeters = 150 }
+                    new Geolocation { Name = "Main Campus", Latitude = "23.6", Longitude = "58.5", IsActive = true, RediusMeters = 100 },
+                    new Geolocation { Name = "Branch Campus", Latitude = "23.7", Longitude = "58.6", IsActive = true, RediusMeters = 150 }
                 );
                 context.SaveChanges(); 
             }
