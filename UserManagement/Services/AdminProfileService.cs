@@ -82,5 +82,13 @@ namespace UserManagement.Services
             // Calls repository async method
             await _repository.AddAdminProfileAsync(admin);
         }
+
+        // Add a new Responsibility (async).
+
+        public async Task AddResponsibilityAsync(Responsibility responsibility)
+        {
+            // Calls repository async method
+            await _repository.AddResponsibilityAsync(responsibility);
+        }
     }
 }
