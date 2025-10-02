@@ -49,7 +49,7 @@ namespace UserManagement.Services
             }
         }
 
-        public async Task AssignSkillToTraineeAsync(int traineeId, int skillId)
+        public async Task AssignSkillToTraineeAsync(Guid traineeId, int skillId)
         {
             await _skillRepo.AssignSkillToTraineeAsync(traineeId, skillId);
         }

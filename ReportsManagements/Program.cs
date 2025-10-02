@@ -1,29 +1,53 @@
-
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReportsManagements.Mapping;
+using ReportsManagements.Models;
+using ReportsManagements.Repositories;
+using ReportsManagements.SeedData;
+using ReportsManagements.Services;
+
+
 
 namespace ReportsManagements
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            var context = ReasonAndFileSeedData.CreateInMemoryDbContext();
+            builder.Services.AddSingleton(context);
+            // ====== Services ======
+            builder.Services.AddScoped<IAttendanceRecordService, AttendanceRecordService>();
+            builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
-            // Add services to the container.
+            // DbContext
             builder.Services.AddDbContext<ReportsDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
-                sql => sql.MigrationsHistoryTable("__Migrations_App")));
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("Default"),
+                    sql => sql.MigrationsHistoryTable("__Migrations_App")
+                )
+            );
 
+            builder.Services.AddSingleton<IReasonCodeRepository>(new ReasonCodeRepository(context));
+            builder.Services.AddSingleton<IFileStorageRepository>(new FileStorageRepository(context));
+
+            // ????? Repositories ?? Singleton
+            builder.Services.AddSingleton<IBranchRepository>(new BranchRepository(context));
+            builder.Services.AddSingleton<IGeolocationRepository>(new GeolocationRepository(context));
+
+            // ????? Controllers
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // AutoMapper
+            builder.Services.AddAutoMapper(typeof(AttendanceMapping)); 
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Swagger ??? ?? ???????
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -31,13 +55,29 @@ namespace ReportsManagements
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
+            await PrintSeedData(context);
+
             app.Run();
+        }
+
+        private static async Task PrintSeedData(ReportsDbContext context)
+        {
+            var allReasons = await context.ReasonCodes.ToListAsync();
+            Console.WriteLine("Reason Codes:");
+            foreach (var r in allReasons)
+            {
+                Console.WriteLine($"{r.ReasonCodeId} - {r.Name} ({r.Code}) - {r.Category}");
+            }
+
+            var allFiles = await context.FileStorages.ToListAsync();
+            Console.WriteLine("\nFile Storage:");
+            foreach (var f in allFiles)
+            {
+                Console.WriteLine($"{f.FileStorageId} - {f.FileName} - {f.Url} - Uploaded by {f.UploadedBy}");
+            }
         }
     }
 }
