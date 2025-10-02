@@ -53,5 +53,15 @@ namespace CoursesManagement.Repos
         /// Marks an entity for deletion from the context.
         /// </summary>
         public void Delete(T entity) => _dbSet.Remove(entity);
+
+        /// <summary>
+        /// Provides direct access to IQueryable for advanced LINQ queries.
+        /// </summary>
+        public IQueryable<T> GetQueryable() => _dbSet.AsQueryable();
+
+        /// <summary>
+        /// Saves all pending changes asynchronously to the database.
+        /// </summary>
+        public async Task SaveAsync() => await _context.SaveChangesAsync();
     }
 }

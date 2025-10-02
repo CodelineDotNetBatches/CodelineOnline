@@ -28,9 +28,8 @@ namespace CoursesManagement.Services
         // ======================
         public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync()
         {
-            // Avoid N+1 problem → AsNoTracking() for performance
             var categories = await _repo.GetQueryable()
-                .AsNoTracking()
+                .AsNoTracking() // read-only optimization
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<CategoryDto>>(categories);
@@ -57,8 +56,8 @@ namespace CoursesManagement.Services
             // Map base properties
             var category = _mapper.Map<Category>(dto);
 
-            // Attach M:M Programs
-            if (dto.ProgramIds.Any())
+            // Attach M:M Programs if provided
+            if (dto.ProgramIds != null && dto.ProgramIds.Any())
             {
                 var programs = await _programRepo.GetQueryable()
                     .Where(p => dto.ProgramIds.Contains(p.ProgramId))
@@ -85,11 +84,11 @@ namespace CoursesManagement.Services
             if (category == null)
                 throw new KeyNotFoundException("Category not found.");
 
-            // Map simple props
+            // Update simple properties
             _mapper.Map(dto, category);
 
-            // Update Programs (replace M:M)
-            if (dto.ProgramIds.Any())
+            // Replace Programs (M:M relation)
+            if (dto.ProgramIds != null && dto.ProgramIds.Any())
             {
                 var programs = await _programRepo.GetQueryable()
                     .Where(p => dto.ProgramIds.Contains(p.ProgramId))
@@ -110,7 +109,7 @@ namespace CoursesManagement.Services
         public async Task DeleteCategoryAsync(Guid id)
         {
             var category = await _repo.GetQueryable()
-                .Include(c => c.Courses)
+                .Include(c => c.Courses) // check for existing courses
                 .FirstOrDefaultAsync(c => c.CategoryId == id);
 
             if (category == null)
