@@ -12,6 +12,11 @@ namespace ReportsManagements.Mapping
             CreateMap<AttendanceRecord, AttendanceRecordDto>();
             CreateMap<AttendanceRecordCreateDto, AttendanceRecord>();
             CreateMap<AttendanceRecordUpdateDto, AttendanceRecord>();
+            CreateMap<AttendanceRecordCreateDto, AttendanceRecord>()
+                .ForMember(d => d.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+            CreateMap<AttendanceRecordUpdateDto, AttendanceRecord>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<AttendanceRecord, AttendanceRecordDto>();
         }
 
     }
