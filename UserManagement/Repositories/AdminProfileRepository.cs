@@ -132,6 +132,14 @@ namespace UserManagement.Repositories
             await _context.Responsibilities.AddAsync(responsibility); // Add new record asynchronously
             await _context.SaveChangesAsync();                        // Save to DB
         }
+
+        // update an existing Responsibility (Async).
+
+        public async Task UpdateResponsibilityAsync(Responsibility responsibility)
+        {
+            _context.Responsibilities.Update(responsibility);  // Update record
+            await _context.SaveChangesAsync();                 // Save changes
+        }
     }
 
 }
