@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoursesManagement.Models
 {
-    [Index(nameof(ProgramName), IsUnique = true)]
+   
     public class Programs
     {
         // Primary key
@@ -19,14 +19,10 @@ namespace CoursesManagement.Models
         [MaxLength(500)]
         public string? ProgramDescription { get; set; }
 
-        // URL to the program's roadmap (required)
-        [Required, MaxLength(200)]
-        [Url]
+        // URL to the program's roadmap ->
+        [Required]
         public string Roadmap { get; set; } = null!;
 
-        // Price 
-        //[Column(TypeName = "decimal(10,2)")]
-        //public decimal? Price { get; set; }
 
         // Timestamps
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -49,6 +45,15 @@ namespace CoursesManagement.Models
 
         //// Many-to-many: Program <-> Category
         //public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+
+
+        // *** 
+        // Additional properties
+        // adding Uniqe Constraint for ProgramName in the DbContext using Fluent API
+        // modelBuilder.Entity<Program>()
+        //     .HasIndex(p => p.ProgramName)
+        //     .IsUnique();
+
 
 
 
