@@ -50,6 +50,20 @@ namespace ReportsManagements
            .Property(g => g.RediusMeters)
           .HasPrecision(18, 2);
 
+            // TrainerReport:(TrainerId, CourseId)
+            mb.Entity<TrainerReport>()
+              .HasIndex(x => new { x.TrainerId, x.CourseId })
+              .IsUnique();
+
+            // CourseReport: CourseId
+            mb.Entity<CourseReport>()
+              .HasIndex(x => x.CourseId)
+              .IsUnique();
+
+            // Decimal precision for AttendanceRate and AverageAttendanceRate
+            mb.Entity<TrainerReport>().Property(x => x.AttendanceRate).HasColumnType("decimal(5,3)");
+            mb.Entity<CourseReport>().Property(x => x.AverageAttendanceRate).HasColumnType("decimal(5,3)");
+
 
             // default schema keeps everything under "users"
             mb.HasDefaultSchema("reports");
