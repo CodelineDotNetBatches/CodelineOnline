@@ -125,6 +125,13 @@ namespace UserManagement.Repositories
             await _distributedCache.RemoveAsync(CacheKey);
         }
 
+        // Add a new  Responsibility (ASync).
+
+        public async Task AddResponsibilityAsync(Responsibility responsibility)
+        {
+            await _context.Responsibilities.AddAsync(responsibility); // Add new record asynchronously
+            await _context.SaveChangesAsync();                        // Save to DB
+        }
     }
 
 }
