@@ -63,6 +63,11 @@ namespace ReportsManagements
             app.MapControllers();
 
             //await PrintSeedData(context);
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ReportsDbContext>();
+                DatabaseSeeder.Seed(db); 
+            }
 
             app.Run();
         }
