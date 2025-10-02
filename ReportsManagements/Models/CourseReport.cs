@@ -9,5 +9,6 @@ namespace ReportsManagements.Models
         public int TotalSessions { get; set; }
         public int TotalStudents { get; set; }
         public decimal AverageAttendanceRate { get; set; }
+        public int CourseId { get; set; }
     }
 }
