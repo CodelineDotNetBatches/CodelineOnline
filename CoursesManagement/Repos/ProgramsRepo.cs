@@ -1,4 +1,4 @@
-﻿using CoursesManagement.Models;
+using CoursesManagement.Models;
 using CoursesManagement.Repos;
 using CoursesManagement;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +15,14 @@ namespace CoursesManagement.Repos
         }
 
         // Program-specific queries:
+       
+        public async Task<Programs?> GetProgramWithCoursesAsync(Guid programId)
+        {
+            return await _context.Programs
+                .Include(p => p.Categories)   // Example navigation
+                .ThenInclude(c => c.Courses)  // Drill deeper
+                .FirstOrDefaultAsync(p => p.ProgramId == programId);
+
 
         // Finds a Program by Guid primary key.
 
