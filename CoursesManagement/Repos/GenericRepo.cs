@@ -2,29 +2,56 @@
 
 namespace CoursesManagement.Repos
 {
-    // T is a placeholder for any class (entity) you pass in, like Student, Course, Instructor, etc ...
-    public class GenericRepo<T> : IGenericRepo<T> where T : class
+    /// <summary>
+    /// A generic repository that provides common CRUD operations 
+    /// for any entity type using Entity Framework Core.
+    /// </summary>
+    /// <typeparam name="T">The entity type (must be a class).</typeparam>
+    public class GenericRepo<T> where T : class
     {
- 
+        /// <summary>
+        /// Database context for performing operations.
+        /// </summary>
+        protected readonly CoursesDbContext _context;
 
-        protected readonly CoursesDbContext _context;// EF DbContext (database session) ...
-        protected readonly DbSet<T> _dbSet;// Represents a database table for entity T ...
+        /// <summary>
+        /// Represents the set of entities in the context.
+        /// </summary>
+        protected readonly DbSet<T> _dbSet;
 
+        /// <summary>
+        /// Initializes the repository with the specified database context.
+        /// </summary>
         public GenericRepo(CoursesDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>(); // Get the DbSet<T> for the entity (like Students, Courses, etc.) ...
+            _dbSet = context.Set<T>();
         }
 
-        //Get all records from the table (asynchronously) ...
-        public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
-        //Get one record by primary key (assumes entity has a single int Id key) ...
+        /// <summary>
+        /// Returns all entities as an IQueryable (supports deferred execution).
+        /// </summary>
+        public IQueryable<T> GetAll() => _dbSet;
+
+        /// <summary>
+        /// Finds an entity by its primary key asynchronously.
+        /// Returns null if not found.
+        /// </summary>
         public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
-        //Add a new record to the DbSet (not saved yet, SaveChanges() needed) ...
+
+        /// <summary>
+        /// Adds a new entity to the context asynchronously.
+        /// </summary>
         public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
-        //Update an existing entity (marks it as Modified in EF Core tracking) ...
+
+        /// <summary>
+        /// Marks an entity as modified for updating.
+        /// </summary>
         public void Update(T entity) => _dbSet.Update(entity);
-        //Delete an entity (marks it for deletion) ...
+
+        /// <summary>
+        /// Marks an entity for deletion from the context.
+        /// </summary>
         public void Delete(T entity) => _dbSet.Remove(entity);
     }
 }
