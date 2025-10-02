@@ -2,10 +2,11 @@
 
 namespace CoursesManagement.Repos
 {
-    public interface IProgramsRepo : IGenericRepo<Program>
+    public interface IProgramsRepo
     {
-        Task<IEnumerable<Program>> GetProgramsByCategoryAsync(int categoryId);
-        Task<IEnumerable<Program>> GetProgramsByLevelAsync(LevelType level);
-        Task<Program?> GetProgramWithCategoryAsync(Guid programId);
+        Task<bool> ExistsByNameAsync(string programName, Guid? excludeId = null);
+        Task<IQueryable<Programs>> GetAllWithDetailsAsync();
+        Task<IQueryable<Programs?>> GetByIdAsync(Guid id);
+        Task<Programs?> GetByNameAsync(string programName);
     }
 }
