@@ -2,6 +2,35 @@
 using System.ComponentModel.DataAnnotations;
 namespace UserManagement.Models
 {
+    public enum ExperienceLevel
+    {
+        Junior,
+        Mid,
+        Senior,
+        Lead
+    }
+    public enum TeachingStyle
+    {
+        ProjectBased,
+        TheoryFirst,
+        HandsOn,
+        Lecture,
+        Discussion
+    }
+
+    public enum Specializations
+    {
+        CSharp,
+        Java,
+        Python,
+        JavaScript,
+        DataScience,
+        DevOps,
+        CloudComputing,
+        WebDevelopment,
+        MobileDevelopment,
+        CyberSecurity
+    }
     public class Instructor
     {
         // PK=FK to Users.UserId (NO IDENTITY)
@@ -18,12 +47,11 @@ namespace UserManagement.Models
         public int Years_of_Experience { get; set; }
 
         [MaxLength(256)]
-        public string? ProfileImage { get; set; }
-        
+        public string? ProfileImage { get; set; } = string.Empty;
+
         [Required]
         [MaxLength(256)]
-        public string InstructorCV { get; set; }
-        
+        public string InstructorCV { get; set; } = string.Empty;
         [Required]
         [MaxLength(30)]
         public ExperienceLevel Experience_Level { get; set; } // e.g., Junior/Mid/Senior
@@ -42,33 +70,6 @@ namespace UserManagement.Models
         public ICollection<Availability> Availabilities { get; set; }
     }
 
-    public enum ExperienceLevel 
-    { 
-        Junior = 1, 
-        Mid = 2, 
-        Senior = 3 
-    }
-    public enum TeachingStyle
-    {
-        ProjectBased = 1,
-        TheoryFirst = 2,
-        HandsOn = 3,
-        Lecture = 4,
-        Discussion = 5
-    }
-
-    public enum Specializations
-    {
-        CSharp = 1,
-        Java = 2,
-        Python = 3,
-        JavaScript = 4,
-        DataScience = 5,
-        DevOps = 6,
-        CloudComputing = 7,
-        WebDevelopment = 8,
-        MobileDevelopment = 9,
-        CyberSecurity = 10
-    }
+    
 
 }
