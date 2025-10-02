@@ -3,7 +3,7 @@ using UserManagement.Repositories;
 
 namespace UserManagement.Services
 {
-    public class AdminProfileService : IAdminProfileService
+    public class AdminProfileService 
     {
         private readonly AdminProfileRepository _repository; // Reference to repository
 
@@ -18,12 +18,12 @@ namespace UserManagement.Services
         // -------------------
 
         //Get all AdminProfile (sync)
-        /// Uses IQueryable for flexibility in filtering
+        /// Uses IEnumerable since the data is already materialized
 
-        public IQueryable<Admin_Profile> GetAllAdmins()
+        public IEnumerable<Admin_Profile> GetAllAdmins()
         {
-            // Calls repository sync method 
-            return _repository.GetAllAdmins();
+            // Calls repository sync method and materializes data immediately
+            return _repository.GetAllAdmins().ToList();
         }
 
         // Get AdminProfile by Id (sync)
@@ -35,9 +35,16 @@ namespace UserManagement.Services
 
         // Add new AdminProfile (sync)
 
-        public void AddAdmin(Admin_Profile admin)
+        public void AddAdminProfile(Admin_Profile admin)
         {
-            _repository.AddAdmin(admin); // Calls repository sync method
+            _repository.AddAdminProfile(admin); // Calls repository sync method
+        }
+
+        // Add a new Responsibility (sync)
+        public void AddResponsibility(Responsibility responsibility)
+        {
+            // Calls repository sync method
+            _repository.AddResponsibility(responsibility);
         }
 
         // -------------------
@@ -64,7 +71,7 @@ namespace UserManagement.Services
         public async Task AddAdminAsync(Admin_Profile admin)
         {
             // Calls repository async method
-            await _repository.AddAdminAsync(admin);
+            await _repository.AddAdminProfileAsync(admin);
         }
     }
 }
