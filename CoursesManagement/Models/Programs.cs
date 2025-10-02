@@ -4,12 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoursesManagement.Models
 {
-    /// <summary>
-    /// Represents a learning program that groups categories and courses.
-    /// </summary>
-    /// <summary>
-    /// Represents a learning program that groups categories and courses.
-    /// </summary>
+  
     /// <summary>
     /// Represents a learning program that groups categories and courses.
     /// </summary>
@@ -45,14 +40,14 @@ namespace CoursesManagement.Models
         // public int AdminId { get; set; }
         // public virtual Admin Admin { get; set; } = null!;
 
-        //// One-to-many: Program -> Enrollments
-        //public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        // One-to-many: Program -> Enrollments
+        public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 
-        //// Many-to-many: Program <-> Course
-        //public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+        // Many-to-many: Program <-> Course
+        public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 
-        //// Many-to-many: Program <-> Category
-        //public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+        // Many-to-many: Program <-> Category
+        public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 
 
         // *** 
@@ -65,5 +60,5 @@ namespace CoursesManagement.Models
 
 
 
-}
+    }
 }
