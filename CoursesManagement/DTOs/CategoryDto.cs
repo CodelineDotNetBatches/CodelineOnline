@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿using CoursesManagement.DTOs;
+
+/// <summary>
 /// DTO for returning category data (Out).
 /// </summary>
 public class CategoryDto
@@ -11,7 +13,7 @@ public class CategoryDto
     /// <summary>
     /// Programs this category belongs to.
     /// </summary>
-    public List<ProgramDto> Programs { get; set; } = new();
+    public List<ProgramDetailsDto> Programs { get; set; } = new();
 
     /// <summary>
     /// Courses under this category.
