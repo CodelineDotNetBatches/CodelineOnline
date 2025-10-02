@@ -3,7 +3,7 @@ using UserManagement.Repositories;
 
 namespace UserManagement.Services
 {
-    public class AdminProfileService 
+    public class AdminProfileService : IAdminProfileService
     {
         private readonly AdminProfileRepository _repository; // Reference to repository
 
