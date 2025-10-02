@@ -1,42 +1,45 @@
 ﻿using CoursesManagement.Models;
-using CoursesManagement.Repos;
-using CoursesManagement;
 using Microsoft.EntityFrameworkCore;
+
 namespace CoursesManagement.Repos
 {
-    public class EnrollmentRepo : GenericRepo<Enrollment>, IEnrollmentRepo
+    /// <summary>
+    /// Repository for managing Enrollment entities.
+    /// Provides common CRUD operations and enrollment-specific queries.
+    /// </summary>
+    public class EnrollmentRepository : GenericRepo<Enrollment>, IEnrollmentRepository
     {
         private readonly CoursesDbContext _context;
-        public EnrollmentRepo(CoursesDbContext context) : base(context)
+
+        public EnrollmentRepository(CoursesDbContext context) : base(context)
         {
             _context = context;
         }
-        // Enrollment-specific queries:
-        //to GetEnrollmentsByTrainee ...
-        public async Task<IEnumerable<Enrollment>> GetEnrollmentsByTraineeAsync(int traineeId)
+
+        /// <inheritdoc />
+        public async Task<Enrollment?> GetByUserAndCourseAsync(Guid userId, Guid courseId)
         {
-            return await _context.Set<Enrollment>()
-                .Where(e => e.TraineeId == traineeId)
-                .Include(e => e.Course) // Include related Course data
-                .Include(e => e.Program) // Include related Program data
+            return await _context.Enrollments
+                .Include(e => e.User)   // Ensure User navigation is loaded
+                .Include(e => e.Course) // Ensure Course navigation is loaded
+                .FirstOrDefaultAsync(e => e.UserId == userId && e.CourseId == courseId);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Enrollment>> GetByUserIdAsync(Guid userId)
+        {
+            return await _context.Enrollments
+                .Include(e => e.Course)
+                .Where(e => e.UserId == userId)
                 .ToListAsync();
         }
-        //to GetAllEnrollmentByCourseId ...
-        public async Task<IEnumerable<Enrollment>> GetAllEnrollmentByCourseId(int courseId)
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Enrollment>> GetByCourseIdAsync(Guid courseId)
         {
-            return await _context.Set<Enrollment>()
+            return await _context.Enrollments
+                .Include(e => e.User)
                 .Where(e => e.CourseId == courseId)
-                .Include(e => e.Course) // Include related Course data
-                .Include(e => e.Program) // Include related Program data
-                .ToListAsync();
-        }
-        //to GetAllEnrollmentByProgramId ...
-        public async Task<IEnumerable<Enrollment>> GetAllEnrollmentByProgramId(int programId)
-        {
-            return await _context.Set<Enrollment>()
-                .Where(e => e.ProgramId == programId)
-                .Include(e => e.Course) // Include related Course data
-                .Include(e => e.Program) // Include related Program data
                 .ToListAsync();
         }
     }

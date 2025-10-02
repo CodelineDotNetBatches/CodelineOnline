@@ -2,10 +2,25 @@
 
 namespace CoursesManagement.Repos
 {
-    public interface IEnrollmentRepo
+    /// <summary>
+    /// Repository interface for managing enrollments.
+    /// Extends generic repo with enrollment-specific queries.
+    /// </summary>
+    public interface IEnrollmentRepository : IGenericRepo<Enrollment>
     {
-        Task<IEnumerable<Enrollment>> GetAllEnrollmentByCourseId(int courseId);
-        Task<IEnumerable<Enrollment>> GetAllEnrollmentByProgramId(int programId);
-        Task<IEnumerable<Enrollment>> GetEnrollmentsByTraineeAsync(int traineeId);
+        /// <summary>
+        /// Finds an enrollment for a specific user and course.
+        /// </summary>
+        Task<Enrollment?> GetByUserAndCourseAsync(Guid userId, Guid courseId);
+
+        /// <summary>
+        /// Retrieves all enrollments for a given user.
+        /// </summary>
+        Task<IEnumerable<Enrollment>> GetByUserIdAsync(Guid userId);
+
+        /// <summary>
+        /// Retrieves all enrollments for a given course.
+        /// </summary>
+        Task<IEnumerable<Enrollment>> GetByCourseIdAsync(Guid courseId);
     }
 }

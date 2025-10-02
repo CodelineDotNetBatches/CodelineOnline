@@ -2,7 +2,7 @@
 
 namespace CoursesManagement.DTOs
 {
-    public class ProgramCreateDto
+    public class ProgramUpdateDto
     {
         [Required, MaxLength(200)]
         public string ProgramName { get; set; } = null!;
@@ -12,9 +12,5 @@ namespace CoursesManagement.DTOs
 
         [Required]
         public string Roadmap { get; set; } = null!;
-
-       
-        public List<Guid>? CategoryIds { get; set; }    // optional
-        public List<Guid>? CourseIds { get; set; }       // optional
     }
 }

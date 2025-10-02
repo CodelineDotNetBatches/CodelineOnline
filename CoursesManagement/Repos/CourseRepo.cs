@@ -13,23 +13,21 @@ public class CourseRepo : GenericRepo<Course>, ICourseRepo
     }
 
     // Course-specific queries:
-    public async Task<IEnumerable<Course>> GetCoursesByLevelAsync(LevelType level)
+    public async Task<IQueryable<Course>> GetCoursesByLevelAsync(LevelType level)
     {
-        return await _context.Courses
-            .Where(c => c.CourseLevel == level)
-            .ToListAsync();
+        return _context.Courses
+            .Where(c => c.CourseLevel == level);
     }
 
-    public async Task<IEnumerable<Course>> GetCoursesByCategoryAsync(int categoryId)
+    public async Task<IQueryable<Course>> GetCoursesByCategoryAsync(int categoryId)
     {
-        return await _context.Courses
-            .Where(c => c.CategoryId == categoryId)
-            .ToListAsync();
+        return _context.Courses
+            .Where(c => c.CategoryId == categoryId);
     }
 
     public async Task<Course?> GetCourseWithCategoryAsync(Guid courseId)
     {
-        return await _context.Courses
+        return _context.Courses
             .Include(c => c.Category)
             .FirstOrDefaultAsync(c => c.CourseId == courseId);
     }
