@@ -1,6 +1,5 @@
-﻿using ReportsManagements.Models;
-using Microsoft.EntityFrameworkCore;
-
+﻿using Microsoft.EntityFrameworkCore;
+using ReportsManagements.Models;
 
 namespace ReportsManagements.Repositories
 {
@@ -13,22 +12,46 @@ namespace ReportsManagements.Repositories
             _context = context;
         }
 
-        // Get all records as IQueryable (make esay in server side filtering, paging etc)
-        public IQueryable<AttendanceRecord> GetQueryable() => _context.AttendanceRecord.AsQueryable();
-        public async Task<AttendanceRecord?> GetByIdAsync(int id) =>
-          await _context.AttendanceRecord
-              .Include(a => a.Geolocation)
-              .Include(a => a.CapturedPhoto)
-              .Include(a => a.ReasonCode)
-              .FirstOrDefaultAsync(a => a.AttId == id);
-        public async Task<IEnumerable<AttendanceRecord>> GetByStudentAndSessionAsync(int studentId, int sessionId) =>
-           await _context.AttendanceRecord
-               .Include(a => a.Geolocation)
-               .Include(a => a.CapturedPhoto)
-               .Include(a => a.ReasonCode)
-               .Where(a => a.StudentId == studentId && a.SessionId == sessionId)
-               .ToListAsync();
+        // Expose queryable (useful for server-side filtering/paging)
+        public IQueryable<AttendanceRecord> GetQueryable()
+            => _context.AttendanceRecord.AsQueryable();
 
+        // Get by Id (with includes)
+        public async Task<AttendanceRecord?> GetByIdAsync(int id) =>
+            await _context.AttendanceRecord
+                .Include(a => a.Geolocation)
+                .Include(a => a.CapturedPhoto)
+                .Include(a => a.ReasonCode)
+                .FirstOrDefaultAsync(a => a.AttId == id);
+
+        // Get by student & session
+        public async Task<IEnumerable<AttendanceRecord>> GetByStudentAndSessionAsync(int studentId, int sessionId) =>
+            await _context.AttendanceRecord
+                .Include(a => a.Geolocation)
+                .Include(a => a.CapturedPhoto)
+                .Include(a => a.ReasonCode)
+                .Where(a => a.StudentId == studentId && a.SessionId == sessionId)
+                .ToListAsync();
+
+        // Filter by student, session, date range, review status
+        public async Task<IEnumerable<AttendanceRecord>> GetFilteredAsync(
+            int? studentId, int? sessionId, DateTime? fromDate, DateTime? toDate, string? reviewStatus)
+        {
+            var query = _context.AttendanceRecord.AsQueryable();
+
+            if (studentId.HasValue) query = query.Where(a => a.StudentId == studentId.Value);
+            if (sessionId.HasValue) query = query.Where(a => a.SessionId == sessionId.Value);
+            if (fromDate.HasValue) query = query.Where(a => a.CheckIn >= fromDate.Value);
+            if (toDate.HasValue) query = query.Where(a => a.CheckIn <= toDate.Value);
+            if (!string.IsNullOrWhiteSpace(reviewStatus)) query = query.Where(a => a.ReviewStatus == reviewStatus);
+
+            return await query
+                .Include(a => a.Geolocation)
+                .Include(a => a.CapturedPhoto)
+                .Include(a => a.ReasonCode)
+                .AsNoTracking()
+                .ToListAsync();
+        }
 
         // Add
         public async Task AddAsync(AttendanceRecord record)
@@ -56,4 +79,3 @@ namespace ReportsManagements.Repositories
         }
     }
 }
- 
