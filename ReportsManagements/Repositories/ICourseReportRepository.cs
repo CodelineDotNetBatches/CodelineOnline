@@ -12,5 +12,6 @@ namespace ReportsManagements.Repositories
 
         Task UpsertBatchAsync(IEnumerable<CourseReport> items, CancellationToken ct = default);
         IQueryable<CourseReport> Query();
+
     }
 }
