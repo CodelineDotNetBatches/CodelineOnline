@@ -90,5 +90,12 @@ namespace UserManagement.Services
             // Calls repository async method
             await _repository.AddResponsibilityAsync(responsibility);
         }
+
+        // Update an existing Responsibility (async)
+        public async Task UpdateResponsibilityAsync(Responsibility responsibility)
+        {
+            // Calls repository async method
+            await _repository.UpdateResponsibilityAsync(responsibility);
+        }
     }
 }
