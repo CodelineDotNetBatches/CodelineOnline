@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoursesManagement.Repos
 {
-    public class CategoryRepository : GenericRepo<Category>, ICategoryRepository
+    public class CategoryRepo : GenericRepo<Category>, ICategoryRepo
     {
         protected readonly CoursesDbContext _ctx;
 
-        public CategoryRepository(CoursesDbContext context) : base(context)
+        public CategoryRepo(CoursesDbContext context) : base(context)
         {
             _ctx = context;
         }
