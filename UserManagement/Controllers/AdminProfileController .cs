@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UserManagement.DTOs;
 using UserManagement.Models;
 using UserManagement.Services;
 
@@ -49,12 +50,11 @@ namespace UserManagement.Controllers
 
         [HttpPost("sync/add")]                 // POST api/Admin Profile /sync /add 
 
-        public IActionResult AddAdmin([FromBody] Admin_Profile admin)
+        public IActionResult AddAdmin([FromBody] AdminProfileDTO adminDto)
         {
-            _service.AddAdmin(admin);                  // Call service to add admin
-            return CreatedAtAction(nameof(GetAdminById), new { id = admin.AdminId }, admin); // Returns 201 Created with location header pointing to new admin 
+            _service.AddAdminProfile(adminDto); // Call service with DTO
+            return CreatedAtAction(nameof(GetAdminById), new { id = adminDto.Id }, adminDto);
         }
-
         // -------------------
         // ASYNC ENDPOINTS
         // -------------------
@@ -84,11 +84,11 @@ namespace UserManagement.Controllers
         // Add new AdminProfile (async)
 
         [HttpPost("async/add")]                        // POST api/AdminProfile/async/add
-                                                      
-        public async Task<IActionResult> AddAdminAsync([FromBody] Admin_Profile admin)
+
+        public async Task<IActionResult> AddAdminProfileAsync([FromBody] AdminProfileDTO adminDto)
         {
-            await _service.AddAdminAsync(admin);       // Call async service to add admin
-            return CreatedAtAction(nameof(GetAdminByIdAsync), new { id = admin.AdminId }, admin);   // Returns 201 Created with location header pointing to new admin
+            await _service.AddAdminAsync(adminDto); // Service expects DTO
+            return CreatedAtAction(nameof(GetAdminByIdAsync), new { id = adminDto.Id }, adminDto);
         }
     }
 }
