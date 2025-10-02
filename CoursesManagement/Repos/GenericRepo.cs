@@ -7,7 +7,7 @@ namespace CoursesManagement.Repos
     /// for any entity type using Entity Framework Core.
     /// </summary>
     /// <typeparam name="T">The entity type (must be a class).</typeparam>
-    public class GenericRepo<T> where T : class
+    public class GenericRepo<T> : IGenericRepo<T> where T : class
     {
         /// <summary>
         /// Database context for performing operations.
@@ -22,6 +22,7 @@ namespace CoursesManagement.Repos
         /// <summary>
         /// Initializes the repository with the specified database context.
         /// </summary>
+        /// <param name="context">The EF Core database context.</param>
         public GenericRepo(CoursesDbContext context)
         {
             _context = context;
@@ -29,34 +30,45 @@ namespace CoursesManagement.Repos
         }
 
         /// <summary>
-        /// Returns all entities as an IQueryable (supports deferred execution).
+        /// Retrieves all entities of type <typeparamref name="T"/> 
+        /// as an <see cref="IQueryable{T}"/> for deferred execution and LINQ queries.
         /// </summary>
+        /// <returns>IQueryable of all entities.</returns>
         public IQueryable<T> GetAll() => _dbSet;
 
         /// <summary>
         /// Finds an entity by its primary key asynchronously.
-        /// Returns null if not found.
+        /// Works for Guid, int, or any supported key type.
         /// </summary>
-        public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+        /// <param name="id">The primary key value of the entity.</param>
+        /// <returns>The entity if found, otherwise null.</returns>
+        public async Task<T?> GetByIdAsync(object id) => await _dbSet.FindAsync(id);
 
         /// <summary>
-        /// Adds a new entity to the context asynchronously.
+        /// Adds a new entity instance to the context asynchronously.
         /// </summary>
+        /// <param name="entity">The entity instance to add.</param>
         public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
 
         /// <summary>
-        /// Marks an entity as modified for updating.
+        /// Marks an entity as modified in the context so that changes 
+        /// are persisted on the next <see cref="SaveAsync"/>.
         /// </summary>
+        /// <param name="entity">The entity instance to update.</param>
         public void Update(T entity) => _dbSet.Update(entity);
 
         /// <summary>
         /// Marks an entity for deletion from the context.
+        /// It will be removed from the database on the next <see cref="SaveAsync"/>.
         /// </summary>
+        /// <param name="entity">The entity instance to delete.</param>
         public void Delete(T entity) => _dbSet.Remove(entity);
 
         /// <summary>
-        /// Provides direct access to IQueryable for advanced LINQ queries.
+        /// Provides direct access to <see cref="IQueryable{T}"/> 
+        /// for advanced LINQ queries (including filters and joins).
         /// </summary>
+        /// <returns>An IQueryable for custom queries.</returns>
         public IQueryable<T> GetQueryable() => _dbSet.AsQueryable();
 
         /// <summary>
