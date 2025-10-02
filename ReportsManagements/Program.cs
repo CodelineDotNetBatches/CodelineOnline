@@ -5,6 +5,8 @@ using ReportsManagements.Models;
 using ReportsManagements.Repositories;
 using ReportsManagements.SeedData;
 using ReportsManagements.Services;
+using Microsoft.EntityFrameworkCore.SqlServer;
+
 
 
 //testing branching
@@ -18,8 +20,8 @@ namespace ReportsManagements
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var context = ReasonAndFileSeedData.CreateInMemoryDbContext();
-            builder.Services.AddSingleton(context);
+            //var context = ReasonAndFileSeedData.CreateInMemoryDbContext();
+            //builder.Services.AddSingleton(context);
             // ====== Services ======
             builder.Services.AddScoped<IAttendanceRecordService, AttendanceRecordService>();
             builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
@@ -32,12 +34,12 @@ namespace ReportsManagements
                 )
             );
 
-            builder.Services.AddSingleton<IReasonCodeRepository>(new ReasonCodeRepository(context));
-            builder.Services.AddSingleton<IFileStorageRepository>(new FileStorageRepository(context));
+            //builder.Services.AddSingleton<IReasonCodeRepository>(new ReasonCodeRepository(context));
+            //builder.Services.AddSingleton<IFileStorageRepository>(new FileStorageRepository(context));
 
-            // ????? Repositories ?? Singleton
-            builder.Services.AddSingleton<IBranchRepository>(new BranchRepository(context));
-            builder.Services.AddSingleton<IGeolocationRepository>(new GeolocationRepository(context));
+            //// ????? Repositories ?? Singleton
+            //builder.Services.AddSingleton<IBranchRepository>(new BranchRepository(context));
+            //builder.Services.AddSingleton<IGeolocationRepository>(new GeolocationRepository(context));
 
             // ????? Controllers
             builder.Services.AddControllers();
@@ -60,7 +62,7 @@ namespace ReportsManagements
             app.UseAuthorization();
             app.MapControllers();
 
-            await PrintSeedData(context);
+            //await PrintSeedData(context);
 
             app.Run();
         }
