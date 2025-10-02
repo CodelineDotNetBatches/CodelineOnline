@@ -10,6 +10,7 @@ namespace ReportsManagements.Repositories
         Task AddAsync(Models.AttendanceRecord record);
         Task UpdateAsync(Models.AttendanceRecord record);
         Task DeleteAsync(int id);
+        IQueryable<AttendanceRecord> GetQueryable();
 
 
     }

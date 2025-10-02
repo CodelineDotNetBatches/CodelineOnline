@@ -25,7 +25,7 @@ namespace ReportsManagements.Models
         public double FaceMatchScore { get; set; } // Confidence score for face recognition
         //LivenessScore, GeolocationId, ReviewStatus, CreatedAt, CreatedBy, UploadedAt, UploadedBy.
         public double LivenessScore { get; set; } // Confidence score for liveness detection
-        public int GeolocationId { get; set; }
+        public int? GeolocationId { get; set; }
         [ForeignKey(nameof(GeolocationId))]
         public Geolocation Geolocation { get; set; } = null!;
 
@@ -34,7 +34,7 @@ namespace ReportsManagements.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string CreatedBy { get; set; } = "";
         public DateTime UploadedAt { get; set; } 
-;        public string  UploadedBy { get; set; } = "";
+      public string  UploadedBy { get; set; } = "";
 
 
     }

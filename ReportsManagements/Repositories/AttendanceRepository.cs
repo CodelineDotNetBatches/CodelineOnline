@@ -52,6 +52,15 @@ namespace ReportsManagements.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+        public async Task<IEnumerable<AttendanceRecord>> GetAllAsync()
+        {
+            return await _context.AttendanceRecord
+                .Include(a => a.Geolocation)
+                .Include(a => a.CapturedPhoto)
+                .Include(a => a.ReasonCode)
+                .AsNoTracking()
+                .ToListAsync();
+        }
 
         // Add
         public async Task AddAsync(AttendanceRecord record)
