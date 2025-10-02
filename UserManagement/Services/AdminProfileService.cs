@@ -47,6 +47,15 @@ namespace UserManagement.Services
             _repository.AddResponsibility(responsibility);
         }
 
+        // Update an existing Responsibility (sync).
+
+        public void UpdateResponsibility(Responsibility responsibility)
+        {
+            // Calls repository sync method
+            _repository.UpdateResponsibility(responsibility);
+        }
+
+
         // -------------------
         // ASYNC METHODS
         // -------------------
