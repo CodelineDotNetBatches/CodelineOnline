@@ -7,8 +7,10 @@ namespace CoursesManagement.Repos
     {
 
 
+
         protected readonly CoursesDbContext _context;// EF DbContext (database session) ...
         protected readonly DbSet<T> _dbSet;// Represents a database table for entity T ...
+
 
         public GenericRepo(CoursesDbContext context)
         {
