@@ -39,8 +39,10 @@ public class ReportsService : IReportsService
     public IEnumerable<TrainerReport> QueryTrainers(PagingQuery q)
     {
         var data = _trainerRepo.Query();
-        if (!string.IsNullOrWhiteSpace(q.TrainerId)) data = data.Where(x => x.TrainerId == q.TrainerId);
-        if (!string.IsNullOrWhiteSpace(q.CourseId)) data = data.Where(x => x.CourseId == q.CourseId);
+        if (!string.IsNullOrWhiteSpace(q.TrainerId) && int.TryParse(q.TrainerId, out var trainerId))
+            data = data.Where(x => x.TrainerId == trainerId);
+        if (!string.IsNullOrWhiteSpace(q.CourseId) && int.TryParse(q.CourseId, out var courseId))
+            data = data.Where(x => x.CourseId == courseId);
 
         data = (q.SortBy?.ToLowerInvariant()) switch
         {
@@ -55,7 +57,8 @@ public class ReportsService : IReportsService
     public IEnumerable<CourseReport> QueryCourses(PagingQuery q)
     {
         var data = _courseRepo.Query();
-        if (!string.IsNullOrWhiteSpace(q.CourseId)) data = data.Where(x => x.CourseId == q.CourseId);
+        if (!string.IsNullOrWhiteSpace(q.CourseId) && int.TryParse(q.CourseId, out var courseId))
+            data = data.Where(x => x.CourseId == courseId);
 
         data = (q.SortBy?.ToLowerInvariant()) switch
         {
