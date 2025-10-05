@@ -12,5 +12,8 @@ namespace CoursesManagement.DTOs
 
         [Required]
         public string Roadmap { get; set; } = null!;
+
+        // The IDs of the categories this program belongs to (Many-to-Many).
+        public List<Guid> CategoryId { get; set; } = new();
     }
 }
