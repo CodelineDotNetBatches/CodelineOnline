@@ -90,7 +90,8 @@ namespace ReportsManagements.Services
             existing.CheckOut = updated.CheckOut ?? existing.CheckOut;
             existing.ReviewStatus = updated.ReviewStatus ?? existing.ReviewStatus;
             existing.ReasonCodeId = updated.ReasonCodeId ?? existing.ReasonCodeId;
-            existing.GeolocationId = updated.GeolocationId ?? existing.GeolocationId;
+            existing.GeolocationId = updated.GeolocationId != 0 ? updated.GeolocationId : existing.GeolocationId;
+
 
             await _repo.UpdateAsync(existing);
             return existing;
@@ -145,6 +146,18 @@ namespace ReportsManagements.Services
 
             await _repo.UpdateAsync(existing);
             return existing;
+        }
+
+        public async Task<bool> SoftDeleteAsync(int id)
+        {
+
+            var record = await _repo.GetByIdAsync(id);
+            if (record == null)
+                return false;
+
+            record.IsDeleted = true;
+            await _repo.UpdateAsync(record);
+            return true;
         }
 
     }

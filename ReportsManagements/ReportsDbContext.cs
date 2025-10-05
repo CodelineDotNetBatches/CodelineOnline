@@ -19,6 +19,8 @@ namespace ReportsManagements
         public DbSet<ReasonCode> ReasonCodes { get; set; }
         public DbSet<FileStorage> FileStorages { get; set; }
         public DbSet<AttendanceRecord> AttendanceRecord { get; set; }
+       
+       
         public DbSet<GeoRadiusAudit> GeoRadiusAudits { get; set; }
 
 
@@ -85,6 +87,8 @@ namespace ReportsManagements
                 new ReasonCode { ReasonCodeId = 2, Code = "SICK", Name = "Sick", Category = "Health", IsActive = true },
                 new ReasonCode { ReasonCodeId = 3, Code = "TECH", Name = "Technical Issue", Category = "System", IsActive = true }
             );
+            // Global query filter to exclude soft-deleted records
+            mb.Entity<AttendanceRecord>().HasQueryFilter(a => !a.IsDeleted);
 
         }
     }

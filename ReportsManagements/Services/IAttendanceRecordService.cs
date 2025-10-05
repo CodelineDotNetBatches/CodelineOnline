@@ -20,6 +20,9 @@ namespace ReportsManagements.Services
         Task<AttendanceRecord?> CheckoutAsync(int id, DateTime checkout);
         Task<AttendanceRecord?> ReviewAsync(int id, string reviewStatus, string reviewedBy);
         IQueryable<AttendanceRecord> GetQueryable();
+        //SoftDeleteAsync
+        Task<bool> SoftDeleteAsync(int id);
+
 
     }
 }

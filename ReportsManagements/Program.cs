@@ -30,8 +30,33 @@ namespace ReportsManagements
                     builder.Configuration.GetConnectionString("Default"),
                     sql => sql.MigrationsHistoryTable("__Migrations_App")
                 )
-            );
 
+            );
+            builder.Services.AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+              {
+                 options.InvalidModelStateResponseFactory = context =>
+                     {
+            var errors = context.ModelState
+                .Where(x => x.Value.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
+
+            var problemDetails = new ValidationProblemDetails(errors)
+            {
+                Type = "https://httpstatuses.com/400",
+                Title = "Validation Failed",
+                Status = StatusCodes.Status400BadRequest,
+                Instance = context.HttpContext.Request.Path
+            };
+
+            return new BadRequestObjectResult(problemDetails);
+            };
+               });
+       
+          
             //builder.Services.AddSingleton<IReasonCodeRepository>(new ReasonCodeRepository(context));
             //builder.Services.AddSingleton<IFileStorageRepository>(new FileStorageRepository(context));
 
@@ -62,10 +87,15 @@ namespace ReportsManagements
             app.MapControllers();
 
             //await PrintSeedData(context);
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ReportsDbContext>();
+                DatabaseSeeder.Seed(db);
+            }
 
             app.Run();
         }
-
+        
         private static async Task PrintSeedData(ReportsDbContext context)
         {
             var allReasons = await context.ReasonCodes.ToListAsync();
@@ -82,6 +112,9 @@ namespace ReportsManagements
                 Console.WriteLine($"{f.FileStorageId} - {f.FileName} - {f.Url} - Uploaded by {f.UploadedBy}");
             }
         }
+
     }
+
+}
 }
 
