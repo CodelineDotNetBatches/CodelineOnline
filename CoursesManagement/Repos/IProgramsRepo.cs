@@ -2,7 +2,7 @@ using CoursesManagement.Models;
 
 namespace CoursesManagement.Repos
 {
-    public interface IProgramsRepo
+    public interface IProgramsRepo : IGenericRepo<Programs>
     {
         Task<Programs?> GetProgramWithCoursesAsync(Guid programId);
 
