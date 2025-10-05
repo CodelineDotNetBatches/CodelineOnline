@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CoursesManagement.Services
 {
     // Business logic layer for Programs.
-    public class ProgramsService
+    public class ProgramsService : IProgramsService
     {
         private readonly IProgramsRepo _repo;
         private readonly ICategoryRepo _categoryRepo;
