@@ -3,6 +3,7 @@ using CoursesManagement.DTOs;
 using CoursesManagement.Models;
 using CoursesManagement.Repos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 namespace CoursesManagement.Services
 {
     /// <summary>
@@ -14,11 +15,13 @@ namespace CoursesManagement.Services
         private readonly ICategoryRepo _repo;
         private readonly IProgramsRepo _programRepo;
         private readonly IMapper _mapper;
-        public CategoryService(ICategoryRepo repo, IProgramsRepo programRepo, IMapper mapper)
+        private readonly IMemoryCache _cache;
+        public CategoryService(ICategoryRepo repo, IProgramsRepo programRepo, IMapper mapper, IMemoryCache cache)
         {
             _repo = repo;
             _programRepo = programRepo;
             _mapper = mapper;
+            _cache = cache;
         }
         // ======================
         // GET ALL
