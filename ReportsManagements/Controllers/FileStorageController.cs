@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReportsManagements.DTOs;
 using ReportsManagements.Repositories;
-using ReportsManagements.Services;
 
 namespace ReportsManagements.Controllers
 {
@@ -12,12 +10,10 @@ namespace ReportsManagements.Controllers
     {
         // Dependency on the file storage repository
         private readonly IFileStorageRepository _repository;
-        private readonly IFileCodeService _fileCodeService;
 
-        public FileStorageController(IFileStorageRepository fileStorageRepository, IFileCodeService fileCodeService)
+        public FileStorageController(IFileStorageRepository fileStorageRepository)
         {
             _repository = fileStorageRepository;
-            _fileCodeService = fileCodeService;
         }
 
         // GET: api/files
@@ -44,9 +40,8 @@ namespace ReportsManagements.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Models.FileStorage file)
         {
-
-            if (!_fileCodeService.IsValidFile(file.FileName, file.FileSize))
-                return BadRequest("File type or size not allowed");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             await _repository.AddAsync(file);
             return CreatedAtAction(nameof(GetById), new { id = file.FileStorageId }, file);
@@ -57,13 +52,7 @@ namespace ReportsManagements.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Models.FileStorage file)
         {
-            if (id != file.FileStorageId) 
-                return BadRequest();
-
-            var existing = await _repository.GetByIdAsync(id);
-            if (existing == null)
-                return NotFound($"File with ID {id} not found");
-
+            if (id != file.FileStorageId) return BadRequest();
             await _repository.UpdateAsync(file);
             return NoContent();
         }
@@ -83,21 +72,13 @@ namespace ReportsManagements.Controllers
         // POST: api/files/presign
         // Generates a presigned URL for file upload 
         [HttpPost("presign")]
-        public IActionResult Presign([FromBody] FileDto fileDto)
+        public IActionResult Presign()
         {
-
-            if (!_fileCodeService.IsValidFile(fileDto.FileName, fileDto.FileSize))
-                return BadRequest("Invalid file metadata");
-
             // Placeholder for presign logic
-            var dummyUrl = $"https://dummy-storage.com/upload/{Guid.NewGuid()}-{fileDto.FileName}";
+            var dummyUrl = "https://dummy-storage.com/upload/fake-presigned-url";
 
-            return Ok(new { 
-                url = dummyUrl,
-                fileName = fileDto.FileName,
-                fileSize = fileDto.FileSize,
-                uploadedBy = fileDto.UploadedBy
-            }); 
+            return Ok(new { url = dummyUrl }); // Return the dummy presigned URL
         }
+
     }
 }

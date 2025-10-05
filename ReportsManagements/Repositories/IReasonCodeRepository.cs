@@ -1,13 +1,18 @@
-﻿using ReportsManagements.Models;
+﻿
+
+
+
+
 
 namespace ReportsManagements.Repositories
 {
+    // Interface defining CRUD operations for ReasonCode
     public interface IReasonCodeRepository
     {
-        Task AddAsync(ReasonCode reasonCode);
+        Task AddAsync(Models.ReasonCode reasonCode);
         Task DeleteAsync(int id);
-        Task<IEnumerable<ReasonCode>> GetAllAsync();
-        Task<ReasonCode> GetByIdAsync(int id);
-        Task UpdateAsync(ReasonCode reasonCode);
+        Task<IEnumerable<Models.ReasonCode>> GetAllAsync();
+        Task<Models.ReasonCode> GetByIdAsync(int id);
+        Task UpdateAsync(Models.ReasonCode reasonCode);
     }
 }
