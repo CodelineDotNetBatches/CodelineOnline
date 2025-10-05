@@ -6,6 +6,6 @@
         public int GeolocationId { get; set; }
         public decimal OldRadius { get; set; }
         public decimal NewRadius { get; set; }
-        public DateTime ChangedAt { get; set; }
+        public DateTime ChangedAt { get; set; }=DateTime.Now;
     }
 }

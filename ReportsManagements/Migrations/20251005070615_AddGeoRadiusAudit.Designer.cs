@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReportsManagements;
 
@@ -11,9 +12,11 @@ using ReportsManagements;
 namespace ReportsManagements.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    partial class ReportsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251005070615_AddGeoRadiusAudit")]
+    partial class AddGeoRadiusAudit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,8 +221,6 @@ namespace ReportsManagements.Migrations
 
                     b.HasKey("GeoRadiusAuditId");
 
-                    b.HasIndex("GeolocationId");
-
                     b.ToTable("GeoRadiusAudits", "reports");
                 });
 
@@ -365,15 +366,6 @@ namespace ReportsManagements.Migrations
                     b.Navigation("Geolocation");
 
                     b.Navigation("ReasonCode");
-                });
-
-            modelBuilder.Entity("ReportsManagements.Models.GeoRadiusAudit", b =>
-                {
-                    b.HasOne("ReportsManagements.Models.Geolocation", null)
-                        .WithMany()
-                        .HasForeignKey("GeolocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ReportsManagements.Models.Geolocation", b =>
