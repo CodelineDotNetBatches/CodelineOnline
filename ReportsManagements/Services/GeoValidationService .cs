@@ -16,12 +16,15 @@
             double R = 6371000; // Radius of the Earth in meters
             double dLat = DegreesToRadians(Lat2 - Lat1);//difference in latitude in radians
             double dLon = DegreesToRadians(Lon2 - lon1);// difference in longitude in radians
-            //Haversine formula
-            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                    Math.Cos(DegreesToRadians(Lat1)) * Math.Cos(DegreesToRadians(Lat2)) *
-                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
 
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            double lat1Rad = DegreesToRadians(Lat1);
+            double lat2Rad = DegreesToRadians(Lat2);
+
+           double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+               Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
+               Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
             return R * c; // Distance in meters
         }
         // Helper method to convert degrees to radians
