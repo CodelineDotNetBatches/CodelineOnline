@@ -1,79 +1,109 @@
 ﻿using AutoMapper;
+using CoursesManagement.Caching;
 using CoursesManagement.DTOs;
 using CoursesManagement.Models;
 using CoursesManagement.Repos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CoursesManagement.Services
 {
-    /// <summary>
-    /// Service implementation for managing enrollments.
-    /// Handles mapping, validation, and repository operations.
-    /// </summary>
     public class EnrollmentService : IEnrollmentService
     {
         private readonly IEnrollmentRepo _repo;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _cache;
 
-        /// <summary>
-        /// Initializes a new instance of EnrollmentService.
-        /// </summary>
-        /// <param name="repo">The enrollment repository (data access layer).</param>
-        /// <param name="mapper">The AutoMapper instance for DTO mapping.</param>
-        public EnrollmentService(IEnrollmentRepo repo, IMapper mapper)
+        public EnrollmentService(IEnrollmentRepo repo, IMapper mapper, IMemoryCache cache)
         {
             _repo = repo;
             _mapper = mapper;
+            _cache = cache;
         }
 
-        /// <inheritdoc />
+        // ======================
+        // GET ALL (with caching)
+        // ======================
         public async Task<IEnumerable<EnrollmentListDto>> GetAllAsync()
         {
-            var enrollments = await _repo.GetAll()
-                .Include(e => e.User)
-                .Include(e => e.Course)
-                .Include(e => e.Program)
-                .ToListAsync();
+            if (!_cache.TryGetValue(CacheKeys.AllEnrollments, out IEnumerable<EnrollmentListDto>? cachedEnrollments))
+            {
+                var enrollments = await _repo.GetAll()
+                    .Include(e => e.User)
+                    .Include(e => e.Course)
+                    .Include(e => e.Program)
+                    .ToListAsync();
 
-            return _mapper.Map<IEnumerable<EnrollmentListDto>>(enrollments);
+                cachedEnrollments = _mapper.Map<IEnumerable<EnrollmentListDto>>(enrollments);
+                _cache.Set(CacheKeys.AllEnrollments, cachedEnrollments, TimeSpan.FromMinutes(10));
+            }
+
+            return cachedEnrollments!;
         }
 
-        /// <inheritdoc />
+        // ======================
+        // GET BY ID (with caching)
+        // ======================
         public async Task<EnrollmentDetailDto?> GetByIdAsync(Guid enrollmentId)
         {
-            var enrollment = await _repo.GetByIdAsync(enrollmentId);
-            if (enrollment == null) return null;
+            var cacheKey = CacheKeys.EnrollmentsByCourse(enrollmentId); // use correct pattern
+            if (!_cache.TryGetValue(cacheKey, out EnrollmentDetailDto? cached))
+            {
+                var enrollment = await _repo.GetByIdAsync(enrollmentId);
+                if (enrollment == null) return null;
 
-            // Ensure navigation properties are loaded
-            await _repo._context.Entry(enrollment).Reference(e => e.User).LoadAsync();
-            await _repo._context.Entry(enrollment).Reference(e => e.Course).LoadAsync();
-            await _repo._context.Entry(enrollment).Reference(e => e.Program).LoadAsync();
+                await _repo._context.Entry(enrollment).Reference(e => e.User).LoadAsync();
+                await _repo._context.Entry(enrollment).Reference(e => e.Course).LoadAsync();
+                await _repo._context.Entry(enrollment).Reference(e => e.Program).LoadAsync();
 
-            return _mapper.Map<EnrollmentDetailDto>(enrollment);
+                cached = _mapper.Map<EnrollmentDetailDto>(enrollment);
+                _cache.Set(cacheKey, cached, TimeSpan.FromMinutes(10));
+            }
+
+            return cached;
         }
 
-        /// <inheritdoc />
         public async Task<EnrollmentDetailDto?> GetByUserAndCourseAsync(Guid userId, Guid courseId)
         {
-            var enrollment = await _repo.GetByUserAndCourseAsync(userId, courseId);
-            return enrollment == null ? null : _mapper.Map<EnrollmentDetailDto>(enrollment);
+            var cacheKey = $"{CacheKeys.EnrollmentsByUser(userId)}_{courseId}";
+            if (!_cache.TryGetValue(cacheKey, out EnrollmentDetailDto? cached))
+            {
+                var enrollment = await _repo.GetByUserAndCourseAsync(userId, courseId);
+                if (enrollment == null) return null;
+
+                cached = _mapper.Map<EnrollmentDetailDto>(enrollment);
+                _cache.Set(cacheKey, cached, TimeSpan.FromMinutes(10));
+            }
+            return cached;
         }
 
-        /// <inheritdoc />
         public async Task<IEnumerable<EnrollmentListDto>> GetByUserIdAsync(Guid userId)
         {
-            var enrollments = await _repo.GetByUserIdAsync(userId);
-            return _mapper.Map<IEnumerable<EnrollmentListDto>>(enrollments);
+            var cacheKey = CacheKeys.EnrollmentsByUser(userId);
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<EnrollmentListDto>? cachedList))
+            {
+                var enrollments = await _repo.GetByUserIdAsync(userId);
+                cachedList = _mapper.Map<IEnumerable<EnrollmentListDto>>(enrollments);
+                _cache.Set(cacheKey, cachedList, TimeSpan.FromMinutes(10));
+            }
+            return cachedList!;
         }
 
-        /// <inheritdoc />
         public async Task<IEnumerable<EnrollmentListDto>> GetByCourseIdAsync(Guid courseId)
         {
-            var enrollments = await _repo.GetByCourseIdAsync(courseId);
-            return _mapper.Map<IEnumerable<EnrollmentListDto>>(enrollments);
+            var cacheKey = CacheKeys.EnrollmentsByCourse(courseId);
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<EnrollmentListDto>? cachedList))
+            {
+                var enrollments = await _repo.GetByCourseIdAsync(courseId);
+                cachedList = _mapper.Map<IEnumerable<EnrollmentListDto>>(enrollments);
+                _cache.Set(cacheKey, cachedList, TimeSpan.FromMinutes(10));
+            }
+            return cachedList!;
         }
 
-        /// <inheritdoc />
+        // ======================
+        // CREATE
+        // ======================
         public async Task<EnrollmentDetailDto> CreateAsync(CreateEnrollmentDto dto)
         {
             var existing = await _repo.GetByUserAndCourseAsync(dto.UserId, dto.CourseId);
@@ -81,33 +111,44 @@ namespace CoursesManagement.Services
                 throw new InvalidOperationException("User is already enrolled in this course.");
 
             var enrollment = _mapper.Map<Enrollment>(dto);
-
             await _repo.AddAsync(enrollment);
             await _repo.SaveAsync();
 
-            // Load related entities for mapping
             await _repo._context.Entry(enrollment).Reference(e => e.Course).LoadAsync();
             await _repo._context.Entry(enrollment).Reference(e => e.Program).LoadAsync();
             await _repo._context.Entry(enrollment).Reference(e => e.User).LoadAsync();
 
+            // Invalidate affected cache groups
+            _cache.Remove(CacheKeys.AllEnrollments);
+            _cache.Remove(CacheKeys.EnrollmentsByUser(dto.UserId));
+            _cache.Remove(CacheKeys.EnrollmentsByCourse(dto.CourseId));
+
             return _mapper.Map<EnrollmentDetailDto>(enrollment);
         }
 
-        /// <inheritdoc />
+        // ======================
+        // UPDATE
+        // ======================
         public async Task<EnrollmentDetailDto?> UpdateAsync(Guid enrollmentId, UpdateEnrollmentDto dto)
         {
             var enrollment = await _repo.GetByIdAsync(enrollmentId);
             if (enrollment == null) return null;
 
             _mapper.Map(dto, enrollment);
-
             _repo.Update(enrollment);
             await _repo.SaveAsync();
+
+            // Invalidate relevant cache
+            _cache.Remove(CacheKeys.AllEnrollments);
+            _cache.Remove(CacheKeys.EnrollmentsByUser(enrollment.UserId));
+            _cache.Remove(CacheKeys.EnrollmentsByCourse(enrollment.CourseId));
 
             return _mapper.Map<EnrollmentDetailDto>(enrollment);
         }
 
-        /// <inheritdoc />
+        // ======================
+        // DELETE
+        // ======================
         public async Task<bool> DeleteAsync(Guid enrollmentId)
         {
             var enrollment = await _repo.GetByIdAsync(enrollmentId);
@@ -115,6 +156,11 @@ namespace CoursesManagement.Services
 
             _repo.Delete(enrollment);
             await _repo.SaveAsync();
+
+            // Invalidate cache
+            _cache.Remove(CacheKeys.AllEnrollments);
+            _cache.Remove(CacheKeys.EnrollmentsByUser(enrollment.UserId));
+            _cache.Remove(CacheKeys.EnrollmentsByCourse(enrollment.CourseId));
 
             return true;
         }
