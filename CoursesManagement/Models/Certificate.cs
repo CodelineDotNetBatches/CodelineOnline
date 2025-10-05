@@ -12,12 +12,12 @@ namespace CoursesManagement.Models
         [Required]
         public int CourseId { get; set; }
         [ForeignKey(nameof(CourseId))] // Navigation property to the associated course
-                                       // public Course Course { get; set; } = default!;
+        public Course Course { get; set; } = default!;
 
-        [Required]
-        public int UserId { get; set; } // Foreign key to the user who earned the certificate
-        [ForeignKey(nameof(UserId))] // Navigation property to the associated user
-                                     // public DemoUser User { get; set; } = default!;
+        //[Required]
+        //public int UserId { get; set; } // Foreign key to the user who earned the certificate
+        //[ForeignKey(nameof(UserId))] // Navigation property to the associated user
+        //public User User { get; set; } = default!;
 
 
         [Required]
