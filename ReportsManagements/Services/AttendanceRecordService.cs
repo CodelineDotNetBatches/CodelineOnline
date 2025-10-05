@@ -90,7 +90,8 @@ namespace ReportsManagements.Services
             existing.CheckOut = updated.CheckOut ?? existing.CheckOut;
             existing.ReviewStatus = updated.ReviewStatus ?? existing.ReviewStatus;
             existing.ReasonCodeId = updated.ReasonCodeId ?? existing.ReasonCodeId;
-            existing.GeolocationId = updated.GeolocationId ?? existing.GeolocationId;
+            existing.GeolocationId = updated.GeolocationId != 0 ? updated.GeolocationId : existing.GeolocationId;
+
 
             await _repo.UpdateAsync(existing);
             return existing;

@@ -25,9 +25,10 @@ namespace ReportsManagements.Models
         public double FaceMatchScore { get; set; } // Confidence score for face recognition
         //LivenessScore, GeolocationId, ReviewStatus, CreatedAt, CreatedBy, UploadedAt, UploadedBy.
         public double LivenessScore { get; set; } // Confidence score for liveness detection
-        public int? GeolocationId { get; set; }
+        [Required]
+        public int GeolocationId { get; set; }
         [ForeignKey(nameof(GeolocationId))]
-        public Geolocation Geolocation { get; set; } = null!;
+        public Geolocation? Geolocation { get; set; } = null!;
 
        
         public string ReviewStatus { get; set; }="pending"; // e.g., Pending, Approved, Rejected
