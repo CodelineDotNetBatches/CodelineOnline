@@ -1,21 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Models;
-using UserManagement.Repositories;
 
 namespace UserManagement.Repositories
 {
-    public class SkillRepository : GenericRepository<Skill>, ISkillRepository
+    /// <summary>
+    /// Repository implementation for Skill entity.
+    /// Provides CRUD operations plus trainee-skill linking logic.
+    /// </summary>
+    public class SkillRepository : GenericRepo<Skill>, ISkillRepository
     {
-        private readonly UsersDbContext _db; // optional, if you want direct access
+        private readonly UsersDbContext _db;
 
         public SkillRepository(UsersDbContext context) : base(context)
         {
             _db = context;
         }
 
+        /// <summary>
+        /// Gets all skills assigned to a specific trainee.
+        /// </summary>
         public async Task<IEnumerable<Skill>> GetSkillsByTraineeAsync(Guid traineeId)
         {
             return await _db.TraineeSkills
@@ -24,6 +31,9 @@ namespace UserManagement.Repositories
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Assigns a skill to a trainee (creates a record in TraineeSkills).
+        /// </summary>
         public async Task AssignSkillToTraineeAsync(Guid traineeId, int skillId)
         {
             var traineeSkill = new TraineeSkill

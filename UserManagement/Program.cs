@@ -1,21 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using UserManagement;
-using UserManagement.Controllers.Middleware;
-using UserManagement.Repositories;
-using UserManagement.Services;
-using AutoMapper;
-using Microsoft.Extensions.DependencyInjection; // for extension method
-using UserManagement.mapping;
-using UserManagement.Caching;
-
-using UserManagement.Controllers;
-using UserManagement.DTOs;
-using UserManagement.Models;
-using UserManagement.SeedData;
 using UserManagement.Repositories;
 using UserManagement.Services;
 using UserManagement.Mapping;
-using UserManagement;
+using UserManagement.Controllers.Middleware;
+using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
 
 namespace CodeLine_Online
 {
@@ -36,6 +26,9 @@ namespace CodeLine_Online
 
 
 
+            // ========================================
+            // 1. Database Context
+            // ========================================
             builder.Services.AddDbContext<UsersDbContext>(options =>
 
             options.UseSqlServer(
@@ -50,22 +43,32 @@ namespace CodeLine_Online
 
             builder.Services.AddMemoryCache();
             builder.Services.AddScoped<ICacheService, MemoryCacheService>();
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("Default"),
+                    sql => sql.MigrationsHistoryTable("__Migrations_App", "user_management")
+                )
+            );
 
             // ========================================
             // 3. Register Repositories
             // ========================================
+            builder.Services.AddScoped<ITraineeRepository, TraineeRepository>();
+            builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+            builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+            builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
             builder.Services.AddScoped<ISkillRepository, SkillRepository>();
             builder.Services.AddScoped<ITraineeRepository, TraineeRepository>();
             builder.Services.AddScoped<IBatchRepository, BatchRepository>();
             builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
             builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
 
-            // If you add a generic repository:
-            // builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-
             // ========================================
             // 4. Register Services
             // ========================================
+            builder.Services.AddScoped<ITraineeService, TraineeService>();
+            builder.Services.AddScoped<IBatchService, BatchService>();
+            builder.Services.AddScoped<IInstructorService, InstructorService>();
+            builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
             builder.Services.AddScoped<ISkillService, SkillService>();
             builder.Services.AddScoped<ITraineeService, TraineeService>();
             builder.Services.AddScoped<IBatchService, BatchService>();
@@ -74,6 +77,7 @@ namespace CodeLine_Online
 
             // ========================================
             // 5. AutoMapper
+            // 4. AutoMapper Profiles
             // ========================================
             //builder.Services.AddAutoMapper(typeof(SkillTraineeMappingProfiles));
 
@@ -85,30 +89,21 @@ namespace CodeLine_Online
 
             // ========================================
             // 6. Controllers + Swagger 
+            // 5. Middleware, Controllers, Swagger
             // ========================================
+            builder.Services.AddMemoryCache();
+            builder.Services.AddTransient<ErrorHandlingMiddleware>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // ========================================
-            // 7. Error Handling Middleware
-            //===================================
-
-
-            builder.Services.AddTransient<ErrorHandlingMiddleware>();
-
-            // ========================================
-            // 8. Build the app
-            // ========================================
-
             var app = builder.Build();
-
-
-            // Configure the HTTP request pipeline.
 
             // ========================================
             // 1. Configure Middleware Pipeline
             // ========================================
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -117,9 +112,6 @@ namespace CodeLine_Online
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
-
-            app.UseMiddleware<ErrorHandlingMiddleware>();
-
             app.MapControllers();
 
             app.Run();
