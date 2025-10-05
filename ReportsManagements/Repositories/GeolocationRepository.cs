@@ -39,9 +39,10 @@ namespace ReportsManagements.Repositories
         public async Task<bool> DeleteAsync(int id)
         {
             var geolocation = await _context.Geolocations.FindAsync(id);
-            if (geolocation != null) 
+            if (geolocation==null) 
             return false;
-            _context.Geolocations.Remove(geolocation);
+
+            geolocation.IsActive = false;
             await _context.SaveChangesAsync();
             return true;
         }

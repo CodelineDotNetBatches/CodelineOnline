@@ -48,7 +48,7 @@ namespace ReportsManagements.Repositories
             if (branch != null)
             {
                 // For soft delete,we set IsActive to false instead of removing the record
-                _context.Branches.Remove(branch);
+                branch.IsActive = false;
                 await _context.SaveChangesAsync();
 
             }
