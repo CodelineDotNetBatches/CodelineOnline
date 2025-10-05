@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReportsManagements;
 
@@ -11,9 +12,11 @@ using ReportsManagements;
 namespace ReportsManagements.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    partial class ReportsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251002115056_AddPendingChanges")]
+    partial class AddPendingChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,10 +76,11 @@ namespace ReportsManagements.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UploadedAt")
+                    b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UploadedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AttId");
@@ -195,33 +199,6 @@ namespace ReportsManagements.Migrations
                     b.ToTable("FileStorages", "reports");
                 });
 
-            modelBuilder.Entity("ReportsManagements.Models.GeoRadiusAudit", b =>
-                {
-                    b.Property<int>("GeoRadiusAuditId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GeoRadiusAuditId"));
-
-                    b.Property<DateTime>("ChangedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GeolocationId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("NewRadius")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("OldRadius")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("GeoRadiusAuditId");
-
-                    b.HasIndex("GeolocationId");
-
-                    b.ToTable("GeoRadiusAudits", "reports");
-                });
-
             modelBuilder.Entity("ReportsManagements.Models.Geolocation", b =>
                 {
                     b.Property<int>("GeolocationId")
@@ -253,8 +230,6 @@ namespace ReportsManagements.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("GeolocationId");
-
-                    b.HasIndex("BranchId");
 
                     b.ToTable("Geolocations", "reports");
                 });
@@ -363,29 +338,6 @@ namespace ReportsManagements.Migrations
                     b.Navigation("Geolocation");
 
                     b.Navigation("ReasonCode");
-                });
-
-            modelBuilder.Entity("ReportsManagements.Models.GeoRadiusAudit", b =>
-                {
-                    b.HasOne("ReportsManagements.Models.Geolocation", null)
-                        .WithMany()
-                        .HasForeignKey("GeolocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ReportsManagements.Models.Geolocation", b =>
-                {
-                    b.HasOne("ReportsManagements.Models.Branch", null)
-                        .WithMany("Geolocations")
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ReportsManagements.Models.Branch", b =>
-                {
-                    b.Navigation("Geolocations");
                 });
 
             modelBuilder.Entity("ReportsManagements.Models.Geolocation", b =>

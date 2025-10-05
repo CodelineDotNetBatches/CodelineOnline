@@ -24,11 +24,20 @@ namespace ReportsManagements.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AttendanceRecordCreateDto dto)
         {
-            var record = _mapper.Map<AttendanceRecord>(dto);
+            var entity = _mapper.Map<AttendanceRecord>(dto);
+
+            try
+            {
+                var record = _mapper.Map<AttendanceRecord>(dto);
             var created = await _service.CreateAsync(record);
             var result = _mapper.Map<AttendanceRecordDto>(created);
 
             return CreatedAtAction(nameof(GetById), new { id = result.AttId }, result);
+        }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         // GET: api/v1/attendance/{id}
@@ -40,6 +49,14 @@ namespace ReportsManagements.Controllers
                 return NotFound();
 
             return Ok(_mapper.Map<AttendanceRecordDto>(record));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFiltered([FromQuery] int? studentId, [FromQuery] int? sessionId,
+           [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate, [FromQuery] string? reviewStatus)
+        {
+            var results = await _service.GetFilteredAsync(studentId, sessionId, fromDate, toDate, reviewStatus);
+            return Ok(results.Select(r => _mapper.Map<AttendanceRecordDto>(r)));
         }
 
         // PUT: api/v1/attendance/{id}
@@ -66,5 +83,37 @@ namespace ReportsManagements.Controllers
 
             return NoContent();
         }
+        // POST: api/v1/attendance/{id}/checkout
+        [HttpPost("{id}/checkout")]
+        public async Task<IActionResult> Checkout(int id, [FromBody] CheckoutDto dto)
+        {
+            try
+            {
+                var r = await _service.CheckoutAsync(id, dto.CheckOut);
+                if (r == null) return NotFound();
+                return Ok(_mapper.Map<AttendanceRecordDto>(r));
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+        // POST: api/v1/attendance/{id}/review
+        [HttpPost("{id}/review")]
+        public async Task<IActionResult> Review(int id, [FromBody] ReviewDto dto)
+        {
+            try
+            {
+                var r = await _service.ReviewAsync(id, dto.ReviewStatus, dto.ReviewedBy);
+                if (r == null) return NotFound();
+                return Ok(_mapper.Map<AttendanceRecordDto>(r));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
     }
 }
