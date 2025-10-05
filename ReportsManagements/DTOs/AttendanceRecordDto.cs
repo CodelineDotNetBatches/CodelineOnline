@@ -7,7 +7,7 @@
             public int SessionId { get; set; }
             public int StudentId { get; set; }
 
-            public DateTime CheckIn { get; set; }
+            public DateTime? CheckIn { get; set; }
             public DateTime? CheckOut { get; set; }
 
             public string Status { get; set; }   // Present, Absent, Late
@@ -22,7 +22,7 @@
             public DateTime CreatedAt { get; set; }
             public string CreatedBy { get; set; }
 
-            public DateTime UploadedAt { get; set; }
+            public DateTime? UploadedAt { get; set; }
             public string UploadedBy { get; set; }
         }
     }
