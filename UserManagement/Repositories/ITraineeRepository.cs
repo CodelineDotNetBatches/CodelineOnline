@@ -2,9 +2,6 @@
 
 namespace UserManagement.Repositories
 {
-    /// <summary>
-    /// Repository interface for managing trainees.
-    /// </summary>
     public interface ITraineeRepository
     {
         Task<IEnumerable<Trainee>> GetAllAsync();
@@ -12,5 +9,11 @@ namespace UserManagement.Repositories
         Task AddAsync(Trainee trainee);
         Task UpdateAsync(Trainee trainee);
         Task DeleteAsync(Guid id);
+
+        // Custom methods
+        Task<Trainee?> GetByIdWithSkillsAsync(Guid traineeId);
+        Task SaveAsync(); //No parameter here
+     
+        
     }
 }

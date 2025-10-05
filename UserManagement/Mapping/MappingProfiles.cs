@@ -9,7 +9,6 @@ namespace UserManagement.Mapping
         public SkillTraineeMappingProfiles()
         {
             CreateMap<Skill, SkillDto>().ReverseMap();
-            CreateMap<TraineeSkill, TraineeSkillDto>().ReverseMap();
         }
     }
 }

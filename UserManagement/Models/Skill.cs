@@ -1,15 +1,23 @@
 ﻿
 
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
 namespace UserManagement.Models
 {
     public class Skill
     {
+        [Key]
         public int SkillId { get; set; }
-        public string SkillName { get; set; } = string.Empty;
-        public int SkillLevel { get; set; }
-        public int MonthsOfExperience { get; set; }
-
-        // Relationships
-        public ICollection<TraineeSkill> TraineeSkills { get; set; } = new List<TraineeSkill>();
+        [Required]
+        public string SkillName { get; set; }
+        public string? SkillLevel { get; set; }
+        public int? MonthsOfExperience { get; set; }
+        // Foreign Key reference to the user
+        [ForeignKey("Trainee")]
+        public int UserId { get; set; }
+        // Navigation property
+        public Trainee? Trainee { get; set; }
     }
+
 }

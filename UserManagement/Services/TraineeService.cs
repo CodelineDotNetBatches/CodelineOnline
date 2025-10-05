@@ -27,7 +27,8 @@ namespace UserManagement.Services
                 EducationalBackground = t.EducationalBackground,
                 TraineeCV = t.TraineeCV,
                 LearningObjectives = t.LearningObjectives,
-                ExperienceLevel = t.ExperienceLevel
+                ExperienceLevel = t.Experience_Level.ToString()
+
             });
         }
 
@@ -44,7 +45,7 @@ namespace UserManagement.Services
                 EducationalBackground = t.EducationalBackground,
                 TraineeCV = t.TraineeCV,
                 LearningObjectives = t.LearningObjectives,
-                ExperienceLevel = t.ExperienceLevel
+                
             };
         }
 
@@ -58,7 +59,8 @@ namespace UserManagement.Services
                 EducationalBackground = dto.EducationalBackground,
                 TraineeCV = dto.TraineeCV,
                 LearningObjectives = dto.LearningObjectives,
-                ExperienceLevel = dto.ExperienceLevel
+                Experience_Level = Enum.Parse<ExperienceLevel>(dto.ExperienceLevel)
+
             };
 
             await _repository.AddAsync(trainee);
@@ -76,7 +78,8 @@ namespace UserManagement.Services
             trainee.EducationalBackground = dto.EducationalBackground;
             trainee.TraineeCV = dto.TraineeCV;
             trainee.LearningObjectives = dto.LearningObjectives;
-            trainee.ExperienceLevel = dto.ExperienceLevel;
+            trainee.Experience_Level = Enum.Parse<ExperienceLevel>(dto.ExperienceLevel);
+
 
             await _repository.UpdateAsync(trainee);
 
