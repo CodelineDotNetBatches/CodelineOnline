@@ -10,8 +10,9 @@
         public DateTime IssuedAt { get; set; }
 
         // Optionally extend with related info later:
-        // public string? CourseTitle { get; set; }
-        // public string? UserFullName { get; set; }
+        public string? CourseName { get; set; }
+        public string? UserName { get; set; }
+        public DateTime IssuedDate => IssuedAt;
     }
 }
 
