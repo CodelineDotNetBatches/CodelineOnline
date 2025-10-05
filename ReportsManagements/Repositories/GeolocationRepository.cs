@@ -56,5 +56,8 @@ namespace ReportsManagements.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> GetGeolocationsCountAsync() => await _context.Geolocations.CountAsync();
+        public async Task<int> GetActiveGeolocationsCountAsync() => await _context.Geolocations.CountAsync(g => g.IsActive);
+
     }
 }

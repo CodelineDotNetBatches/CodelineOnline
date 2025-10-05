@@ -10,5 +10,8 @@ namespace ReportsManagements.Repositories
         Task<Geolocation?> GetByIdAsync(int id);
         Task<Geolocation> UpdateAsync(Geolocation geolocation);
         Task AddAuditAsync(GeoRadiusAudit audit);
+
+        Task<int> GetGeolocationsCountAsync();
+        Task<int> GetActiveGeolocationsCountAsync();
     }
 }

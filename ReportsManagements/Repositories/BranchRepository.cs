@@ -64,8 +64,25 @@ namespace ReportsManagements.Repositories
 
             return branch?.Geolocations ?? new List<Geolocation>();
         }
+        public async Task<int> GetBranchesCountAsync()
+        {
+            return await _context.Branches.CountAsync();
+        }
 
+        public async Task<int> GetActiveBranchesCountAsync()
+        {
+            return await _context.Branches.CountAsync(b => b.IsActive);
+        }
 
+        public Task<int> GetBranchCountAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetActiveBranchCountAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ReportsManagements.Models;
 using ReportsManagements.Repositories;
 using ReportsManagements.Services;
@@ -11,6 +12,7 @@ namespace ReportsManagements.Controllers
     {
         private readonly IGeoValidationService _geoService;
         private readonly IGeolocationRepository _geoRepo;
+        private readonly IBranchRepository _branchRepo;
 
         public GeoController(IGeoValidationService geoService, IGeolocationRepository geoRepo)
         {
@@ -41,5 +43,24 @@ namespace ReportsManagements.Controllers
                 return Ok(new { isInside }
             );
         }
+        [HttpGet("health")]
+        public async Task<IActionResult> GetHealth()
+        {
+            var branchesCount = await _branchRepo.GetBranchCountAsync();
+            var activeBranches = await _branchRepo.GetActiveBranchCountAsync();
+            var geolocationsCount = await _geoRepo.GetGeolocationsCountAsync();
+            var activeGeolocations = await _geoRepo.GetActiveGeolocationsCountAsync();
+
+            var result = new
+            {
+                branchesCount,
+                activeBranches,
+                geolocationsCount,
+                activeGeolocations
+            };
+            return Ok(result);
+        }
+        
+
     }
 }
