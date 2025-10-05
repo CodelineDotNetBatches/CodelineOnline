@@ -17,9 +17,9 @@ namespace UserManagement
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Availability> Availabilities { get; set; }
         public DbSet<Batch> Batches { get; set; }
-        public DbSet<BatchTrainee> BatchTrainees { get; set; }
+     
         public DbSet<Skill> Skills { get; set; }
-        public DbSet<TraineeSkill> TraineeSkills { get; set; }
+        
 
         public DbSet<Admin_Profile> AdminProfiles { get; set; }
 
@@ -102,38 +102,13 @@ namespace UserManagement
             // 5. BatchTrainee entity configuration
             // ==================================================
 
-            // BatchTrainee config (composite PK)
-            mb.Entity<BatchTrainee>(entity =>
-            {
-                entity.HasKey(bt => new { bt.BatchId, bt.TraineeId });
-
-                entity.HasOne(bt => bt.Batch)
-                      .WithMany(b => b.BatchTrainees)
-                      .HasForeignKey(bt => bt.BatchId);
-
-                entity.HasOne(bt => bt.Trainee)
-                      .WithMany(t => t.BatchTrainees)
-                      .HasForeignKey(bt => bt.TraineeId);
-            });
+           
 
             // ==================================================
             // 6. TraineeSkill entity configuration
             // ==================================================
 
-            // TraineeSkill config (many-to-many Trainee <-> Skill)
-            mb.Entity<TraineeSkill>(entity =>
-            {
-                entity.HasKey(ts => new { ts.TraineeId, ts.SkillId });
-
-                entity.HasOne(ts => ts.Trainee)
-                      .WithMany(t => t.TraineeSkills)
-                      .HasForeignKey(ts => ts.TraineeId);
-
-                entity.HasOne(ts => ts.Skill)
-                      .WithMany(s => s.TraineeSkills)
-                      .HasForeignKey(ts => ts.SkillId);
-            });
-
+            
 
 
             // ==============================================
@@ -143,8 +118,8 @@ namespace UserManagement
 
             InstructorsSeedData.InstructorsSeed(mb);
             AvailabilitiesSeedData.AvailabilitiesSeed(mb);
-            // Batches + Trainees + BatchTrainee
-            Batches_Trainees_BatchTrainee_SeedData.BatchesTraineesBatchTraineeSeedData(mb);
+            
+            
         }
     }
 }

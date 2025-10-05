@@ -7,7 +7,7 @@ using UserManagement.DTOs;
 namespace UserManagement.Mapping
 {
     // AutoMapper profile to configure mapping rules
-    public class AdminProfileMapping : Profile
+
     /// <summary>
     /// AutoMapper profile for Admin_Profile entity and DTO mapping.
     /// </summary>

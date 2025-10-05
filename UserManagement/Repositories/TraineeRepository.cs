@@ -1,10 +1,13 @@
 ﻿using UserManagement.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace UserManagement.Repositories
 {
     /// <summary>
-    /// Repository for trainee persistence.
+    /// Repository for trainee persistence and skill relations.
     /// </summary>
     public class TraineeRepository : ITraineeRepository
     {
@@ -15,10 +18,15 @@ namespace UserManagement.Repositories
             _context = context;
         }
 
+        // =========================================================
+        // BASIC CRUD
+        // =========================================================
 
         public async Task<IEnumerable<Trainee>> GetAllAsync()
         {
-            return await _context.Trainees.ToListAsync();
+            return await _context.Trainees
+                .Include(t => t.Skills) // Include related Skills
+                .ToListAsync();
         }
 
         public async Task<Trainee?> GetByIdAsync(Guid id)
@@ -46,6 +54,28 @@ namespace UserManagement.Repositories
                 _context.Trainees.Remove(trainee);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        // =========================================================
+        // CUSTOM METHODS
+        // =========================================================
+
+        /// <summary>
+        /// Loads a trainee by ID including related skills (for assignment logic).
+        /// </summary>
+        public async Task<Trainee?> GetByIdWithSkillsAsync(Guid traineeId)
+        {
+            return await _context.Trainees
+                .Include(t => t.Skills)
+                .FirstOrDefaultAsync(t => t.TraineeId == traineeId);
+        }
+
+        /// <summary>
+        /// Saves pending changes asynchronously (used by service layer).
+        /// </summary>
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

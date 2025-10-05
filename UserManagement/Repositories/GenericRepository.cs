@@ -1,29 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using UserManagement.Repos; // Adjust if your interface is under a different folder/namespace
-using UserManagement.Models; // Optional if entities are here
 
 namespace UserManagement.Repositories
 {
-    /// <summary>
-    /// Generic repository implementation for common CRUD operations.
-    /// </summary>
-    /// <typeparam name="T">The entity type (e.g., User, Role, Skill).</typeparam>
-    public class GenericRepo<T> : IGenericRepo<T> where T : class
+    public class GenericRepository<T> : IGenericRepo<T> where T : class
     {
-        protected readonly UsersDbContext _context; // fixed from CoursesDbContext
+        protected readonly UsersDbContext _context;
         protected readonly DbSet<T> _dbSet;
 
-        public GenericRepo(UsersDbContext context)
+        public GenericRepository(UsersDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>();
+            _dbSet = _context.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public IQueryable<T> GetAll()
         {
-            return await _dbSet.ToListAsync();
+            return _dbSet.AsQueryable();
         }
 
         public async Task<T?> GetByIdAsync(int id)
@@ -44,6 +38,11 @@ namespace UserManagement.Repositories
         public void Delete(T entity)
         {
             _dbSet.Remove(entity);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

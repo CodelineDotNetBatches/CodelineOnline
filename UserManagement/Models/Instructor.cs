@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace UserManagement.Models
 {
-    public enum ExperienceLevel
+    public enum Experience_Level
     {
         Junior,
         Mid,
@@ -41,7 +41,7 @@ namespace UserManagement.Models
 
         [MaxLength(50)]
         public string GithubUserName { get; set; } = string.Empty;
-        
+
         [Required]
         [Range(0, 60)]
         public int Years_of_Experience { get; set; }
@@ -68,8 +68,12 @@ namespace UserManagement.Models
 
         // navigation property
         public ICollection<Availability> Availabilities { get; set; }
+
+        // 🔗 Many-to-Many: 
+        public ICollection<Skill> Skills { get; set; } = new List<Skill>();
+
     }
 
-    
+
 
 }

@@ -1,48 +1,27 @@
 using Microsoft.EntityFrameworkCore;
-using UserManagement;
-using UserManagement.Repositories;
-using UserManagement.Services;
-using UserManagement.Mapping;
-using UserManagement.Controllers.Middleware;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
+
+using UserManagement;                       // UsersDbContext
+using UserManagement.Caching;               // ICacheService, MemoryCacheService
+using UserManagement.Repositories;          // Repos interfaces & impls
+using UserManagement.Services;              // Services interfaces & impls
+using UserManagement.Mapping;               // AutoMapper profiles (BatchMapping, etc.)
+using UserManagement.Controllers.Middleware;// ErrorHandlingMiddleware
+using UserManagement.SeedData;              // BatchSeedData, TraineeSeedData, InstructorsSeedData, SkillSeedData, AvailabilitiesSeedData
 
 namespace CodeLine_Online
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // ========================================
-            // 1. Database Context
-            // ========================================
-
-            // Add services to the container.
-            //options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
-            //sql => sql.MigrationsHistoryTable("__Migrations_App")));
-
-
-
-
-            // ========================================
-            // 1. Database Context
+            // 1) Database Context
             // ========================================
             builder.Services.AddDbContext<UsersDbContext>(options =>
-
-            options.UseSqlServer(
-                            builder.Configuration.GetConnectionString("Default"),
-                            sql => sql.MigrationsHistoryTable("__Migrations_App", "user_management")
-
-            ));
-
-            // ========================================
-            // 2. Caching: In-Memory
-            // ==========================================
-
-            builder.Services.AddMemoryCache();
-            builder.Services.AddScoped<ICacheService, MemoryCacheService>();
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("Default"),
                     sql => sql.MigrationsHistoryTable("__Migrations_App", "user_management")
@@ -50,48 +29,37 @@ namespace CodeLine_Online
             );
 
             // ========================================
-            // 3. Register Repositories
+            // 2) Caching
+            // ========================================
+            builder.Services.AddMemoryCache();
+            builder.Services.AddScoped<ICacheService, MemoryCacheService>();
+
+            // ========================================
+            // 3) Repositories
             // ========================================
             builder.Services.AddScoped<ITraineeRepository, TraineeRepository>();
             builder.Services.AddScoped<IBatchRepository, BatchRepository>();
             builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
             builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
             builder.Services.AddScoped<ISkillRepository, SkillRepository>();
-            builder.Services.AddScoped<ITraineeRepository, TraineeRepository>();
-            builder.Services.AddScoped<IBatchRepository, BatchRepository>();
-            builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
-            builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
 
             // ========================================
-            // 4. Register Services
+            // 4) Services
             // ========================================
             builder.Services.AddScoped<ITraineeService, TraineeService>();
             builder.Services.AddScoped<IBatchService, BatchService>();
             builder.Services.AddScoped<IInstructorService, InstructorService>();
             builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
             builder.Services.AddScoped<ISkillService, SkillService>();
-            builder.Services.AddScoped<ITraineeService, TraineeService>();
-            builder.Services.AddScoped<IBatchService, BatchService>();
-            builder.Services.AddScoped<IInstructorService, InstructorService>();
-            builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
 
             // ========================================
-            // 5. AutoMapper
-            // 4. AutoMapper Profiles
+            // 5) AutoMapper (scan all profiles in Mapping assembly)
             // ========================================
-            //builder.Services.AddAutoMapper(typeof(SkillTraineeMappingProfiles));
-
-            builder.Services.AddAutoMapper(
-                typeof(AvailabilityMappingProfile).Assembly,
-                typeof(InstructorMappingProfile).Assembly,
-                typeof(SkillTraineeMappingProfiles).Assembly
-            );
+            builder.Services.AddAutoMapper(typeof(BatchMapping).Assembly);
 
             // ========================================
-            // 6. Controllers + Swagger 
-            // 5. Middleware, Controllers, Swagger
+            // 6) Controllers, Swagger, Middleware
             // ========================================
-            builder.Services.AddMemoryCache();
             builder.Services.AddTransient<ErrorHandlingMiddleware>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -100,7 +68,22 @@ namespace CodeLine_Online
             var app = builder.Build();
 
             // ========================================
-            // 1. Configure Middleware Pipeline
+            // 7) Apply Migrations & Seed Data
+            // ========================================
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+                await db.Database.MigrateAsync();
+
+                // Order matters: batches -> trainees -> other related seeds
+                await BatchSeedData.SeedAsync(db);
+                await TraineeSeedData.SeedAsync(db);
+
+           
+            }
+
+            // ========================================
+            // 8) Middleware Pipeline
             // ========================================
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
@@ -114,7 +97,7 @@ namespace CodeLine_Online
             app.UseAuthorization();
             app.MapControllers();
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }
