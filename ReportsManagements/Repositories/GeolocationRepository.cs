@@ -50,11 +50,11 @@ namespace ReportsManagements.Repositories
             return true;
         }
 
-        //public async Task AddAuditAsync(GeolocationAudit audit)
-        //{
-        //    _context.GeolocationAudits.Add(audit);
-        //    await _context.SaveChangesAsync();
-        //}
+        public async Task AddAuditAsync(GeoRadiusAudit audit)
+        {
+            _context.GeoRadiusAudits.Add(audit);
+            await _context.SaveChangesAsync();
+        }
 
     }
 }
