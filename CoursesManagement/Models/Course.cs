@@ -32,12 +32,12 @@ namespace CoursesManagement.Models
         //every course belongs to one category ... one to many relationship
         public int CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
-        public Category Category { get; set; } = default!;
+        public virtual Category Category { get; set; } = default!;
 
         //every course is belongs to many programs ... many to many relationship ...
-        //public ICollection<Programs> Programs { get; set; } = new List<Programs>();
+        public virtual ICollection<Programs?> Programs { get; set; } = new List<Programs>();
         //every course has many enrollments ... many to many relationship ...
-        //public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        public virtual ICollection<Enrollment?> Enrollments { get; set; } = new List<Enrollment>();
         //every course has many notification ... one to many relationship ...
         //public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         //every course has many UserProgress ... many to many relationship ...
