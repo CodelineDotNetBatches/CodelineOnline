@@ -53,6 +53,17 @@ namespace ReportsManagements.Repositories
 
             }
         }
+
+        public async Task<IEnumerable<Geolocation>> GetBranchGeolocationsAsync(int branchId)
+        {
+            var branch = await _context.Branches
+                .Include(b => b.Geolocations)
+                .FirstOrDefaultAsync(b => b.BranchId == branchId);
+
+            return branch?.Geolocations ?? new List<Geolocation>();
+        }
+
+
     }
 
 
