@@ -35,6 +35,7 @@ namespace ReportsManagements.Models
         public string CreatedBy { get; set; } = "";
         public DateTime? UploadedAt { get; set; } 
       public string?  UploadedBy { get; set; } = "";
+        public bool IsDeleted { get; set; } = false;
 
 
     }
