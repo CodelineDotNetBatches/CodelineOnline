@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReportsManagements.DTOs;
 using ReportsManagements.Models;
 using ReportsManagements.Repositories;
 using ReportsManagements.Services;
@@ -14,35 +15,37 @@ namespace ReportsManagements.Controllers
         private readonly IGeolocationRepository _geoRepo;
         private readonly IBranchRepository _branchRepo;
 
-        public GeoController(IGeoValidationService geoService, IGeolocationRepository geoRepo)
+        public GeoController(IGeoValidationService geoService, IGeolocationRepository geoRepo,IBranchRepository branchRepository)
         {
             _geoService = geoService;
             _geoRepo = geoRepo;
+            _branchRepo = branchRepository;
         }
 
-        // Endpoint to check if a point is within a circle
-        //POST /api/v1/geo/validate
         [HttpPost("validate")]
-        public async Task<IActionResult> Validate([FromBody] Geolocation request)
+        public async Task<IActionResult> Validate([FromBody] GeoValidateRequest request)
         {
             var geo = await _geoRepo.GetByIdAsync(request.GeolocationId);
             if (geo == null)
                 return NotFound("Geolocation not found.");
 
-            if(!double.TryParse(geo.Latitude, out double centerLat) || !double.TryParse(geo.Longitude, out double centerLon))
+            if (!double.TryParse(request.Latitude, out double lat) || !double.TryParse(request.Longitude, out double lon))
+                return BadRequest("Invalid coordinates.");
+
+            if (!double.TryParse(geo.Latitude, out double centerLat) || !double.TryParse(geo.Longitude, out double centerLon))
                 return BadRequest("Invalid geolocation coordinates.");
 
             var isInside = _geoService.IsPointInsideCircle(
-                double.Parse(request.Latitude),
-                double.Parse(request.Longitude),
+                lat,
+                lon,
                 centerLat,
                 centerLon,
                 (double)geo.RediusMeters,
                 out double distanceMeters);
 
-                return Ok(new { isInside }
-            );
+            return Ok(new { isInside, distanceMeters });
         }
+
         [HttpGet("health")]
         public async Task<IActionResult> GetHealth()
         {

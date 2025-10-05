@@ -74,15 +74,16 @@ namespace ReportsManagements.Repositories
             return await _context.Branches.CountAsync(b => b.IsActive);
         }
 
-        public Task<int> GetBranchCountAsync()
+        public async Task<int> GetBranchCountAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Branches.CountAsync();
         }
 
-        public Task<int> GetActiveBranchCountAsync()
+        public async Task<int> GetActiveBranchCountAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Branches.CountAsync(b => b.IsActive);
         }
+
     }
 
 
