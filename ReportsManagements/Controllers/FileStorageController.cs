@@ -1,19 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReportsManagements.Models;
 using ReportsManagements.Repositories;
+using ReportsManagements.Services;
+using ReportsManagements.DTOs;
+using System.Threading.RateLimiting;
 
 namespace ReportsManagements.Controllers
 {
     // API controller for managing file storage operations
-    [Route("api/files")]
+    [Route("api/v1/files")]
     [ApiController] 
     public class FileStorageController : ControllerBase
     {
         // Dependency on the file storage repository
         private readonly IFileStorageRepository _repository;
+        private readonly IFileCodeService _fileCodeService;
+        private readonly UploadRateLimiterService _rateLimiter;
 
-        public FileStorageController(IFileStorageRepository fileStorageRepository)
+
+        public FileStorageController(IFileStorageRepository fileStorageRepository, IFileCodeService fileCodeService, UploadRateLimiterService rateLimiter)
         {
             _repository = fileStorageRepository;
+            _fileCodeService = fileCodeService;
+            _rateLimiter = rateLimiter;
         }
 
         // GET: api/files
@@ -38,10 +47,37 @@ namespace ReportsManagements.Controllers
         // POST: api/files
         // Creates a new file storage record
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Models.FileStorage file)
+        public async Task<IActionResult> Create([FromBody] FileStorage file)
         {
+            string userKey = User.Identity?.Name ?? HttpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
+
+            if (!_rateLimiter.CanUpload(userKey))
+            {
+                return BadRequest(new ErrorResponse
+                {
+                    Status = 429,
+                    Code = "RATE_LIMIT_EXCEEDED",
+                    Message = "Upload limit exceeded. Try again later."
+                });
+            }
+
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ErrorResponse
+                {
+                    Status = 400,
+                    Code = "INVALID_MODEL",
+                    Message = "Invalid data format",
+                    Details = ModelState
+                });
+
+            if (!_fileCodeService.IsValidFile(file.FileName, file.FileSize))
+                return BadRequest(new ErrorResponse
+                {
+                    Status = 400,
+                    Code = "BadRequest",
+                    Message = "File type or size not allowed",
+                    Details = new { file.FileName, file.FileSize }
+                });
 
             await _repository.AddAsync(file);
             return CreatedAtAction(nameof(GetById), new { id = file.FileStorageId }, file);
@@ -50,7 +86,7 @@ namespace ReportsManagements.Controllers
         // PUT: api/files/{id}
         // Updates an existing file storage record
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Models.FileStorage file)
+        public async Task<IActionResult> Update(int id, [FromBody] FileStorage file)
         {
             if (id != file.FileStorageId) return BadRequest();
             await _repository.UpdateAsync(file);
@@ -72,13 +108,37 @@ namespace ReportsManagements.Controllers
         // POST: api/files/presign
         // Generates a presigned URL for file upload 
         [HttpPost("presign")]
-        public IActionResult Presign()
+        public IActionResult Presign([FromBody] FileDto fileDto)
         {
-            // Placeholder for presign logic
-            var dummyUrl = "https://dummy-storage.com/upload/fake-presigned-url";
+            if (!_fileCodeService.IsValidFile(fileDto.FileName, fileDto.FileSize))
+                return BadRequest(new ErrorResponse
+                {
+                    Status = 400,
+                    Code = "INVALID_FILE_METADATA",
+                    Message = "Invalid file metadata",
+                    Details = new { fileDto.FileName, fileDto.FileSize }
+                });
 
-            return Ok(new { url = dummyUrl }); // Return the dummy presigned URL
+            // Placeholder for presign logic
+            var dummyUrl = $"https://dummy-storage.com/upload/{Guid.NewGuid()}-{fileDto.FileName}";
+
+            return Ok(new
+            {
+                url = dummyUrl,
+                fileDto.FileName,
+                fileDto.FileSize,
+                fileDto.UploadedBy
+            });
         }
+
+        [HttpGet("{id}/download")]
+        public async Task<IActionResult> Download(int id)
+        {
+            var file = await _repository.GetByIdAsync(id);
+            if (file == null) return NotFound();
+            return Redirect(file.Url);
+        }
+
 
     }
 }
