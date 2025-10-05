@@ -33,6 +33,10 @@ namespace ReportsManagements
             builder.Services.AddScoped<ITrainerReportRepository, TrainerReportRepository>();
             builder.Services.AddScoped<ICourseReportRepository, CourseReportRepository>();
             builder.Services.AddScoped<IReportsService, ReportsService>();
+            builder.Services.AddScoped<IReasonCodeRepository, ReasonCodeRepository>();
+            builder.Services.AddScoped<IFileStorageRepository, FileStorageRepository>();
+            builder.Services.AddScoped<IFileCodeService, FileCodeService>();
+           
             // DbContext
             builder.Services.AddDbContext<ReportsDbContext>(options =>
                 options.UseSqlServer(
@@ -40,9 +44,6 @@ namespace ReportsManagements
                     sql => sql.MigrationsHistoryTable("__Migrations_App")
                 )
             );
-
-            //builder.Services.AddSingleton<IReasonCodeRepository>(new ReasonCodeRepository(context));
-            //builder.Services.AddSingleton<IFileStorageRepository>(new FileStorageRepository(context));
 
             //// ????? Repositories ?? Singleton
             //builder.Services.AddSingleton<IBranchRepository>(new BranchRepository(context));
@@ -86,23 +87,6 @@ namespace ReportsManagements
             }
 
             app.Run();
-        }
-
-        private static async Task PrintSeedData(ReportsDbContext context)
-        {
-            var allReasons = await context.ReasonCodes.ToListAsync();
-            Console.WriteLine("Reason Codes:");
-            foreach (var r in allReasons)
-            {
-                Console.WriteLine($"{r.ReasonCodeId} - {r.Name} ({r.Code}) - {r.Category}");
-            }
-
-            var allFiles = await context.FileStorages.ToListAsync();
-            Console.WriteLine("\nFile Storage:");
-            foreach (var f in allFiles)
-            {
-                Console.WriteLine($"{f.FileStorageId} - {f.FileName} - {f.Url} - Uploaded by {f.UploadedBy}");
-            }
         }
     }
 }
