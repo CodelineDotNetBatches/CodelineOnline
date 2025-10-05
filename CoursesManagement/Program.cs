@@ -12,8 +12,12 @@ namespace CoursesManagement
 
             // Add services to the container.
             builder.Services.AddDbContext<CoursesDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
-                sql => sql.MigrationsHistoryTable("__Migrations_App", "Courses"))); 
+                options.UseLazyLoadingProxies() //to enable Lazy Loading ...
+                       .UseSqlServer(
+                           builder.Configuration.GetConnectionString("Default"),
+                           sql => sql.MigrationsHistoryTable("__Migrations_App", "Courses")
+                       ));
+
 
 
             builder.Services.AddControllers();
