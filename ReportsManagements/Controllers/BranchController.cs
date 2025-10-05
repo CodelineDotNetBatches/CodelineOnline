@@ -9,7 +9,7 @@ namespace ReportsManagements.Controllers
     public class BranchController : ControllerBase
     {
         private readonly IBranchRepository _repo;
-        
+
 
         public BranchController(IBranchRepository repo)
         {
@@ -73,12 +73,28 @@ namespace ReportsManagements.Controllers
         {
             var geolocations = await _repo.GetBranchGeolocationsAsync(id);
 
-            if(geolocations==null|| !geolocations.Any())
+            if (geolocations == null || !geolocations.Any())
                 return NotFound($"No geolocations found for Branch with ID:{id}");
 
             return Ok(geolocations);
 
         }
 
-}
+        [HttpGet("{id}/report")]
+        public async Task<IActionResult> GetBranchReport(int id)
+        {
+            var branch = await _repo.GetByIdAsync(id);
+            if (branch == null)
+                return NotFound($"Branch with ID:{id} not found");
+            var report = new
+            {
+                BranchId = branch.BranchId,
+                BranchName = branch.Name,
+
+                Geolocations = await _repo.GetBranchGeolocationsAsync(id)
+            };
+
+            return Ok(report);
+        }
+    }
 }
