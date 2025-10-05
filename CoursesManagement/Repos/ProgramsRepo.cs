@@ -15,7 +15,7 @@ namespace CoursesManagement.Repos
         }
 
         // Program-specific queries:
-       
+
         public async Task<Programs?> GetProgramWithCoursesAsync(Guid programId)
         {
             return await _context.Programs
@@ -23,6 +23,7 @@ namespace CoursesManagement.Repos
                 .ThenInclude(c => c.Courses)  // Drill deeper
                 .FirstOrDefaultAsync(p => p.ProgramId == programId);
 
+        }
 
         // Finds a Program by Guid primary key.
 
