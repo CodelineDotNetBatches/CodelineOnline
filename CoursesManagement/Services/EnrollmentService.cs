@@ -3,6 +3,7 @@ using CoursesManagement.DTOs;
 using CoursesManagement.Models;
 using CoursesManagement.Repos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CoursesManagement.Services
 {
@@ -14,16 +15,18 @@ namespace CoursesManagement.Services
     {
         private readonly IEnrollmentRepo _repo;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _cache;
 
         /// <summary>
         /// Initializes a new instance of EnrollmentService.
         /// </summary>
         /// <param name="repo">The enrollment repository (data access layer).</param>
         /// <param name="mapper">The AutoMapper instance for DTO mapping.</param>
-        public EnrollmentService(IEnrollmentRepo repo, IMapper mapper)
+        public EnrollmentService(IEnrollmentRepo repo, IMapper mapper, IMemoryCache cache)
         {
             _repo = repo;
             _mapper = mapper;
+            _cache = cache;
         }
 
         /// <inheritdoc />
