@@ -147,5 +147,17 @@ namespace ReportsManagements.Services
             return existing;
         }
 
+        public async Task<bool> SoftDeleteAsync(int id)
+        {
+
+            var record = await _repo.GetByIdAsync(id);
+            if (record == null)
+                return false;
+
+            record.IsDeleted = true;
+            await _repo.UpdateAsync(record);
+            return true;
+        }
+
     }
 }
