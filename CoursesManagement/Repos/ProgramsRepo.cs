@@ -22,6 +22,7 @@ namespace CoursesManagement.Repos
                 .Include(p => p.Categories)   // Example navigation
                 .ThenInclude(c => c.Courses)  // Drill deeper
                 .FirstOrDefaultAsync(p => p.ProgramId == programId);
+        }
 
         }
 
