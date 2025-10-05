@@ -30,7 +30,7 @@ namespace CoursesManagement.Models
         // Foreign Keys and Navigation Properties ...
 
         //every course belongs to one category ... one to many relationship
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; } = default!;
 
@@ -52,7 +52,7 @@ namespace CoursesManagement.Models
         //public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
         // Instructor of the course ... many to one relationship ...
-        //public int InstructorId { get; set; }
+        //public Guid InstructorId { get; set; }
         //[ForeignKey(nameof(InstructorId))]
         //public Instructor Instructor { get; set; } = default!;
 
