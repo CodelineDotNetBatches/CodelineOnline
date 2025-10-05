@@ -12,5 +12,8 @@ namespace ReportsManagements.Models
         public string Address { get; set; }
 
         public bool IsActive { get; set; }= true;
+
+        // Navigation property: A branch can have many geolocations
+        public ICollection<Geolocation> Geolocations { get; set; } = new List<Geolocation>();
     }
 }

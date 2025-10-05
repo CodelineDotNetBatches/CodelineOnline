@@ -5,10 +5,12 @@ using ReportsManagements.Repositories;
 namespace ReportsManagements.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/branch")]
     public class BranchController : ControllerBase
     {
         private readonly IBranchRepository _repo;
+
+
         public BranchController(IBranchRepository repo)
         {
             _repo = repo;
@@ -17,8 +19,8 @@ namespace ReportsManagements.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-           var branches = await _repo.GetAllAsync();
-            
+            var branches = await _repo.GetAllAsync();
+
             return Ok(branches);
         }
 
@@ -43,12 +45,12 @@ namespace ReportsManagements.Controllers
 
         //Update an existing branch if the provided id matches the branch id
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,Branch branch)
+        public async Task<IActionResult> Put(int id, Branch branch)
         {
-            if(id!=branch.BranchId)
+            if (id != branch.BranchId)
                 return BadRequest("Branch Id dose not match.");
 
-            var update= await _repo.UpdateAsync(branch);
+            var update = await _repo.UpdateAsync(branch);
             if (update == null)
                 return NotFound($"Branch with ID:{id} not found");
 
@@ -63,6 +65,36 @@ namespace ReportsManagements.Controllers
                 return NotFound($"Branch with ID:{id} not found");
             await _repo.DeleteAsync(id);
             return NoContent();
+        }
+
+
+        [HttpGet("{id}/geolocations")]
+        public async Task<IActionResult> GetBranchGeolocations(int id)
+        {
+            var geolocations = await _repo.GetBranchGeolocationsAsync(id);
+
+            if (geolocations == null || !geolocations.Any())
+                return NotFound($"No geolocations found for Branch with ID:{id}");
+
+            return Ok(geolocations);
+
+        }
+
+        [HttpGet("{id}/report")]
+        public async Task<IActionResult> GetBranchReport(int id)
+        {
+            var branch = await _repo.GetByIdAsync(id);
+            if (branch == null)
+                return NotFound($"Branch with ID:{id} not found");
+            var report = new
+            {
+                BranchId = branch.BranchId,
+                BranchName = branch.Name,
+
+                Geolocations = await _repo.GetBranchGeolocationsAsync(id)
+            };
+
+            return Ok(report);
         }
     }
 }
