@@ -51,6 +51,16 @@ namespace ReportsManagements
           .HasPrecision(18, 2);
 
 
+            mb.Entity<GeoRadiusAudit>()
+              .HasKey(a => a.GeoRadiusAuditId);
+
+            mb.Entity<GeoRadiusAudit>()
+              .HasOne<Geolocation>()
+              .WithMany()
+              .HasForeignKey(a => a.GeolocationId)
+              .OnDelete(DeleteBehavior.Cascade);
+
+
             // default schema keeps everything under "users"
             mb.HasDefaultSchema("reports");
             mb.Entity<Geolocation>().ToTable("Geolocations");
