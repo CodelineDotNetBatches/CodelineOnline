@@ -27,7 +27,7 @@ namespace CoursesManagement.Models
         /// Navigation property for the enrolled user.
         /// </summary>
         [ForeignKey(nameof(UserId))]
-        public User User { get; set; } = default!;
+        public virtual User User { get; set; } = default!;
 
         /// <summary>
         /// Foreign key to the course being enrolled in.
@@ -39,7 +39,7 @@ namespace CoursesManagement.Models
         /// Navigation property for the course.
         /// </summary>
         [ForeignKey(nameof(CourseId))]
-        public Course Course { get; set; } = default!;
+        public virtual Course Course { get; set; } = default!;
 
         /// <summary>
         /// Optional foreign key to the program (if enrollment is part of a program).
@@ -50,7 +50,7 @@ namespace CoursesManagement.Models
         /// Navigation property for the program.
         /// </summary>
         [ForeignKey(nameof(ProgramId))]
-        public Programs? Program { get; set; }
+        public virtual Programs? Program { get; set; }
 
         /// <summary>
         /// Date and time when the enrollment was created.
