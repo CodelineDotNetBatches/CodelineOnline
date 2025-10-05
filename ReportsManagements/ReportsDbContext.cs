@@ -19,7 +19,7 @@ namespace ReportsManagements
         public DbSet<ReasonCode> ReasonCodes { get; set; }
         public DbSet<FileStorage> FileStorages { get; set; }
         public DbSet<AttendanceRecord> AttendanceRecord { get; set; }
-
+        public DbSet<GeoRadiusAudit> GeoRadiusAudits { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)
