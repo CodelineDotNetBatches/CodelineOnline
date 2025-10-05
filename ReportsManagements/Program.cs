@@ -25,6 +25,9 @@ namespace ReportsManagements
             // ====== Services ======
             builder.Services.AddScoped<IAttendanceRecordService, AttendanceRecordService>();
             builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+            builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+            builder.Services.AddScoped<IGeolocationRepository, GeolocationRepository>();
+            builder.Services.AddScoped<IGeoValidationService, GeoValidationService>();
 
             // DbContext
             builder.Services.AddDbContext<ReportsDbContext>(options =>
@@ -45,6 +48,7 @@ namespace ReportsManagements
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            
 
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(AttendanceMapping)); 
