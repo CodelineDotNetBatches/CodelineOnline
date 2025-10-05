@@ -30,14 +30,14 @@ namespace CoursesManagement.Models
         // Foreign Keys and Navigation Properties ...
 
         //every course belongs to one category ... one to many relationship
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; } = default!;
 
         //every course is belongs to many programs ... many to many relationship ...
-        public ICollection<Programs> Programs { get; set; } = new List<Programs>();
+        public ICollection<Programs?> Programs { get; set; } = new List<Programs>();
         //every course has many enrollments ... many to many relationship ...
-        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        public ICollection<Enrollment?> Enrollments { get; set; } = new List<Enrollment>();
         //every course has many notification ... one to many relationship ...
         //public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         //every course has many UserProgress ... many to many relationship ...
@@ -52,7 +52,7 @@ namespace CoursesManagement.Models
         //public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
         // Instructor of the course ... many to one relationship ...
-        //public int InstructorId { get; set; }
+        //public Guid InstructorId { get; set; }
         //[ForeignKey(nameof(InstructorId))]
         //public Instructor Instructor { get; set; } = default!;
 
