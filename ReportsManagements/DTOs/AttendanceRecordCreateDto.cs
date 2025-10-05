@@ -20,6 +20,6 @@
 
             public string CreatedBy { get; set; }
             public string? UploadedBy { get; set; }
-        
+        public string IdempotencyKey { get; set; }
     }
 }

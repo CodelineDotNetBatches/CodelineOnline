@@ -19,9 +19,8 @@ namespace ReportsManagements
         public DbSet<ReasonCode> ReasonCodes { get; set; }
         public DbSet<FileStorage> FileStorages { get; set; }
         public DbSet<AttendanceRecord> AttendanceRecord { get; set; }
-
-
-
+       
+       
         protected override void OnModelCreating(ModelBuilder mb)
         {
             // for AttendanceRecord 

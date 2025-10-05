@@ -36,6 +36,7 @@ namespace ReportsManagements.Models
         public DateTime? UploadedAt { get; set; } 
       public string?  UploadedBy { get; set; } = "";
         public bool IsDeleted { get; set; } = false;
+        public string IdempotencyKey { get; set; } 
 
 
     }

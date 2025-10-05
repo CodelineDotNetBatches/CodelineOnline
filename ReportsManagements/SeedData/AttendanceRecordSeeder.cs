@@ -7,15 +7,13 @@ namespace ReportsManagements.SeedData
     {
         public static void Seed(ReportsDbContext context)
         {
-            // Seed Geolocations
             if (!context.Geolocations.Any())
             {
                 context.Geolocations.AddRange(
-              new Geolocation { GeolocationId = 1, Latitude = "23.6", Longitude = "58.5", IsActive = true, RediusMeters = 100 },
-                  new Geolocation { GeolocationId = 2, Latitude = "23.7", Longitude = "58.6", IsActive = true, RediusMeters = 150 }
-   );
-
-                context.SaveChanges(); 
+                    new Geolocation { Latitude = "23.6", Longitude = "58.5", IsActive = true, RediusMeters = 100 },
+                    new Geolocation { Latitude = "23.7", Longitude = "58.6", IsActive = true, RediusMeters = 150 }
+                );
+                context.SaveChanges();
             }
 
             // Seed ReasonCodes
@@ -56,7 +54,8 @@ namespace ReportsManagements.SeedData
                         CreatedBy = "System",
                         CreatedAt = DateTime.UtcNow,
                         UploadedBy = "Admin",
-                        UploadedAt = DateTime.UtcNow
+                        UploadedAt = DateTime.UtcNow,
+                         IdempotencyKey = Guid.NewGuid().ToString()
                     },
                     new AttendanceRecord
                     {
@@ -72,7 +71,8 @@ namespace ReportsManagements.SeedData
                         CreatedBy = "System",
                         CreatedAt = DateTime.UtcNow,
                         UploadedBy = "Admin",
-                        UploadedAt = DateTime.UtcNow
+                        UploadedAt = DateTime.UtcNow,
+                              IdempotencyKey = Guid.NewGuid().ToString()
                     },
                     new AttendanceRecord
                     {
@@ -84,7 +84,8 @@ namespace ReportsManagements.SeedData
                         CreatedBy = "System",
                         CreatedAt = DateTime.UtcNow,
                         UploadedBy = "Admin",
-                        UploadedAt = DateTime.UtcNow
+                        UploadedAt = DateTime.UtcNow,
+                         IdempotencyKey = Guid.NewGuid().ToString()
                     }
                 );
 
