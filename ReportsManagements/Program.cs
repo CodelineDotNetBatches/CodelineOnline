@@ -25,7 +25,7 @@ namespace ReportsManagements
             // ====== Services ======
             builder.Services.AddScoped<IAttendanceRecordService, AttendanceRecordService>();
             builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
-
+            builder.Services.AddScoped<IFileCodeService, FileCodeService>();
             // DbContext
             builder.Services.AddDbContext<ReportsDbContext>(options =>
                 options.UseSqlServer(

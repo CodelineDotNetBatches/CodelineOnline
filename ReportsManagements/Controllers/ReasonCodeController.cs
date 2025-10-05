@@ -54,7 +54,9 @@ namespace ReportsManagements.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Models.ReasonCode reasonCode) 
         {
-            if (id != reasonCode.ReasonCodeId) return BadRequest();
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+                return NotFound();
 
             await _repository.UpdateAsync(reasonCode);
             return NoContent();
@@ -70,6 +72,36 @@ namespace ReportsManagements.Controllers
                 return NotFound();
             await _repository.DeleteAsync(id);
             return NoContent();
+        }
+
+        // PUT: api/reasons/{id}/deactivate
+        [HttpPut("{id}/deactivate")]
+        public async Task<IActionResult> Deactivate(int id)
+        {
+            var item = await _repository.GetByIdAsync(id);
+            if (item == null) return NotFound();
+
+            if (!item.IsActive) return BadRequest("Already inactive");
+
+            item.IsActive = false;
+            await _repository.UpdateAsync(item);
+
+            return Ok(item);
+        }
+
+        // PUT: api/reasons/{id}/activate
+        [HttpPut("{id}/activate")]
+        public async Task<IActionResult> Activate(int id)
+        {
+            var item = await _repository.GetByIdAsync(id);
+            if (item == null) return NotFound();
+
+            if (item.IsActive) return BadRequest("Already active");
+
+            item.IsActive = true;
+            await _repository.UpdateAsync(item);
+
+            return Ok(item);
         }
     }
 }

@@ -17,26 +17,26 @@ namespace ReportsManagements.Repositories
         }
 
         // Retrieves all file storage records from the database
-        public async Task<IEnumerable<Models.FileStorage>> GetAllAsync()
+        public async Task<IEnumerable<FileStorage>> GetAllAsync()
         {
             return await _context.FileStorages.ToListAsync();
         }
 
         // Retrieves a file storage record by its ID
-        public async Task<Models.FileStorage?> GetByIdAsync(int id)
+        public async Task<FileStorage?> GetByIdAsync(int id)
         {
             return await _context.FileStorages.FindAsync(id);
         }
 
         // Adds a new file storage record to the database
-        public async Task AddAsync(Models.FileStorage file)
+        public async Task AddAsync(FileStorage file)
         {
             _context.FileStorages.Add(file);
             await _context.SaveChangesAsync();
         }
 
         // Updates an existing file storage record in the database
-        public async Task UpdateAsync(Models.FileStorage file)
+        public async Task UpdateAsync(FileStorage file)
         {
             _context.FileStorages.Update(file);
             await _context.SaveChangesAsync();

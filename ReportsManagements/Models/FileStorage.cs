@@ -7,9 +7,11 @@ namespace ReportsManagements.Models
     {
         [Key]
         public int FileStorageId { get; set; }
+        [Required]
         public string FileName { get; set; }
         public string Url { get; set; }            
         public DateTime UploadedAt { get; set; }
         public string UploadedBy { get; set; }
+        public long FileSize { get; set; }
     }
 }

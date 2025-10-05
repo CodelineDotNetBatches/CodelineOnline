@@ -14,26 +14,26 @@ namespace ReportsManagements.Repositories
         }
 
         // Retrieves all reason codes from the database
-        public async Task<IEnumerable<Models.ReasonCode>> GetAllAsync()
+        public async Task<IEnumerable<ReasonCode>> GetAllAsync()
         {
             return await _context.ReasonCodes.ToListAsync();
         }
 
         // Retrieves a reason code by its ID
-        public async Task<Models.ReasonCode> GetByIdAsync(int id)
+        public async Task<ReasonCode> GetByIdAsync(int id)
         {
             return await _context.ReasonCodes.FindAsync(id);
         }
 
         // Adds a new reason code to the database
-        public async Task AddAsync(Models.ReasonCode reasonCode)
+        public async Task AddAsync(ReasonCode reasonCode)
         {
             _context.ReasonCodes.Add(reasonCode);
             await _context.SaveChangesAsync();
         }
 
         // Updates an existing reason code in the database
-        public async Task UpdateAsync(Models.ReasonCode reasonCode)
+        public async Task UpdateAsync(ReasonCode reasonCode)
         {
             _context.ReasonCodes.Update(reasonCode);
             await _context.SaveChangesAsync();
