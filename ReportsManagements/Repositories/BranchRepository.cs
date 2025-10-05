@@ -12,8 +12,10 @@ namespace ReportsManagements.Repositories
         }
 
         // Retrieves all Branch records from the database asynchronously
-        public async Task<IEnumerable<Branch>> GetAllAsync() =>
-             (IEnumerable<Branch>)await _context.Branches.ToListAsync();
+        public async Task<IEnumerable<Branch>> GetAllAsync()
+        {
+            return await _context.Branches.Where(b => b.IsActive).ToListAsync();
+        }
         // Get by id method
         public async Task<Branch?> GetByIdAsync(int id)
         {
@@ -48,11 +50,40 @@ namespace ReportsManagements.Repositories
             if (branch != null)
             {
                 // For soft delete,we set IsActive to false instead of removing the record
-                _context.Branches.Remove(branch);
+                branch.IsActive = false;
                 await _context.SaveChangesAsync();
 
             }
         }
+
+        public async Task<IEnumerable<Geolocation>> GetBranchGeolocationsAsync(int branchId)
+        {
+            var branch = await _context.Branches
+                .Include(b => b.Geolocations)
+                .FirstOrDefaultAsync(b => b.BranchId == branchId);
+
+            return branch?.Geolocations ?? new List<Geolocation>();
+        }
+        public async Task<int> GetBranchesCountAsync()
+        {
+            return await _context.Branches.CountAsync();
+        }
+
+        public async Task<int> GetActiveBranchesCountAsync()
+        {
+            return await _context.Branches.CountAsync(b => b.IsActive);
+        }
+
+        public async Task<int> GetBranchCountAsync()
+        {
+            return await _context.Branches.CountAsync();
+        }
+
+        public async Task<int> GetActiveBranchCountAsync()
+        {
+            return await _context.Branches.CountAsync(b => b.IsActive);
+        }
+
     }
 
 
