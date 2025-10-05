@@ -12,8 +12,10 @@ namespace ReportsManagements.Repositories
         }
 
         // Retrieves all Branch records from the database asynchronously
-        public async Task<IEnumerable<Branch>> GetAllAsync() =>
-             (IEnumerable<Branch>)await _context.Branches.ToListAsync();
+        public async Task<IEnumerable<Branch>> GetAllAsync()
+        {
+            return await _context.Branches.Where(b => b.IsActive).ToListAsync();
+        }
         // Get by id method
         public async Task<Branch?> GetByIdAsync(int id)
         {

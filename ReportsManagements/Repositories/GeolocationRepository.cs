@@ -14,8 +14,11 @@ namespace ReportsManagements.Repositories
         }
 
         //Get all geolocations
-        public async Task<IEnumerable<Geolocation>> GetAllAsync() =>
-            await _context.Geolocations.ToListAsync();
+        public async Task<IEnumerable<Geolocation>> GetAllAsync()
+        {
+            return await _context.Geolocations.Where(g => g.IsActive).ToListAsync();
+        }
+            
         //Get geoloction by id
         public async Task<Geolocation?> GetByIdAsync(int id) =>
             await _context.Geolocations.FindAsync(id);
