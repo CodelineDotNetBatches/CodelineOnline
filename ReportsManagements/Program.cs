@@ -25,7 +25,14 @@ namespace ReportsManagements
             // ====== Services ======
             builder.Services.AddScoped<IAttendanceRecordService, AttendanceRecordService>();
             builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+            builder.Services.AddDbContext<ReportsDbContext>(/* SqlServer or InMemory */);
+            builder.Services.AddScoped<ITrainerReportRepository, TrainerReportRepository>();
+            builder.Services.AddScoped<ICourseReportRepository, CourseReportRepository>();
+            builder.Services.AddScoped<IReportsService, ReportsService>();
 
+            builder.Services.AddScoped<ITrainerReportRepository, TrainerReportRepository>();
+            builder.Services.AddScoped<ICourseReportRepository, CourseReportRepository>();
+            builder.Services.AddScoped<IReportsService, ReportsService>();
             // DbContext
             builder.Services.AddDbContext<ReportsDbContext>(options =>
                 options.UseSqlServer(
@@ -42,6 +49,15 @@ namespace ReportsManagements
             //builder.Services.AddSingleton<IGeolocationRepository>(new GeolocationRepository(context));
 
             // ????? Controllers
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(ReportsManagements.Mapping.ReportsMapping).Assembly);
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddAutoMapper(typeof(ReportsManagements.Mapping.ReportsMapping).Assembly);
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -43,6 +43,28 @@ namespace ReportsManagements.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task UpsertBatchAsync(IEnumerable<TrainerReport> items, CancellationToken ct = default)
+        {
+            foreach (var i in items)
+            {
+                var existing = await _context.TrainerReports
+                    .FirstOrDefaultAsync(x => x.TrainerId == i.TrainerId && x.CourseId == i.CourseId, ct);
+
+                if (existing is null)
+                    await _context.TrainerReports.AddAsync(i, ct);
+                else
+                {
+                    existing.TotalSessions = i.TotalSessions;
+                    existing.TotalStudents = i.TotalStudents;
+                    existing.AttendanceRate = i.AttendanceRate;
+                    _context.TrainerReports.Update(existing);
+                }
+            }
+            await _context.SaveChangesAsync(ct);
+        }
+
+        public IQueryable<TrainerReport> Query() => _context.TrainerReports.AsNoTracking();
+
 
 
     }
