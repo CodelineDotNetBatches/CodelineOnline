@@ -21,6 +21,9 @@ namespace ReportsManagements
         public DbSet<AttendanceRecord> AttendanceRecord { get; set; }
        
        
+        public DbSet<GeoRadiusAudit> GeoRadiusAudits { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder mb)
         {
             // for AttendanceRecord 
@@ -62,6 +65,16 @@ namespace ReportsManagements
             // Decimal precision for AttendanceRate and AverageAttendanceRate
             mb.Entity<TrainerReport>().Property(x => x.AttendanceRate).HasColumnType("decimal(5,3)");
             mb.Entity<CourseReport>().Property(x => x.AverageAttendanceRate).HasColumnType("decimal(5,3)");
+
+
+            mb.Entity<GeoRadiusAudit>()
+              .HasKey(a => a.GeoRadiusAuditId);
+
+            mb.Entity<GeoRadiusAudit>()
+              .HasOne<Geolocation>()
+              .WithMany()
+              .HasForeignKey(a => a.GeolocationId)
+              .OnDelete(DeleteBehavior.Cascade);
 
 
             // default schema keeps everything under "users"

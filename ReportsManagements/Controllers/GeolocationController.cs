@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ReportsManagements.Models;
 using ReportsManagements.Repositories;
 namespace ReportsManagements.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/Geolocation")]
     public class GeolocationController: ControllerBase
     {
         private readonly IGeolocationRepository _repo;
@@ -64,6 +65,30 @@ namespace ReportsManagements.Controllers
                 return NotFound();
 
             return NoContent();
+        }
+
+        [HttpPatch("{id}/radius")]
+        public async Task<IActionResult> UpdateRadius(int id, [FromBody] double newRadius)
+        {
+            var geolocation = await _repo.GetByIdAsync(id);
+            if (geolocation == null)
+                return NotFound();
+
+            var oldRadius = geolocation.RediusMeters;
+            geolocation.RediusMeters = (decimal)newRadius;
+            await _repo.UpdateAsync(geolocation);
+
+            var audit = new GeoRadiusAudit
+            {
+                GeolocationId = id,
+                OldRadius = oldRadius,
+                NewRadius = (decimal)newRadius,
+            };
+
+           await _repo.AddAuditAsync(audit);
+            return Ok(geolocation);
+
+
         }
     }
 }

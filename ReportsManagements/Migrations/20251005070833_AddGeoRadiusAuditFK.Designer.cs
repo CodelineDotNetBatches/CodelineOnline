@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReportsManagements;
 
@@ -11,9 +12,11 @@ using ReportsManagements;
 namespace ReportsManagements.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    partial class ReportsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251005070833_AddGeoRadiusAuditFK")]
+    partial class AddGeoRadiusAuditFK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,10 +37,10 @@ namespace ReportsManagements.Migrations
                     b.Property<int?>("CapturedPhotoId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CheckIn")
+                    b.Property<DateTime>("CheckIn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("CheckOut")
+                    b.Property<DateTime>("CheckOut")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
@@ -50,15 +53,8 @@ namespace ReportsManagements.Migrations
                     b.Property<double>("FaceMatchScore")
                         .HasColumnType("float");
 
-                    b.Property<int?>("GeolocationId")
+                    b.Property<int>("GeolocationId")
                         .HasColumnType("int");
-
-                    b.Property<string>("IdempotencyKey")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<double>("LivenessScore")
                         .HasColumnType("float");
@@ -80,10 +76,11 @@ namespace ReportsManagements.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UploadedAt")
+                    b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UploadedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AttId");
@@ -158,7 +155,7 @@ namespace ReportsManagements.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseReportId"));
 
                     b.Property<decimal>("AverageAttendanceRate")
-                        .HasColumnType("decimal(5,3)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
@@ -170,9 +167,6 @@ namespace ReportsManagements.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("CourseReportId");
-
-                    b.HasIndex("CourseId")
-                        .IsUnique();
 
                     b.ToTable("CourseReports", "reports");
                 });
@@ -188,9 +182,6 @@ namespace ReportsManagements.Migrations
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
@@ -335,7 +326,7 @@ namespace ReportsManagements.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrainerReportId"));
 
                     b.Property<decimal>("AttendanceRate")
-                        .HasColumnType("decimal(5,3)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
@@ -351,9 +342,6 @@ namespace ReportsManagements.Migrations
 
                     b.HasKey("TrainerReportId");
 
-                    b.HasIndex("TrainerId", "CourseId")
-                        .IsUnique();
-
                     b.ToTable("TrainerReports", "reports");
                 });
 
@@ -367,7 +355,8 @@ namespace ReportsManagements.Migrations
                     b.HasOne("ReportsManagements.Models.Geolocation", "Geolocation")
                         .WithMany("AttendanceRecords")
                         .HasForeignKey("GeolocationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ReportsManagements.Models.ReasonCode", "ReasonCode")
                         .WithMany()
