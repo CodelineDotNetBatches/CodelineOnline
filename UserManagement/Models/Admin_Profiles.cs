@@ -14,6 +14,7 @@ namespace UserManagement.Models
         // Navigation property for related responsibilities
         // One Admin can have many Responsibilities
         public ICollection<Responsibility> Responsibilitys {  get; set; }
+        public ICollection<Batch> Batchs { get; set; } // one admin can manage many batch 
 
     }
 
@@ -24,6 +25,7 @@ namespace UserManagement.Models
         public int AdminId { get; set; } // References the Admin who owns this Responsibility
 
         [StringLength(500, ErrorMessage = "Responsibility details cannot exceed 500 characters")]
+        public string ResponsibilityTitle { get; set; } // Extra details or notes about the responsibility
         public string ResponsibilityDetails { get; set; } // Extra details or notes about the responsibility
 
         // Navigation 
