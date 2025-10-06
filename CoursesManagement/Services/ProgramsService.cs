@@ -144,5 +144,29 @@ namespace CoursesManagement.Services
             _cache.Remove(CacheKeys.Program(id));
             _cache.Remove(CacheKeys.AllPrograms);
         }
+
+        // ======================
+        // Get Program By Program Name
+        public async Task<Programs?> GetProgramByNameAsync(string programName)
+        {
+            return await _repo.GetByNameAsync(programName);
+        }
+
+        // ======================
+        // Get Program with Courses
+        public async Task<Programs?> GetProgramWithCoursesAsync(Guid programId)
+        {
+            return await _repo.GetProgramWithCoursesAsync(programId);
+        }
+
+        // ======================
+
+        // Get Program with Categories
+
+        public async Task<Programs?> GetProgramWithCategoriesAsync(Guid programId)
+        {
+            return await _repo.GetProgramWithCategoriesAsync(programId);
+        }
+
     }
 }
