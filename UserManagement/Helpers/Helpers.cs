@@ -70,6 +70,8 @@ namespace UserManagement.Helpers
             }
         }
 
+        // Common utilities for time, strings, and IDs
+
 
 
 
