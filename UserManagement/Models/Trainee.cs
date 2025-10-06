@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -39,7 +40,11 @@ namespace UserManagement.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public Guid TraineeId { get; set; }
+        public int TraineeId { get; set; }
+
+        // link with batch entity 
+        [ForeignKey("Batch")]
+        public int BatchId { get; set; }
 
         [MaxLength(50)]
         public string GithubUsername { get; set; } = string.Empty;
@@ -70,7 +75,12 @@ namespace UserManagement.Models
         [MaxLength(256)]
         public string? LearningObjectives { get; set; }
 
-        //  Many-to-Many: One Trainee can have many Skills
-        public ICollection<Skill> Skills { get; set; } = new List<Skill>();
+        // Navigation
+
+        public ICollection<TraineeSkill> traineeSkills { get; set; } = new List<TraineeSkill>(); // one trainee can has many skills 
+        public Batch Batch { get; set; } // one trainee can join with onw batch 
+
+        public ICollection<Instructor> Instructors { get; set; } = new List<Instructor>(); // one trainee can has many instructor (mentor)
+
     }
 }
