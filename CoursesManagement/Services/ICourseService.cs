@@ -14,5 +14,9 @@ namespace CoursesManagement.Services
         Task<Course> AddCourseAsync(CourseCreateDto dto);
         Task<Course?> UpdateCourseAsync(CourseUpdateDto dto);
         Task DeleteCourseAsync(Guid id);
+        Task<Course?> GetCourseWithEnrollmentListAsync(Guid courseId);
+        Task<Course?> GetCourseByNameAsync(string courseName);
+
+
     }
 }
