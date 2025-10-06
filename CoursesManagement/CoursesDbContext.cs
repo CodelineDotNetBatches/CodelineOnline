@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CoursesManagement.Models;
+using CoursesManagement.Data;
+using System.Reflection.Emit;
 namespace CoursesManagement
 {
     /// <summary>
@@ -109,6 +111,12 @@ namespace CoursesManagement
               .WithMany(c => c.Programs)
               .UsingEntity(j => j.ToTable("ProgramCourses"));
             base.OnModelCreating(mb);
+
+
+            // Calling SeedData
+            SeedData.Seed(mb);
+            
+
         }
     }
 }
