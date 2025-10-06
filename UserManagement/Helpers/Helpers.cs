@@ -41,5 +41,42 @@ namespace UserManagement.Helpers
                 Validator.TryValidateObject(obj, context, results, true);
                 return results;
             }
+
+            public static bool IsValid(object obj, out List<ValidationResult> errors)
+            {
+                errors = ValidateObject(obj);
+                return !errors.Any();
+            }
         }
+
+
+        // Logging helper to standardize error logs across the app
+
+        public static class LogHelper
+        {
+            public static void LogError(ILogger logger, Exception ex, string contextInfo = "")
+            {
+                logger.LogError($"❌ ERROR: {contextInfo}\nMessage: {ex.Message}\nStackTrace: {ex.StackTrace}");
+            }
+
+            public static void LogInfo(ILogger logger, string message)
+            {
+                logger.LogInformation($"ℹ️ {message}");
+            }
+
+            public static void LogWarning(ILogger logger, string message)
+            {
+                logger.LogWarning($"⚠️ {message}");
+            }
+        }
+
+
+
+
+
+
+
+
+    }
+
 }
