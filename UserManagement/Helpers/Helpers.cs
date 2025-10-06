@@ -1,4 +1,6 @@
-﻿namespace UserManagement.Helpers
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UserManagement.Helpers
 {
     // Generic response wrapper for consistent API output.
     // Used by Controllers and Services.
@@ -26,5 +28,18 @@
             public static ApiResponse<T> Fail(string msg) =>
                 new ApiResponse<T>(false, msg);
         }
-    }
+
+
+        // Validation helper to manually validate models
+
+        public static class ValidationHelper
+        {
+            public static List<ValidationResult> ValidateObject(object obj)
+            {
+                var context = new ValidationContext(obj, null, null);
+                var results = new List<ValidationResult>();
+                Validator.TryValidateObject(obj, context, results, true);
+                return results;
+            }
+        }
 }
