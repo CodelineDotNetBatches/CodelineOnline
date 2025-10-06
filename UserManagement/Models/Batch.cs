@@ -11,30 +11,40 @@ namespace UserManagement.Models
     public class Batch
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid BatchId { get; set; }
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int BatchId { get; set; }
+
+        [ForeignKey("Admin_Profiles")]
+
+        public int AdminId { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; } = default!;
+        public string BatchName { get; set; } = default!;
 
         [Required]
         [MaxLength(50)]
-        public string Status { get; set; } = "Planned"; // e.g., Planned, Ongoing, Completed
+        public string BatchStatus { get; set; } = "Planned"; // e.g., Planned, Ongoing, Completed
 
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTime BatchStartDate { get; set; }
 
         [Required]
-        public DateTime EndDate { get; set; }
+        public DateTime BatchEndDate { get; set; }
 
         [MaxLength(256)]
-        public string? Timeline { get; set; }
+        public string? BatchTimeline { get; set; }
 
         [MaxLength(500)]
-        public string? Description { get; set; }
+        public string? BatchDescription { get; set; }
 
-        //  One-to-Many: One Batch → Many Trainees
-        public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>();
-    }
+        // navigation property
+
+
+        public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>(); // one batch can has many trainee
+
+        public Admin_Profile admin_Profile { get; set; } //batch can managed by one admin
+
+        public ICollection<Instructor> Instructors { get; set; } = new List<Instructor>(); // one batch can has many instructor
+    } 
 }
