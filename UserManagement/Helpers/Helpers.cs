@@ -9,5 +9,22 @@
             public bool Success { get; set; } //true if operation succeeded
             public string Message { get; set; } //any message (error/success)
             public T? Data { get; set; } //returned object or list
+
+
+
+            public ApiResponse(bool success, string message, T? data = default)
+            {
+                Success = success;
+                Message = message;
+                Data = data;
+            }
+
+            // Helper factory methods
+            public static ApiResponse<T> Ok(T data, string msg = "Operation succeeded") =>
+          new ApiResponse<T>(true, msg, data);
+
+            public static ApiResponse<T> Fail(string msg) =>
+                new ApiResponse<T>(false, msg);
         }
+    }
 }
