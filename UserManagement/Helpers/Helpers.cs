@@ -7,5 +7,6 @@
         public class ApiResponse<T>
         {
             public bool Success { get; set; } //true if operation succeeded
+            public string Message { get; set; } //any message (error/success)
         }
 }
