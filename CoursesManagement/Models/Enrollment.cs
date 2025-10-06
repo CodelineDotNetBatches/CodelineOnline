@@ -29,8 +29,8 @@ namespace CoursesManagement.Models
         /// <summary>
         /// Navigation property to the enrolled user.
         /// </summary>
-        [ForeignKey(nameof(UserId))]
-        public virtual User User { get; set; } = default!;
+        //[ForeignKey(nameof(UserId))]
+        //public virtual User User { get; set; } = default!;
 
         // =============================
         // Relationships: Course

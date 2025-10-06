@@ -56,6 +56,10 @@ namespace CoursesManagement.Models
         //[ForeignKey(nameof(InstructorId))]
         //public Instructor Instructor { get; set; } = default!;
 
+        // Admin who created the course ... many to one relationship ...
+        //public Guid AdminId { get; set; }
+        //[ForeignKey(nameof(AdminId))]
+        //public Admin Admin { get; set; } = default!;
 
     }
 }
