@@ -69,7 +69,7 @@ namespace CoursesManagement.Services
         // =======================
         // GET BY CATEGORY (with caching)
         // =======================
-        public async Task<IEnumerable<Course>> GetCoursesByCategoryAsync(int categoryId)
+        public async Task<IEnumerable<Course>> GetCoursesByCategoryAsync(Guid categoryId)
         {
             var cacheKey = CacheKeys.CoursesByCategory(new Guid(categoryId.ToString()));
             // or adjust depending on your schema (categoryId as int → cast to Guid if applicable)

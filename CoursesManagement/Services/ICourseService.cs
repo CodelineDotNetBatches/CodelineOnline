@@ -8,7 +8,7 @@ namespace CoursesManagement.Services
         Task<IEnumerable<Course>> GetAllCoursesAsync();
         Task<Course?> GetCourseByIdAsync(Guid id);
         Task<IEnumerable<Course>> GetCoursesByLevelAsync(LevelType level);
-        Task<IEnumerable<Course>> GetCoursesByCategoryAsync(int categoryId);
+        Task<IEnumerable<Course>> GetCoursesByCategoryAsync(Guid categoryId);
         Task<Course?> GetCourseWithCategoryAsync(Guid id);
 
         Task<Course> AddCourseAsync(CourseCreateDto dto);

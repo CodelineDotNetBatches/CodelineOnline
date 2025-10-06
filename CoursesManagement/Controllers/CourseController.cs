@@ -34,7 +34,7 @@ namespace CoursesManagement.Controllers
         }
 
         [HttpGet("category/{categoryId:int}")]
-        public async Task<IActionResult> GetByCategory(int categoryId)
+        public async Task<IActionResult> GetByCategory(Guid categoryId)
         {
             var courses = await _courseService.GetCoursesByCategoryAsync(categoryId);
             return Ok(courses);

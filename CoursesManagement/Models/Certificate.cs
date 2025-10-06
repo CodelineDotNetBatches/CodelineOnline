@@ -15,7 +15,7 @@ namespace CoursesManagement.Models
         public Course Course { get; set; } = default!;
 
         //[Required]
-        //public int UserId { get; set; } // Foreign key to the user who earned the certificate
+        public int UserId { get; set; } // Foreign key to the user who earned the certificate
         //[ForeignKey(nameof(UserId))] // Navigation property to the associated user
         //public User User { get; set; } = default!;
 

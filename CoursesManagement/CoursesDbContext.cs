@@ -22,7 +22,7 @@ namespace CoursesManagement
         public DbSet<Course> Courses { get; set; } = default!;
         //public DbSet<User> Users { get; set; } = default!;
         public DbSet<Enrollment> Enrollments { get; set; } = default!;
-        public DbSet<Certificate> Certificates { get; set; } = default!;
+     //   public DbSet<Certificate> Certificates { get; set; } = default!;
         // =========================
         // Fluent API Configuration
         // =========================
@@ -90,13 +90,13 @@ namespace CoursesManagement
             // ===================================================
             // CERTIFICATE ENTITY
             // ===================================================
-            mb.Entity<Certificate>(entity =>
-            {
-                //// Unique: one certificate per user per course
-                //entity.HasIndex(c => new { c.UserId, c.CourseId }).IsUnique();
-                // Unique: certificate URL must be unique
-                entity.HasIndex(c => c.CertificateUrl).IsUnique();
-            });
+            //mb.Entity<Certificate>(entity =>
+            //{
+            //    //// Unique: one certificate per user per course
+            //    //entity.HasIndex(c => new { c.UserId, c.CourseId }).IsUnique();
+            //    // Unique: certificate URL must be unique
+            //    entity.HasIndex(c => c.CertificateUrl).IsUnique();
+            //});
             // ===================================================
             // MANY-TO-MANY RELATIONSHIPS
             // ===================================================
