@@ -29,9 +29,9 @@ namespace CoursesManagement.Services
             if (!_cache.TryGetValue(CacheKeys.AllEnrollments, out IEnumerable<EnrollmentListDto>? cachedEnrollments))
             {
                 var enrollments = await _repo.GetAll()
-                    .Include(e => e.User)
                     .Include(e => e.Course)
                     .Include(e => e.Program)
+                    //.Include(e => e.User) // Uncomment when User module is merged
                     .ToListAsync();
 
                 cachedEnrollments = _mapper.Map<IEnumerable<EnrollmentListDto>>(enrollments);
@@ -46,15 +46,14 @@ namespace CoursesManagement.Services
         // ======================
         public async Task<EnrollmentDetailDto?> GetByIdAsync(Guid enrollmentId)
         {
-            var cacheKey = CacheKeys.EnrollmentsByCourse(enrollmentId); // use correct pattern
+            var cacheKey = CacheKeys.EnrollmentsByCourse(enrollmentId);
             if (!_cache.TryGetValue(cacheKey, out EnrollmentDetailDto? cached))
             {
                 var enrollment = await _repo.GetByIdAsync(enrollmentId);
                 if (enrollment == null) return null;
 
-                await _repo._context.Entry(enrollment).Reference(e => e.User).LoadAsync();
-                await _repo._context.Entry(enrollment).Reference(e => e.Course).LoadAsync();
-                await _repo._context.Entry(enrollment).Reference(e => e.Program).LoadAsync();
+                // Load related entities (from repo)
+                enrollment = await _repo.GetByIdWithRelationsAsync(enrollmentId);
 
                 cached = _mapper.Map<EnrollmentDetailDto>(enrollment);
                 _cache.Set(cacheKey, cached, TimeSpan.FromMinutes(10));
@@ -63,6 +62,9 @@ namespace CoursesManagement.Services
             return cached;
         }
 
+        // ======================
+        // GET BY USER & COURSE
+        // ======================
         public async Task<EnrollmentDetailDto?> GetByUserAndCourseAsync(Guid userId, Guid courseId)
         {
             var cacheKey = $"{CacheKeys.EnrollmentsByUser(userId)}_{courseId}";
@@ -77,6 +79,9 @@ namespace CoursesManagement.Services
             return cached;
         }
 
+        // ======================
+        // GET BY USER ID
+        // ======================
         public async Task<IEnumerable<EnrollmentListDto>> GetByUserIdAsync(Guid userId)
         {
             var cacheKey = CacheKeys.EnrollmentsByUser(userId);
@@ -89,6 +94,9 @@ namespace CoursesManagement.Services
             return cachedList!;
         }
 
+        // ======================
+        // GET BY COURSE ID
+        // ======================
         public async Task<IEnumerable<EnrollmentListDto>> GetByCourseIdAsync(Guid courseId)
         {
             var cacheKey = CacheKeys.EnrollmentsByCourse(courseId);
@@ -114,9 +122,8 @@ namespace CoursesManagement.Services
             await _repo.AddAsync(enrollment);
             await _repo.SaveAsync();
 
-            await _repo._context.Entry(enrollment).Reference(e => e.Course).LoadAsync();
-            await _repo._context.Entry(enrollment).Reference(e => e.Program).LoadAsync();
-            await _repo._context.Entry(enrollment).Reference(e => e.User).LoadAsync();
+            // Reload with related entities
+            enrollment = await _repo.GetByIdWithRelationsAsync(enrollment.EnrollmentId);
 
             // Invalidate affected cache groups
             _cache.Remove(CacheKeys.AllEnrollments);
@@ -138,7 +145,6 @@ namespace CoursesManagement.Services
             _repo.Update(enrollment);
             await _repo.SaveAsync();
 
-            // Invalidate relevant cache
             _cache.Remove(CacheKeys.AllEnrollments);
             _cache.Remove(CacheKeys.EnrollmentsByUser(enrollment.UserId));
             _cache.Remove(CacheKeys.EnrollmentsByCourse(enrollment.CourseId));
@@ -157,7 +163,6 @@ namespace CoursesManagement.Services
             _repo.Delete(enrollment);
             await _repo.SaveAsync();
 
-            // Invalidate cache
             _cache.Remove(CacheKeys.AllEnrollments);
             _cache.Remove(CacheKeys.EnrollmentsByUser(enrollment.UserId));
             _cache.Remove(CacheKeys.EnrollmentsByCourse(enrollment.CourseId));
