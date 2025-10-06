@@ -23,7 +23,7 @@ namespace UserManagement.SeedData
             {
                 new Trainee
                 {
-                    TraineeId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                    TraineeId = 1,
                     GithubUsername = "ali-dev",
                     Years_of_Experience = 2,
                     TraineeCV = "ali_cv.pdf",
@@ -36,7 +36,7 @@ namespace UserManagement.SeedData
                 },
                 new Trainee
                 {
-                    TraineeId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    TraineeId = 2,
                     GithubUsername = "sara-code",
                     Years_of_Experience = 1,
                     TraineeCV = "sara_cv.pdf",
@@ -49,7 +49,7 @@ namespace UserManagement.SeedData
                 },
                 new Trainee
                 {
-                    TraineeId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    TraineeId = 3,
                     GithubUsername = "mohammed-tech",
                     Years_of_Experience = 3,
                     TraineeCV = "mohammed_cv.pdf",

@@ -32,7 +32,7 @@ namespace UserManagement.Services
             });
         }
 
-        public async Task<TraineeDTO?> GetTraineeByIdAsync(Guid id)
+        public async Task<TraineeDTO?> GetTraineeByIdAsync(int id)
         {
             var t = await _repository.GetByIdAsync(id);
             if (t == null) return null;
@@ -53,7 +53,7 @@ namespace UserManagement.Services
         {
             var trainee = new Trainee
             {
-                TraineeId = Guid.NewGuid(),
+                TraineeId = dto.TraineeId,
                 GithubUsername = dto.GithubUsername,
                 ProfileImage = dto.ProfileImage,
                 EducationalBackground = dto.EducationalBackground,
@@ -86,7 +86,7 @@ namespace UserManagement.Services
             return dto;
         }
 
-        public async Task DeleteTraineeAsync(Guid id)
+        public async Task DeleteTraineeAsync(int id)
         {
             await _repository.DeleteAsync(id);
         }

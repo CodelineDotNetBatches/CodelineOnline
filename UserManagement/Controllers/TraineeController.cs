@@ -29,7 +29,7 @@ namespace UserManagement.Controllers
         /// Get a trainee by ID.
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById(int id)
         {
             var trainee = await _service.GetTraineeByIdAsync(id);
             if (trainee == null) return NotFound();
@@ -50,7 +50,7 @@ namespace UserManagement.Controllers
         /// Update an existing trainee.
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] TraineeDTO dto)
+        public async Task<IActionResult> Update(int id, [FromBody] TraineeDTO dto)
         {
             if (id != dto.TraineeId) return BadRequest();
 
@@ -62,7 +62,7 @@ namespace UserManagement.Controllers
         /// Delete a trainee by ID.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteTraineeAsync(id);
             return NoContent();
