@@ -69,8 +69,11 @@ namespace UserManagement.Models
         // navigation property
         public ICollection<Availability> Availabilities { get; set; }
 
-        // 🔗 Many-to-Many: 
-        public ICollection<Skill> Skills { get; set; } = new List<Skill>();
+        public ICollection<InstructorSkill> instructorSkills { get; set; } = new List<InstructorSkill>(); // one instructor can has many skills
+        public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>(); // one instructor can mentor many trainee
+
+        public ICollection<Batch> Batches { get; set; } = new List<Batch>(); // one instructor can teach many batch
+
 
     }
 
