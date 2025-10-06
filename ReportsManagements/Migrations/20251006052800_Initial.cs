@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ReportsManagements.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,7 +59,7 @@ namespace ReportsManagements.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TotalSessions = table.Column<int>(type: "int", nullable: false),
                     TotalStudents = table.Column<int>(type: "int", nullable: false),
-                    AverageAttendanceRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AverageAttendanceRate = table.Column<decimal>(type: "decimal(5,3)", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -77,30 +77,12 @@ namespace ReportsManagements.Migrations
                     FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UploadedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UploadedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileSize = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FileStorages", x => x.FileStorageId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Geolocations",
-                schema: "reports",
-                columns: table => new
-                {
-                    GeolocationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Latitude = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Longitude = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    RediusMeters = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    BranchId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Geolocations", x => x.GeolocationId);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,13 +111,39 @@ namespace ReportsManagements.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TotalSessions = table.Column<int>(type: "int", nullable: false),
                     TotalStudents = table.Column<int>(type: "int", nullable: false),
-                    AttendanceRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AttendanceRate = table.Column<decimal>(type: "decimal(5,3)", nullable: false),
                     TrainerId = table.Column<int>(type: "int", nullable: false),
                     CourseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TrainerReports", x => x.TrainerReportId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Geolocations",
+                schema: "reports",
+                columns: table => new
+                {
+                    GeolocationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Latitude = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Longitude = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    RediusMeters = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Geolocations", x => x.GeolocationId);
+                    table.ForeignKey(
+                        name: "FK_Geolocations_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "reports",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -147,8 +155,8 @@ namespace ReportsManagements.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SessionId = table.Column<int>(type: "int", nullable: false),
                     StudentId = table.Column<int>(type: "int", nullable: false),
-                    CheckIn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CheckOut = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CheckIn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CheckOut = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReasonCodeId = table.Column<int>(type: "int", nullable: true),
                     CapturedPhotoId = table.Column<int>(type: "int", nullable: true),
@@ -158,8 +166,10 @@ namespace ReportsManagements.Migrations
                     ReviewStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UploadedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UploadedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IdempotencyKey = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -185,6 +195,30 @@ namespace ReportsManagements.Migrations
                         principalTable: "ReasonCodes",
                         principalColumn: "ReasonCodeId",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GeoRadiusAudits",
+                schema: "reports",
+                columns: table => new
+                {
+                    GeoRadiusAuditId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GeolocationId = table.Column<int>(type: "int", nullable: false),
+                    OldRadius = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NewRadius = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ChangedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GeoRadiusAudits", x => x.GeoRadiusAuditId);
+                    table.ForeignKey(
+                        name: "FK_GeoRadiusAudits_Geolocations_GeolocationId",
+                        column: x => x.GeolocationId,
+                        principalSchema: "reports",
+                        principalTable: "Geolocations",
+                        principalColumn: "GeolocationId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -215,6 +249,32 @@ namespace ReportsManagements.Migrations
                 schema: "reports",
                 table: "AttendanceRecord",
                 column: "ReasonCodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseReports_CourseId",
+                schema: "reports",
+                table: "CourseReports",
+                column: "CourseId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Geolocations_BranchId",
+                schema: "reports",
+                table: "Geolocations",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GeoRadiusAudits_GeolocationId",
+                schema: "reports",
+                table: "GeoRadiusAudits",
+                column: "GeolocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrainerReports_TrainerId_CourseId",
+                schema: "reports",
+                table: "TrainerReports",
+                columns: new[] { "TrainerId", "CourseId" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -222,10 +282,6 @@ namespace ReportsManagements.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AttendanceRecord",
-                schema: "reports");
-
-            migrationBuilder.DropTable(
-                name: "Branches",
                 schema: "reports");
 
             migrationBuilder.DropTable(
@@ -237,6 +293,10 @@ namespace ReportsManagements.Migrations
                 schema: "reports");
 
             migrationBuilder.DropTable(
+                name: "GeoRadiusAudits",
+                schema: "reports");
+
+            migrationBuilder.DropTable(
                 name: "TrainerReports",
                 schema: "reports");
 
@@ -245,11 +305,15 @@ namespace ReportsManagements.Migrations
                 schema: "reports");
 
             migrationBuilder.DropTable(
+                name: "ReasonCodes",
+                schema: "reports");
+
+            migrationBuilder.DropTable(
                 name: "Geolocations",
                 schema: "reports");
 
             migrationBuilder.DropTable(
-                name: "ReasonCodes",
+                name: "Branches",
                 schema: "reports");
         }
     }

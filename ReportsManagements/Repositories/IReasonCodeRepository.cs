@@ -1,9 +1,6 @@
 ﻿
 
 
-
-
-
 namespace ReportsManagements.Repositories
 {
     // Interface defining CRUD operations for ReasonCode

@@ -78,6 +78,8 @@ namespace ReportsManagements.Controllers
                     Message = "File type or size not allowed",
                     Details = new { file.FileName, file.FileSize }
                 });
+            
+            file.UploadedAt = DateTime.UtcNow;
 
             await _repository.AddAsync(file);
             return CreatedAtAction(nameof(GetById), new { id = file.FileStorageId }, file);
