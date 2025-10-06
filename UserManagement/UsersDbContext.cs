@@ -17,12 +17,9 @@ namespace UserManagement
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Availability> Availabilities { get; set; }
         public DbSet<Batch> Batches { get; set; }
-     
-        public DbSet<Skill> Skills { get; set; }
-        
-
+        public DbSet<TraineeSkill> TraineeSkills { get; set; }
+        public DbSet<InstructorSkill> InstructorSkills { get; set; }
         public DbSet<Admin_Profile> AdminProfiles { get; set; }
-
         public DbSet<Responsibility> Responsibilities { get; set; }
 
 
@@ -30,17 +27,14 @@ namespace UserManagement
         {
             // Default schema
             mb.HasDefaultSchema("users");
+
             // ==========================================
 
-            // 1. nstructor entity configuration
+            // 1. Instructor entity configuration
 
             //==========================================
 
-            // Unique GitHub username if provided
-            mb.Entity<Instructor>()
-            .HasIndex(i => i.GithubUserName)
-            .IsUnique();
-
+          
             // optional: index for specialization + experience
             mb.Entity<Instructor>()
                 .HasIndex(i => new
@@ -82,44 +76,65 @@ namespace UserManagement
             // ================================================
             mb.Entity<Batch>(entity =>
             {
-                entity.HasKey(b => b.BatchId);
-                entity.Property(b => b.Name).IsRequired().HasMaxLength(200);
-                entity.Property(b => b.Status).HasMaxLength(50);
+                // indexing by batch name 
+                entity.HasIndex(b => b.BatchName).IsUnique();
             });
 
-            // ==================================================
-            // 4. Trainee entity configuration
-            // ==================================================
-
-            // Trainee config
-            mb.Entity<Trainee>(entity =>
-            {
-                entity.HasKey(t => t.TraineeId);
-                entity.Property(t => t.GithubUsername).IsRequired();
-            });
 
             // ==================================================
-            // 5. BatchTrainee entity configuration
+            // 4. Admin_Resposibilities entity configuration
             // ==================================================
 
-           
+            // Composite key
+            mb.Entity<Responsibility>()
+
+                .HasKey(r => new { r.AdminId, r.ResponsibilityTitle});
+            // indexing by responsibility name
+            mb.Entity<Responsibility>()
+                .HasIndex(r => r.ResponsibilityTitle).IsUnique();
 
             // ==================================================
-            // 6. TraineeSkill entity configuration
+            // 5. TraineeSkills entity configuration
             // ==================================================
+            mb.Entity<TraineeSkill>()
+                .HasIndex(TS => TS.SkillName);
+            // Composite key
+            mb.Entity<TraineeSkill>()
+                .HasKey(ts => new { ts.TraineeId, ts.TraineeSkillId }); // to not allow duplicate skills for a trainee
 
-            
+
+            // ==================================================
+            // 6. InstructorSkills entity configuration
+            // ==================================================
+            mb.Entity<InstructorSkill>()
+                .HasIndex(IS => IS.SkillName);
+
+            // Composite key
+            mb.Entity<InstructorSkill>()
+                .HasKey(isk => new { isk.InstructorId, isk.InstructorSkillId }); // to not allow duplicate skills for an instructor
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             // ==============================================
-            // Seed data 
+            // 7. Seed data 
 
             //====================================
 
             InstructorsSeedData.InstructorsSeed(mb);
             AvailabilitiesSeedData.AvailabilitiesSeed(mb);
-            
-            
+
+
         }
     }
 }

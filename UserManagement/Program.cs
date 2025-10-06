@@ -41,7 +41,7 @@ namespace CodeLine_Online
             builder.Services.AddScoped<IBatchRepository, BatchRepository>();
             builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
             builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
-            builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+            builder.Services.AddScoped<IInstructorSkillRepository, InstructorSkillRepository>();
 
             // ========================================
             // 4) Services
@@ -50,7 +50,7 @@ namespace CodeLine_Online
             builder.Services.AddScoped<IBatchService, BatchService>();
             builder.Services.AddScoped<IInstructorService, InstructorService>();
             builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
-            builder.Services.AddScoped<ISkillService, SkillService>();
+            builder.Services.AddScoped<IInstructorSkillService,InstructorSkillService>();
 
             // ========================================
             // 5) AutoMapper (scan all profiles in Mapping assembly)

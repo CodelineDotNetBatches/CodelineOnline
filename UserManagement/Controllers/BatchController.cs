@@ -29,7 +29,7 @@ namespace UserManagement.Controllers
         /// Get batch by ID.
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById(int id)
         {
             var batch = await _service.GetBatchByIdAsync(id);
             if (batch == null) return NotFound();
@@ -50,7 +50,7 @@ namespace UserManagement.Controllers
         /// Update a batch.
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] BatchDTO dto)
+        public async Task<IActionResult> Update(int id, [FromBody] BatchDTO dto)
         {
             if (id != dto.BatchId) return BadRequest();
 
@@ -62,7 +62,7 @@ namespace UserManagement.Controllers
         /// Delete a batch.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteBatchAsync(id);
             return NoContent();

@@ -8,9 +8,9 @@ namespace UserManagement.Services
     public interface ITraineeService
     {
         Task<IEnumerable<TraineeDTO>> GetAllTraineesAsync();
-        Task<TraineeDTO?> GetTraineeByIdAsync(Guid id);
+        Task<TraineeDTO?> GetTraineeByIdAsync(int id);
         Task<TraineeDTO> CreateTraineeAsync(TraineeDTO dto);
         Task<TraineeDTO> UpdateTraineeAsync(TraineeDTO dto);
-        Task DeleteTraineeAsync(Guid id);
+        Task DeleteTraineeAsync(int id);
     }
 }

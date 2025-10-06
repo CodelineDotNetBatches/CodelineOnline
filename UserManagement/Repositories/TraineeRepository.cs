@@ -25,11 +25,11 @@ namespace UserManagement.Repositories
         public async Task<IEnumerable<Trainee>> GetAllAsync()
         {
             return await _context.Trainees
-                .Include(t => t.Skills) // Include related Skills
+                .Include(t => t.traineeSkills) // Include related Skills
                 .ToListAsync();
         }
 
-        public async Task<Trainee?> GetByIdAsync(Guid id)
+        public async Task<Trainee?> GetByIdAsync(int id)
         {
             return await _context.Trainees.FindAsync(id);
         }
@@ -46,7 +46,7 @@ namespace UserManagement.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(int id)
         {
             var trainee = await _context.Trainees.FindAsync(id);
             if (trainee != null)
@@ -63,10 +63,10 @@ namespace UserManagement.Repositories
         /// <summary>
         /// Loads a trainee by ID including related skills (for assignment logic).
         /// </summary>
-        public async Task<Trainee?> GetByIdWithSkillsAsync(Guid traineeId)
+        public async Task<Trainee?> GetByIdWithSkillsAsync(int traineeId)
         {
             return await _context.Trainees
-                .Include(t => t.Skills)
+                .Include(t => t.traineeSkills)
                 .FirstOrDefaultAsync(t => t.TraineeId == traineeId);
         }
 

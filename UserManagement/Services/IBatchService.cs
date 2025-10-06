@@ -8,9 +8,9 @@ namespace UserManagement.Services
     public interface IBatchService
     {
         Task<IEnumerable<BatchDTO>> GetAllBatchesAsync();
-        Task<BatchDTO?> GetBatchByIdAsync(Guid id);
+        Task<BatchDTO?> GetBatchByIdAsync(int id);
         Task<BatchDTO> CreateBatchAsync(BatchDTO dto);
         Task<BatchDTO> UpdateBatchAsync(BatchDTO dto);
-        Task DeleteBatchAsync(Guid id);
+        Task DeleteBatchAsync(int id);
     }
 }

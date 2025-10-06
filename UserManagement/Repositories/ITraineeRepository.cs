@@ -5,13 +5,13 @@ namespace UserManagement.Repositories
     public interface ITraineeRepository
     {
         Task<IEnumerable<Trainee>> GetAllAsync();
-        Task<Trainee?> GetByIdAsync(Guid id);
+        Task<Trainee?> GetByIdAsync(int id);
         Task AddAsync(Trainee trainee);
         Task UpdateAsync(Trainee trainee);
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(int id);
 
         // Custom methods
-        Task<Trainee?> GetByIdWithSkillsAsync(Guid traineeId);
+        Task<Trainee?> GetByIdWithSkillsAsync(int traineeId);
         Task SaveAsync(); //No parameter here
      
         

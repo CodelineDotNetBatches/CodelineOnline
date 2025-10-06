@@ -6,7 +6,7 @@
     /// </summary>
     public class TraineeDTO
     {
-        public Guid TraineeId { get; set; }
+        public int TraineeId { get; set; }
         public string GithubUsername { get; set; } = default!;
         public string? ProfileImage { get; set; }
         public string EducationalBackground { get; set; } = default!;

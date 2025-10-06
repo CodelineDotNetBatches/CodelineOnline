@@ -5,7 +5,7 @@
     /// </summary>
     public class BatchDTO
     {
-        public Guid BatchId { get; set; }
+        public int BatchId { get; set; }
         public string Name { get; set; } = default!;
         public string Status { get; set; } = default!;
         public DateTime StartDate { get; set; }
