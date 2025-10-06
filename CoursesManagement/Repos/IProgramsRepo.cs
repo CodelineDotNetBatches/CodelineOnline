@@ -10,5 +10,7 @@ namespace CoursesManagement.Repos
         Task<List<Programs>> GetAllWithDetailsAsync();
         Task<Programs?> GetByIdAsync(Guid id);
         Task<Programs?> GetByNameAsync(string programName);
+
+        Task<Programs?> GetProgramWithCategoriesAsync(Guid programId);
     }
 }
