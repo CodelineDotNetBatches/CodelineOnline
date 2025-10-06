@@ -1,94 +1,115 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using ReportsManagements.DTOs;
 using ReportsManagements.Models;
-using ReportsManagements.Repositories;
+using ReportsManagements.Services;
+using static ReportsManagements.DTOs.GeolocationDTO;
+
 namespace ReportsManagements.Controllers
 {
     [ApiController]
-    [Route("api/Geolocation")]
-    public class GeolocationController: ControllerBase
+    [Route("api/v1/geolocation")]
+    public class GeolocationController : ControllerBase
     {
-        private readonly IGeolocationRepository _repo;
+        private readonly GeolocationService _service;
 
-        public GeolocationController(IGeolocationRepository repo)
+        public GeolocationController(GeolocationService service)
         {
-            _repo = repo;
+            _service = service;
         }
-        // Retrieve all geolocations
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var geolocations = await _repo.GetAllAsync();
-            return Ok(geolocations);
+            var geos = await _service.GetAllAsync();
+            var result = geos.Select(g => new GeolocationResponseDto
+            {
+                GeolocationId = g.GeolocationId,
+                Latitude = g.Latitude,
+                Longitude = g.Longitude,
+                RediusMeters = g.RediusMeters,
+                IsActive = g.IsActive,
+                BranchId = g.BranchId
+            });
+            return Ok(result);
         }
-        // Retrieve geolocation by id
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var geolocation = await _repo.GetByIdAsync(id);
-            if (geolocation == null)
-                return NotFound();
+            var geo = await _service.GetByIdAsync(id);
+            if (geo == null) return NotFound();
 
-            return Ok(geolocation);
+            return Ok(new GeolocationResponseDto
+            {
+                GeolocationId = geo.GeolocationId,
+                Latitude = geo.Latitude,
+                Longitude = geo.Longitude,
+                RediusMeters = geo.RediusMeters,
+                IsActive = geo.IsActive,
+                BranchId = geo.BranchId
+            });
         }
 
-        // Create a new geolocation
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Geolocation geolocation)
+        public async Task<IActionResult> Post([FromBody] GeolocationCreateDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var geo = new Geolocation
+            {
+                Latitude = dto.Latitude,
+                Longitude = dto.Longitude,
+                RediusMeters = dto.RediusMeters,
+                BranchId = dto.BranchId,
+                IsActive = true
+            };
 
-            var created = await _repo.AddAsync(geolocation);
-            return CreatedAtAction(nameof(Get), new { id = created.GeolocationId }, created);
+            var created = await _service.CreateAsync(geo);
+
+            return CreatedAtAction(nameof(Get), new { id = created.GeolocationId }, new GeolocationResponseDto
+            {
+                GeolocationId = created.GeolocationId,
+                Latitude = created.Latitude,
+                Longitude = created.Longitude,
+                RediusMeters = created.RediusMeters,
+                IsActive = created.IsActive,
+                BranchId = created.BranchId
+            });
         }
-        // Update an existing geolocation
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Geolocation geolocation)
-        {
-            if (id != geolocation.GeolocationId)
-                return BadRequest("ID mismatch");
 
-            var updated = await _repo.UpdateAsync(geolocation);
-            if (updated == null)
-                return NotFound();
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] Geolocation geo)
+        {
+            if (id != geo.GeolocationId) return BadRequest("ID mismatch");
+
+            var updated = await _service.UpdateAsync(geo);
+            if (updated == null) return NotFound();
 
             return Ok(updated);
         }
 
-        // Delete a geolocation by id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _repo.DeleteAsync(id);
-            if (!deleted)
-                return NotFound();
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted) return NotFound();
 
             return NoContent();
         }
 
         [HttpPatch("{id}/radius")]
-        public async Task<IActionResult> UpdateRadius(int id, [FromBody] double newRadius)
+        public async Task<IActionResult> UpdateRadius(int id, [FromBody] GeoRadiusUpdateDto dto)
         {
-            var geolocation = await _repo.GetByIdAsync(id);
-            if (geolocation == null)
-                return NotFound();
+            var updated = await _service.UpdateRadiusAsync(id, dto.NewRadius);
+            if (updated == null) return NotFound();
 
-            var oldRadius = geolocation.RediusMeters;
-            geolocation.RediusMeters = (decimal)newRadius;
-            await _repo.UpdateAsync(geolocation);
-
-            var audit = new GeoRadiusAudit
+            return Ok(new GeolocationResponseDto
             {
-                GeolocationId = id,
-                OldRadius = oldRadius,
-                NewRadius = (decimal)newRadius,
-            };
-
-           await _repo.AddAuditAsync(audit);
-            return Ok(geolocation);
-
-
+                GeolocationId = updated.GeolocationId,
+                Latitude = updated.Latitude,
+                Longitude = updated.Longitude,
+                RediusMeters = updated.RediusMeters,
+                IsActive = updated.IsActive,
+                BranchId = updated.BranchId
+            });
         }
     }
 }

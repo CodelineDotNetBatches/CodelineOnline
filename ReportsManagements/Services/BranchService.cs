@@ -3,7 +3,7 @@ using ReportsManagements.Repositories;
 
 namespace ReportsManagements.Services
 {
-    public class BranchService
+    public class BranchService : IBranchService
     {
         private readonly IBranchRepository _repo;
         public BranchService(IBranchRepository repo)
