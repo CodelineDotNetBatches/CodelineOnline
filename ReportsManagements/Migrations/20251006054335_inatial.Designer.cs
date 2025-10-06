@@ -12,8 +12,8 @@ using ReportsManagements;
 namespace ReportsManagements.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    [Migration("20251005070615_AddGeoRadiusAudit")]
-    partial class AddGeoRadiusAudit
+    [Migration("20251006054335_inatial")]
+    partial class inatial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,10 +37,10 @@ namespace ReportsManagements.Migrations
                     b.Property<int?>("CapturedPhotoId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CheckIn")
+                    b.Property<DateTime?>("CheckIn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("CheckOut")
+                    b.Property<DateTime?>("CheckOut")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
@@ -55,6 +55,13 @@ namespace ReportsManagements.Migrations
 
                     b.Property<int>("GeolocationId")
                         .HasColumnType("int");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<double>("LivenessScore")
                         .HasColumnType("float");
@@ -76,11 +83,10 @@ namespace ReportsManagements.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UploadedAt")
+                    b.Property<DateTime?>("UploadedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UploadedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AttId");
@@ -155,7 +161,7 @@ namespace ReportsManagements.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseReportId"));
 
                     b.Property<decimal>("AverageAttendanceRate")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(5,3)");
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
@@ -167,6 +173,9 @@ namespace ReportsManagements.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("CourseReportId");
+
+                    b.HasIndex("CourseId")
+                        .IsUnique();
 
                     b.ToTable("CourseReports", "reports");
                 });
@@ -182,6 +191,9 @@ namespace ReportsManagements.Migrations
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
@@ -220,6 +232,8 @@ namespace ReportsManagements.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("GeoRadiusAuditId");
+
+                    b.HasIndex("GeolocationId");
 
                     b.ToTable("GeoRadiusAudits", "reports");
                 });
@@ -324,7 +338,7 @@ namespace ReportsManagements.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrainerReportId"));
 
                     b.Property<decimal>("AttendanceRate")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(5,3)");
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
@@ -339,6 +353,9 @@ namespace ReportsManagements.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("TrainerReportId");
+
+                    b.HasIndex("TrainerId", "CourseId")
+                        .IsUnique();
 
                     b.ToTable("TrainerReports", "reports");
                 });
@@ -368,13 +385,24 @@ namespace ReportsManagements.Migrations
                     b.Navigation("ReasonCode");
                 });
 
+            modelBuilder.Entity("ReportsManagements.Models.GeoRadiusAudit", b =>
+                {
+                    b.HasOne("ReportsManagements.Models.Geolocation", null)
+                        .WithMany()
+                        .HasForeignKey("GeolocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ReportsManagements.Models.Geolocation", b =>
                 {
-                    b.HasOne("ReportsManagements.Models.Branch", null)
+                    b.HasOne("ReportsManagements.Models.Branch", "Branch")
                         .WithMany("Geolocations")
                         .HasForeignKey("BranchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Branch");
                 });
 
             modelBuilder.Entity("ReportsManagements.Models.Branch", b =>

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReportsManagements.DTOs;
 using ReportsManagements.Models;
-using ReportsManagements.Repositories;
+using ReportsManagements.Services;
+using static ReportsManagements.DTOs.BranchDtos;
 
 namespace ReportsManagements.Controllers
 {
@@ -8,93 +10,80 @@ namespace ReportsManagements.Controllers
     [Route("api/v1/branch")]
     public class BranchController : ControllerBase
     {
-        private readonly IBranchRepository _repo;
+        private readonly BranchService _service;
 
-
-        public BranchController(IBranchRepository repo)
+        public BranchController(BranchService service)
         {
-            _repo = repo;
+            _service = service;
         }
-        //Retrieve all branches 
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var branches = await _repo.GetAllAsync();
-
-            return Ok(branches);
+            var branches = await _service.GetAllBranchesAsync();
+            var result = branches.Select(b => new BranchResponseDto
+            {
+                BranchId = b.BranchId,
+                Name = b.Name,
+                IsActive = b.IsActive
+            });
+            return Ok(result);
         }
 
-        //Retrieve branch by id
         [HttpGet("{id}")]
-        public async Task<ActionResult<Branch>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var branch = await _repo.GetByIdAsync(id);
+            var branch = await _service.GetBranchByIdAsync(id);
             if (branch == null)
                 return NotFound($"Branch with ID:{id} not found");
 
-            return Ok(branch);
+            return Ok(new BranchDtos.BranchResponseDto
+            {
+                BranchId = branch.BranchId,
+                Name = branch.Name,
+                IsActive = branch.IsActive
+            });
         }
 
-        //Create a new branch and return the created branch
+
+
         [HttpPost]
-        public async Task<ActionResult<Branch>> Post(Branch branch)
+        public async Task<IActionResult> Post([FromBody] BranchCreateDto dto)
         {
-            var created = await _repo.AddAsync(branch);
-            return CreatedAtAction(nameof(Get), new { id = created.BranchId }, created);
+            var created = await _service.CreateBranchAsync(dto.Name);
+            return CreatedAtAction(nameof(Get), new { id = created.BranchId }, new BranchResponseDto
+            {
+                BranchId = created.BranchId,
+                Name = created.Name,
+                IsActive = created.IsActive
+            });
         }
 
-        //Update an existing branch if the provided id matches the branch id
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Branch branch)
+        public async Task<IActionResult> Put(int id, [FromBody] Branch branch)
         {
-            if (id != branch.BranchId)
-                return BadRequest("Branch Id dose not match.");
+            var updated = await _service.UpdateBranchAsync(id, branch);
+            if (updated == null)
+                return NotFound($"Branch with ID:{id} not found or ID mismatch");
 
-            var update = await _repo.UpdateAsync(branch);
-            if (update == null)
-                return NotFound($"Branch with ID:{id} not found");
-
-            return Ok(update);
+            return Ok(updated);
         }
-        //delete a branch by id
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existing = await _repo.GetByIdAsync(id);
-            if (existing == null)
-                return NotFound($"Branch with ID:{id} not found");
-            await _repo.DeleteAsync(id);
+            await _service.DeleteBranchAsync(id);
             return NoContent();
         }
-
 
         [HttpGet("{id}/geolocations")]
         public async Task<IActionResult> GetBranchGeolocations(int id)
         {
-            var geolocations = await _repo.GetBranchGeolocationsAsync(id);
-
+            var geolocations = await _service.GetBranchGeolocationsAsync(id);
             if (geolocations == null || !geolocations.Any())
                 return NotFound($"No geolocations found for Branch with ID:{id}");
 
             return Ok(geolocations);
-
-        }
-
-        [HttpGet("{id}/report")]
-        public async Task<IActionResult> GetBranchReport(int id)
-        {
-            var branch = await _repo.GetByIdAsync(id);
-            if (branch == null)
-                return NotFound($"Branch with ID:{id} not found");
-            var report = new
-            {
-                BranchId = branch.BranchId,
-                BranchName = branch.Name,
-
-                Geolocations = await _repo.GetBranchGeolocationsAsync(id)
-            };
-
-            return Ok(report);
         }
     }
 }

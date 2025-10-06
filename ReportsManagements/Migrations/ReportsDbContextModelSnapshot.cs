@@ -50,7 +50,7 @@ namespace ReportsManagements.Migrations
                     b.Property<double>("FaceMatchScore")
                         .HasColumnType("float");
 
-                    b.Property<int?>("GeolocationId")
+                    b.Property<int>("GeolocationId")
                         .HasColumnType("int");
 
                     b.Property<string>("IdempotencyKey")
@@ -367,7 +367,8 @@ namespace ReportsManagements.Migrations
                     b.HasOne("ReportsManagements.Models.Geolocation", "Geolocation")
                         .WithMany("AttendanceRecords")
                         .HasForeignKey("GeolocationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ReportsManagements.Models.ReasonCode", "ReasonCode")
                         .WithMany()
@@ -392,11 +393,13 @@ namespace ReportsManagements.Migrations
 
             modelBuilder.Entity("ReportsManagements.Models.Geolocation", b =>
                 {
-                    b.HasOne("ReportsManagements.Models.Branch", null)
+                    b.HasOne("ReportsManagements.Models.Branch", "Branch")
                         .WithMany("Geolocations")
                         .HasForeignKey("BranchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Branch");
                 });
 
             modelBuilder.Entity("ReportsManagements.Models.Branch", b =>
