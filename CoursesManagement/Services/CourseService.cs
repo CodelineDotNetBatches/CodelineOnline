@@ -180,5 +180,28 @@ namespace CoursesManagement.Services
             return course;
         }
 
+        //=======================
+        //GET COURSE BY NAME (case-insensitive, with caching)
+        //======================
+        public async Task<Course?> GetCourseByNameAsync(string courseName)
+        {
+            var cacheKey = $"course_name_{courseName.ToLower()}";
+
+            if (!_cache.TryGetValue(cacheKey, out Course? cachedCourse))
+            {
+                cachedCourse = await _courseRepo
+                    .GetAll()
+                    .Include(c => c.Category)
+                    .Include(c => c.Enrollments)
+                    .FirstOrDefaultAsync(c => c.CourseName.ToLower() == courseName.ToLower());
+
+                if (cachedCourse != null)
+                    _cache.Set(cacheKey, cachedCourse, TimeSpan.FromMinutes(10));
+            }
+
+            return cachedCourse;
+        }
+
+
     }
 }
