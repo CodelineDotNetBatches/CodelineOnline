@@ -19,7 +19,7 @@ public class CourseRepo : GenericRepo<Course>, ICourseRepo
             .Where(c => c.CourseLevel == level);
     }
 
-    public async Task<IQueryable<Course>> GetCoursesByCategoryAsync(int categoryId)
+    public async Task<IQueryable<Course>> GetCoursesByCategoryAsync(Guid categoryId)
     {
         return _context.Courses
             .Where(c => c.CategoryId == categoryId);
@@ -27,7 +27,7 @@ public class CourseRepo : GenericRepo<Course>, ICourseRepo
 
     public async Task<Course?> GetCourseWithCategoryAsync(Guid courseId)
     {
-        return _context.Courses
+        return await _context.Courses
             .Include(c => c.Category)
             .FirstOrDefaultAsync(c => c.CourseId == courseId);
     }
