@@ -14,7 +14,7 @@ namespace CoursesManagement.Mapping
         public MappingProfile()
         {
             // =========================================================
-            // 🟪 PROGRAM MAPPINGS
+            //  PROGRAM MAPPINGS
             // =========================================================
             CreateMap<Programs, ProgramDetailsDto>()
                 .ForMember(dest => dest.CategoryNames,
@@ -37,7 +37,7 @@ namespace CoursesManagement.Mapping
                 .ReverseMap();
 
             // =========================================================
-            // 🟩 CATEGORY MAPPINGS
+            //  CATEGORY MAPPINGS
             // =========================================================
             CreateMap<Category, CategoryDto>()
                 .ForMember(dest => dest.Programs, opt => opt.MapFrom(src => src.Programs))
@@ -57,7 +57,7 @@ namespace CoursesManagement.Mapping
                 .ReverseMap();
 
             // =========================================================
-            // 🟦 COURSE MAPPINGS
+            //  COURSE MAPPINGS
             // =========================================================
             CreateMap<Course, CourseListDto>()
                 .ForMember(dest => dest.CategoryName,
@@ -78,7 +78,7 @@ namespace CoursesManagement.Mapping
                 .ReverseMap();
 
             // =========================================================
-            // 🟧 ENROLLMENT MAPPINGS
+            //  ENROLLMENT MAPPINGS
             // =========================================================
             CreateMap<Enrollment, EnrollmentListDto>()
                 //.ForMember(dest => dest.UserName,
@@ -136,7 +136,7 @@ namespace CoursesManagement.Mapping
             CreateMap<CertificateVerifyResultDto, Certificate>().ReverseMap();
 
             //// =========================================================
-            //// 🟫 USER MAPPINGS
+            ////  USER MAPPINGS
             //// =========================================================
             //CreateMap<User, UserDto>().ReverseMap();
             //CreateMap<CreateUserDto, User>().ReverseMap();
