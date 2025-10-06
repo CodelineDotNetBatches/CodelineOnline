@@ -23,7 +23,7 @@ namespace CoursesManagement.Controllers
             return Ok(courses);
         }
 
-        [HttpGet("{id:guid}", Name = "GetCourseById")]
+        [HttpGet("GetCourseById/{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var course = await _courseService.GetCourseByIdAsync(id);
@@ -33,21 +33,21 @@ namespace CoursesManagement.Controllers
             return Ok(course);
         }
 
-        [HttpGet("category/{categoryId:Guid}", Name = "GetCourseByCategoryId")]
+        [HttpGet("GetCourseByCategoryId/{categoryId:Guid}")]
         public async Task<IActionResult> GetByCategory(Guid categoryId)
         {
             var courses = await _courseService.GetCoursesByCategoryAsync(categoryId);
             return Ok(courses);
         }
 
-        [HttpGet("level/{level}", Name = "GetCourseBylevel")]
+        [HttpGet("GetCourseBylevel/{level}")]
         public async Task<IActionResult> GetByLevel(LevelType level)
         {
             var courses = await _courseService.GetCoursesByLevelAsync(level);
             return Ok(courses);
         }
 
-        [HttpGet("{id:guid}/category", Name = "GetCourseWithCategoryDetails")]
+        [HttpGet("GetCourseWithCategoryDetails/{id:guid}")]
         public async Task<IActionResult> GetCourseWithCategory(Guid id)
         {
             var course = await _courseService.GetCourseWithCategoryAsync(id);
@@ -69,7 +69,7 @@ namespace CoursesManagement.Controllers
         }
 
         // --- UPDATE using CourseUpdateDto ---
-        [HttpPut("{id:guid}", Name = "UpdateCourse")]
+        [HttpPut("UpdateCourse/{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CourseUpdateDto dto)
         {
             if (id != dto.CourseId)
@@ -82,11 +82,36 @@ namespace CoursesManagement.Controllers
             return Ok(updatedCourse);
         }
 
-        [HttpDelete("{id:guid}", Name = "DeleteCourse")]
+        [HttpDelete("DeleteCourse/{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _courseService.DeleteCourseAsync(id);
             return NoContent();
         }
+
+        [HttpGet("GetCourseWithEnrollmentList/{id:guid}")]
+        public async Task<IActionResult> GetCourseWithEnrollmentList(Guid id)
+        {
+            var course = await _courseService.GetCourseWithEnrollmentListAsync(id);
+            if (course == null)
+                return NotFound(new { message = "Course not found." });
+
+            // Ensure enrollments are included in response
+            return Ok(new
+            {
+                course.CourseId,
+                course.CourseName,
+                course.CourseLevel,
+                course.Price,
+                Enrollments = course.Enrollments?.Select(e => new
+                {
+                    e.CourseId,
+                    e.UserId,
+                    e.EnrolledAt
+                    // Add more fields if Enrollment has them
+                })
+            });
+        }
+
     }
 }
