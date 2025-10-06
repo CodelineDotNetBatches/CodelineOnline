@@ -113,5 +113,16 @@ namespace CoursesManagement.Controllers
             });
         }
 
+        [HttpGet("GetCourseByName/{courseName}")]
+        public async Task<IActionResult> GetByName(string courseName)
+        {
+            var course = await _courseService.GetCourseByNameAsync(courseName);
+            if (course == null)
+                return NotFound(new { message = "Course not found" });
+
+            return Ok(course);
+        }
+
+
     }
 }
