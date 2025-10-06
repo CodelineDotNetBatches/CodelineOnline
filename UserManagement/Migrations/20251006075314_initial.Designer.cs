@@ -12,8 +12,8 @@ using UserManagement;
 namespace UserManagement.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20251006061631_iupdatenitial")]
-    partial class iupdatenitial
+    [Migration("20251006075314_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

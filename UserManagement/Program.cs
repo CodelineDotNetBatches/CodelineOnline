@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
 
@@ -8,7 +8,7 @@ using UserManagement.Repositories;          // Repos interfaces & impls
 using UserManagement.Services;              // Services interfaces & impls
 using UserManagement.Mapping;               // AutoMapper profiles (BatchMapping, etc.)
 using UserManagement.Controllers.Middleware;// ErrorHandlingMiddleware
-using UserManagement.SeedData;              // BatchSeedData, TraineeSeedData, InstructorsSeedData, SkillSeedData, AvailabilitiesSeedData
+using UserManagement.SeedData;              // BatchSeedData, TraineeSeedData, etc.
 
 namespace CodeLine_Online
 {
@@ -24,7 +24,7 @@ namespace CodeLine_Online
             builder.Services.AddDbContext<UsersDbContext>(options =>
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("Default"),
-                    sql => sql.MigrationsHistoryTable("__Migrations_App", "user_management")
+                    sql => sql.MigrationsHistoryTable("__Migrations_App", "users") // 👈 keep history inside 'users' schema
                 )
             );
 
@@ -42,6 +42,7 @@ namespace CodeLine_Online
             builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
             builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
             builder.Services.AddScoped<IInstructorSkillRepository, InstructorSkillRepository>();
+            builder.Services.AddScoped<IAdminProfileRepository, AdminProfileRepository>();
 
             // ========================================
             // 4) Services
@@ -50,10 +51,12 @@ namespace CodeLine_Online
             builder.Services.AddScoped<IBatchService, BatchService>();
             builder.Services.AddScoped<IInstructorService, InstructorService>();
             builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
-            builder.Services.AddScoped<IInstructorSkillService,InstructorSkillService>();
+            builder.Services.AddScoped<IInstructorSkillService, InstructorSkillService>();
+            builder.Services.AddScoped<IAdminProfileService, AdminProfileService>();
+
 
             // ========================================
-            // 5) AutoMapper (scan all profiles in Mapping assembly)
+            // 5) AutoMapper (scan all mapping profiles)
             // ========================================
             builder.Services.AddAutoMapper(typeof(BatchMapping).Assembly);
 
@@ -65,6 +68,7 @@ namespace CodeLine_Online
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
             var app = builder.Build();
 
             // ========================================
@@ -75,10 +79,10 @@ namespace CodeLine_Online
                 var db = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
                 await db.Database.MigrateAsync();
 
-                // Order matters: batches -> trainees -> other related seeds
-                await BatchSeedData.SeedAsync(db);
-                await TraineeSeedData.SeedAsync(db);
+                // ✅ optional: clear tracking cache to ensure seed data consistency
+                db.ChangeTracker.Clear();
 
+            
            
             }
 
