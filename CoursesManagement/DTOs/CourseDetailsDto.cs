@@ -15,7 +15,7 @@ namespace CoursesManagement.DTOs
         public string CategoryName { get; set; } = default!;
 
         // Example future expansion
-        // public List<string> ProgramNames { get; set; } = new();
+         public List<string> ProgramNames { get; set; } = new();
         // public List<string> LessonTitles { get; set; } = new();
     }
 }

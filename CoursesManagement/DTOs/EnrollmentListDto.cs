@@ -25,6 +25,8 @@
         /// </summary>
         public Guid CourseId { get; set; }
 
+        public string CourseName { get; set; } = default!;
+
         /// <summary>
         /// Title of the enrolled course.
         /// </summary>

@@ -6,7 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace CoursesManagement.Repos
 {
-    public class ProgramsRepo : GenericRepo<Program>, IProgramsRepo
+    public class ProgramsRepo : GenericRepo<Programs>, IProgramsRepo
     {
         private readonly CoursesDbContext _context;
         public ProgramsRepo(CoursesDbContext context) : base(context)
@@ -15,20 +15,26 @@ namespace CoursesManagement.Repos
         }
 
         // Program-specific queries:
-       
+        // Get program with full course/category hierarchy
         public async Task<Programs?> GetProgramWithCoursesAsync(Guid programId)
         {
             return await _context.Programs
-                .Include(p => p.Categories)   // Example navigation
-                .ThenInclude(c => c.Courses)  // Drill deeper
+                .Include(p => p.Categories)   
+                    .ThenInclude(c => c.Courses)
+                .Include(p => p.Courses)
                 .FirstOrDefaultAsync(p => p.ProgramId == programId);
+        }
 
+        
 
         // Finds a Program by Guid primary key.
 
-        public async Task<IQueryable<Programs?>> GetByIdAsync(Guid id)
+        public async Task<Programs?> GetByIdAsync(Guid id)
         {
-            return _context.Programs.FirstOrDefault(p => p.ProgramId == id);
+            return _context.Programs
+                .Include(p => p.Categories)
+                .Include(p => p.Courses)
+                .FirstOrDefault(p => p.ProgramId == id);
         }
 
 
@@ -39,7 +45,7 @@ namespace CoursesManagement.Repos
             if (string.IsNullOrWhiteSpace(programName)) return null;
 
             string normalized = programName.Trim().ToLower();
-            return _context.Programs.FirstOrDefaultAsync(p => p.ProgramName.ToLower() == normalized);
+            return await _context.Programs.FirstOrDefaultAsync(p => p.ProgramName.ToLower() == normalized);
         }
 
 
@@ -50,23 +56,25 @@ namespace CoursesManagement.Repos
             if (string.IsNullOrWhiteSpace(programName)) return false;
 
             string normalized = programName.Trim().ToLower();
-            var query = _dbSet.AsQueryable();
+            var query = _context.Programs.AsQueryable();
 
-            if (excludeId is Guid idToExclude)
-                query = query.Where(p => p.ProgramId != idToExclude);
+            if (excludeId .HasValue)
+                query = query.Where(p => p.ProgramId != excludeId.Value);
 
-            return _context.Programs.AnyAsync(p => p.ProgramName.ToLower() == normalized);
+            return await query.AnyAsync(p => p.ProgramName.ToLower() == normalized);
         }
 
 
 
 
         // gets all programs with their related categories and courses
-        public async Task<IQueryable<Programs>> GetAllWithDetailsAsync()
+        public async Task<List<Programs>> GetAllWithDetailsAsync()
         {
-            return _context.Programs
+            return await _context.Programs
                 .Include(p => p.Categories)
-                .ThenInclude(c => c.Courses);
+                    .ThenInclude(c => c.Courses)
+                .Include(p => p.Courses)
+                .ToListAsync();
 
         }
 

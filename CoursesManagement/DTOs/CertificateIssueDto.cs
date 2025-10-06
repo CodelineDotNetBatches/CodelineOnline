@@ -7,6 +7,6 @@
         public int UserId { get; set; }
         public string CertificateUrl { get; set; } = default!;
         // Optional: allow custom issued date if needed
-        // public DateTime? IssuedAt { get; set; }
+        public DateTime? IssuedAt { get; set; }
     }
 }

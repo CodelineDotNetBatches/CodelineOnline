@@ -2,7 +2,7 @@
 
 namespace CoursesManagement.Repos
 {
-    public interface ICertificateRepo
+    public interface ICertificateRepo : IGenericRepo<Certificate>
     {
         Task<bool> ExistsByUserAndCourseAsync(int userId, int courseId);
         Task<Certificate?> GetByUrlAsync(string certificateUrl);

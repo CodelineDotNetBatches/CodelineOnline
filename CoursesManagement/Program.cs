@@ -19,6 +19,8 @@ namespace CoursesManagement
                        ));
 
 
+            // Add caching ...
+            builder.Services.AddMemoryCache();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
