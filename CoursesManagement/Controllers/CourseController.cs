@@ -16,14 +16,14 @@ namespace CoursesManagement.Controllers
             _courseService = courseService;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllCourses")]
         public async Task<IActionResult> GetAll()
         {
             var courses = await _courseService.GetAllCoursesAsync();
             return Ok(courses);
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id:guid}", Name = "GetCourseById")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var course = await _courseService.GetCourseByIdAsync(id);
@@ -33,21 +33,21 @@ namespace CoursesManagement.Controllers
             return Ok(course);
         }
 
-        [HttpGet("category/{categoryId:int}")]
+        [HttpGet("category/{categoryId:Guid}", Name = "GetCourseByCategoryId")]
         public async Task<IActionResult> GetByCategory(Guid categoryId)
         {
             var courses = await _courseService.GetCoursesByCategoryAsync(categoryId);
             return Ok(courses);
         }
 
-        [HttpGet("level/{level}")]
+        [HttpGet("level/{level}", Name = "GetCourseBylevel")]
         public async Task<IActionResult> GetByLevel(LevelType level)
         {
             var courses = await _courseService.GetCoursesByLevelAsync(level);
             return Ok(courses);
         }
 
-        [HttpGet("{id:guid}/category")]
+        [HttpGet("{id:guid}/category", Name = "GetCourseWithCategoryDetails")]
         public async Task<IActionResult> GetCourseWithCategory(Guid id)
         {
             var course = await _courseService.GetCourseWithCategoryAsync(id);
@@ -58,7 +58,7 @@ namespace CoursesManagement.Controllers
         }
 
         // --- CREATE using CourseCreateDto ---
-        [HttpPost]
+        [HttpPost("CreateCourse")]
         public async Task<IActionResult> Create([FromBody] CourseCreateDto dto)
         {
             if (!ModelState.IsValid)
@@ -69,7 +69,7 @@ namespace CoursesManagement.Controllers
         }
 
         // --- UPDATE using CourseUpdateDto ---
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id:guid}", Name = "UpdateCourse")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CourseUpdateDto dto)
         {
             if (id != dto.CourseId)
@@ -82,7 +82,7 @@ namespace CoursesManagement.Controllers
             return Ok(updatedCourse);
         }
 
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id:guid}", Name = "DeleteCourse")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _courseService.DeleteCourseAsync(id);
