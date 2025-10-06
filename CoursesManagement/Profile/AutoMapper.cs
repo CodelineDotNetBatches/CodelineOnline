@@ -112,28 +112,28 @@ namespace CoursesManagement.Mapping
             // =========================================================
             //  CERTIFICATE MAPPINGS
             // =========================================================
-            CreateMap<Certificate, CertificateListItemDto>().ReverseMap();
-            CreateMap<Certificate, CertificateDetailsDto>()
-                .ForMember(dest => dest.CourseName,
-                           opt => opt.MapFrom(src => src.Course.CourseName))
-                //.ForMember(dest => dest.UserName,
-                //           opt => opt.MapFrom(src => src.User.FullName))
-                .ForMember(dest => dest.IssuedDate,
-                           opt => opt.MapFrom(src => src.IssuedAt))
-                .ReverseMap();
+            //CreateMap<Certificate, CertificateListItemDto>().ReverseMap();
+            //CreateMap<Certificate, CertificateDetailsDto>()
+            //    .ForMember(dest => dest.CourseName,
+            //               opt => opt.MapFrom(src => src.Course.CourseName))
+            //    //.ForMember(dest => dest.UserName,
+            //    //           opt => opt.MapFrom(src => src.User.FullName))
+            //    .ForMember(dest => dest.IssuedDate,
+            //               opt => opt.MapFrom(src => src.IssuedAt))
+            //    .ReverseMdap();
 
-            CreateMap<CertificateIssueDto, Certificate>()
-                .ForMember(dest => dest.IssuedAt,
-                           opt => opt.MapFrom(_ => DateTime.UtcNow))
-                .ReverseMap();
+            //CreateMap<CertificateIssueDto, Certificate>()
+            //    .ForMember(dest => dest.IssuedAt,
+            //               opt => opt.MapFrom(_ => DateTime.UtcNow))
+            //    .ReverseMap();
 
-            CreateMap<CertificateUpdateUrlDto, Certificate>()
-                .ForMember(dest => dest.CertificateUrl,
-                           opt => opt.MapFrom(src => src.CertificateUrl))
-                .ReverseMap();
+            //CreateMap<CertificateUpdateUrlDto, Certificate>()
+            //    .ForMember(dest => dest.CertificateUrl,
+            //               opt => opt.MapFrom(src => src.CertificateUrl))
+            //    .ReverseMap();
 
-            CreateMap<CertificateQueryDto, Certificate>().ReverseMap();
-            CreateMap<CertificateVerifyResultDto, Certificate>().ReverseMap();
+            //CreateMap<CertificateQueryDto, Certificate>().ReverseMap();
+            //CreateMap<CertificateVerifyResultDto, Certificate>().ReverseMap();
 
             //// =========================================================
             ////  USER MAPPINGS
