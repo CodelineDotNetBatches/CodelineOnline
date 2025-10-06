@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReportsManagements.Models;
 using ReportsManagements.Repositories;
 
 
@@ -33,7 +34,7 @@ namespace ReportsManagements.Controllers
         {
             var item = await _repository.GetByIdAsync(id);
             if (item == null)
-                return NotFound();
+                return NotFound(new ErrorResponse { Status = 404, Code = "NOT_FOUND", Message = "Reason code not found" });
             return Ok(item);
         }
 
@@ -43,7 +44,13 @@ namespace ReportsManagements.Controllers
         public async Task<IActionResult> Create([FromBody] Models.ReasonCode reasonCode)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new ErrorResponse { Status = 400, Code = "INVALID_MODEL", Message = "Invalid data format", Details = ModelState });
+
+            var all = await _repository.GetAllAsync();
+            if (all.Any(rc => rc.Code.Equals(reasonCode.Code, StringComparison.OrdinalIgnoreCase)))
+            {
+                return BadRequest(new ErrorResponse { Status = 400, Code = "DUPLICATE_CODE", Message = "Reason code already exists" });
+            }
 
             await _repository.AddAsync(reasonCode);
             return CreatedAtAction(nameof(GetById), new { id = reasonCode.ReasonCodeId }, reasonCode);
@@ -54,7 +61,12 @@ namespace ReportsManagements.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Models.ReasonCode reasonCode) 
         {
-            if (id != reasonCode.ReasonCodeId) return BadRequest();
+            if (id != reasonCode.ReasonCodeId) 
+            return BadRequest(new ErrorResponse { Status = 400, Code = "ID_MISMATCH", Message = "ID in URL does not match body" });
+
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+                return NotFound(new ErrorResponse { Status = 404, Code = "NOT_FOUND", Message = "Reason code not found" });
 
             await _repository.UpdateAsync(reasonCode);
             return NoContent();
@@ -66,10 +78,25 @@ namespace ReportsManagements.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _repository.GetByIdAsync(id);
-            if (item == null) 
-                return NotFound();
+            if (item == null)
+                return NotFound(new ErrorResponse { Status = 404, Code = "NOT_FOUND", Message = "Reason code not found" });
+
             await _repository.DeleteAsync(id);
             return NoContent();
         }
+
+        
+        [HttpPut("{id}/deactivate")]
+        public async Task<IActionResult> Deactivate(int id)
+        {
+            var reasonCode = await _repository.GetByIdAsync(id);
+            if (reasonCode == null)
+                return NotFound(new ErrorResponse { Status = 404, Code = "NOT_FOUND", Message = "Reason code not found" });
+
+            reasonCode.IsActive = false;
+            await _repository.UpdateAsync(reasonCode);
+            return NoContent();
+        }
+
     }
 }

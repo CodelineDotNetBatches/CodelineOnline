@@ -23,6 +23,12 @@ namespace ReportsManagements
             builder.Services.AddScoped<IBranchRepository, BranchRepository>();
             builder.Services.AddScoped<IGeolocationRepository, GeolocationRepository>();
             builder.Services.AddScoped<IGeoValidationService, GeoValidationService>();
+            builder.Services.AddScoped<IFileStorageRepository, FileStorageRepository>();
+            builder.Services.AddScoped<IFileCodeService, FileCodeService>();
+            builder.Services.AddScoped<UploadRateLimiterService>();
+            builder.Services.AddScoped<IReasonCodeRepository, ReasonCodeRepository>();
+            builder.Services.AddMemoryCache();
+
 
             // DbContext
             builder.Services.AddDbContext<ReportsDbContext>(options =>
