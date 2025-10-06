@@ -8,5 +8,6 @@
         {
             public bool Success { get; set; } //true if operation succeeded
             public string Message { get; set; } //any message (error/success)
+            public T? Data { get; set; } //returned object or list
         }
 }
