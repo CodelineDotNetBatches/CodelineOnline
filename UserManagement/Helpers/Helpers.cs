@@ -72,13 +72,24 @@ namespace UserManagement.Helpers
 
         // Common utilities for time, strings, and IDs
 
+        public static class UtilityHelper
+        {
+            // Generate a readable timestamp
+            public static string GetTimestamp() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            // Generate a random alphanumeric code (for Admin IDs or tracking)
+            public static string GenerateCode(int length = 8)
+            {
+                var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                var random = new Random();
+                return new string(Enumerable.Repeat(chars, length)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+            }
 
 
 
 
 
-
+        }
 
     }
-
-}
