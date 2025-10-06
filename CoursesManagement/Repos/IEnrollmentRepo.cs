@@ -3,31 +3,42 @@
 namespace CoursesManagement.Repos
 {
     /// <summary>
-    /// Repository interface for managing Enrollment entities.
-    /// Extends the generic repository with enrollment-specific queries.
+    /// Repository interface for Enrollment entity operations.
+    /// Defines custom queries in addition to generic CRUD.
     /// </summary>
     public interface IEnrollmentRepo : IGenericRepo<Enrollment>
     {
+        // ==========================================================
+        // 🔹 Get all enrollments by User ID
+        // ==========================================================
         /// <summary>
-        /// Retrieves all enrollments for a given user.
+        /// Returns all enrollments belonging to a specific user.
         /// </summary>
-        /// <param name="userId">The user ID.</param>
-        /// <returns>A list of Enrollment entities for the specified user.</returns>
         Task<IEnumerable<Enrollment>> GetByUserIdAsync(Guid userId);
 
+        // ==========================================================
+        // 🔹 Get all enrollments by Course ID
+        // ==========================================================
         /// <summary>
-        /// Retrieves all enrollments for a given course.
+        /// Returns all enrollments for a specific course.
         /// </summary>
-        /// <param name="courseId">The course ID.</param>
-        /// <returns>A list of Enrollment entities for the specified course.</returns>
         Task<IEnumerable<Enrollment>> GetByCourseIdAsync(Guid courseId);
 
+        // ==========================================================
+        // 🔹 Get enrollment by User + Course combination
+        // ==========================================================
         /// <summary>
-        /// Retrieves a single enrollment for a given user and course combination.
-        /// Returns null if not found.
+        /// Returns a single enrollment that matches both user and course IDs.
+        /// Returns null if no record is found.
         /// </summary>
-        /// <param name="userId">The user ID.</param>
-        /// <param name="courseId">The course ID.</param>
         Task<Enrollment?> GetByUserAndCourseAsync(Guid userId, Guid courseId);
+
+        // ==========================================================
+        // 🔹 Get enrollment with related entities (Course, Program, etc.)
+        // ==========================================================
+        /// <summary>
+        /// Returns an enrollment by ID with all related entities loaded.
+        /// </summary>
+        Task<Enrollment?> GetByIdWithRelationsAsync(Guid id);
     }
 }
