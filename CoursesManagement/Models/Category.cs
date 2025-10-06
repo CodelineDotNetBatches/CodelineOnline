@@ -39,11 +39,11 @@ namespace CoursesManagement.Models
         /// <summary>
         /// Navigation property: many-to-many relationship with Programs.
         /// </summary>
-        public ICollection<Programs> Programs { get; set; } = new List<Programs>();
+        public virtual ICollection<Programs> Programs { get; set; } = new List<Programs>();
 
         /// <summary>
         /// Navigation property: one-to-many relationship with Courses.
         /// </summary>
-        public ICollection<Course> Courses { get; set; } = new List<Course>();
+        public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
     }
 }
