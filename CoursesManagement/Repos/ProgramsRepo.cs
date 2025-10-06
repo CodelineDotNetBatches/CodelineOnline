@@ -78,5 +78,38 @@ namespace CoursesManagement.Repos
 
         }
 
+        // Get Program With Categories
+        public async Task<Programs?> GetProgramWithCategoriesAsync(Guid programId)
+        {
+            return await _context.Programs
+                .Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.ProgramId == programId);
+        }
+
+        // Get Program With Courses
+        public async Task<Programs?> GetProgramWithCoursesOnlyAsync(Guid programId)
+        {
+            return await _context.Programs
+                .Include(p => p.Courses)
+                .FirstOrDefaultAsync(p => p.ProgramId == programId);
+        }
+
+        // Get All Enrolled Students in a Program
+        public async Task<List<Enrollment>> GetAllEnrolledStudentsInProgramAsync(Guid programId, List<Enrollment> User)
+        {
+            var program = await _context.Programs
+                .Include(p => p.Courses)
+                    .ThenInclude(c => c.Enrollments)
+                        .ThenInclude(e => e.UserId)
+                .FirstOrDefaultAsync(p => p.ProgramId == programId);
+            if (program == null) return new List<Enrollment>();
+            var students = program.Courses
+                .SelectMany(c => c.Enrollments)
+                .Select(e => e.UserId)
+                .Distinct()
+                .ToList();
+            return User;
+        }
+
     }
 }
