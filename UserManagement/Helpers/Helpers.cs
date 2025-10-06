@@ -86,7 +86,14 @@ namespace UserManagement.Helpers
                     .Select(s => s[random.Next(s.Length)]).ToArray());
             }
 
-
+            // Capitalize first letter of each word
+            public static string CapitalizeWords(string text)
+            {
+                if (string.IsNullOrWhiteSpace(text)) return text;
+                return string.Join(" ", text.Split(' ')
+                    .Where(w => !string.IsNullOrWhiteSpace(w))
+                    .Select(w => char.ToUpper(w[0]) + w.Substring(1).ToLower()));
+            }
 
 
 
