@@ -20,7 +20,7 @@ namespace UserManagement.Repositories
             return await _context.Batches.ToListAsync();
         }
 
-        public async Task<Batch?> GetByIdAsync(Guid id)
+        public async Task<Batch?> GetByIdAsync(int id)
         {
             return await _context.Batches.FindAsync(id);
         }
@@ -37,7 +37,7 @@ namespace UserManagement.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(int id)
         {
             var batch = await _context.Batches.FindAsync(id);
             if (batch != null)

@@ -8,9 +8,9 @@ namespace UserManagement.Repositories
     public interface IBatchRepository
     {
         Task<IEnumerable<Batch>> GetAllAsync();
-        Task<Batch?> GetByIdAsync(Guid id);
+        Task<Batch?> GetByIdAsync(int id);
         Task AddAsync(Batch batch);
         Task UpdateAsync(Batch batch);
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(int id);
     }
 }
