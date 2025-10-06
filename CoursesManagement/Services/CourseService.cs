@@ -161,5 +161,24 @@ namespace CoursesManagement.Services
             if (course.CategoryId != Guid.Empty)
                 _cache.Remove(CacheKeys.CoursesByCategory(course.CategoryId));
         }
+
+        //=======================
+        // GET COURSE WITH ENROLLMENTS 
+        //=======================
+        public async Task<Course?> GetCourseWithEnrollmentListAsync(Guid courseId)
+        {
+            // Retrieve the course (lazy loading will automatically load enrollments later)
+            var course = await _courseRepo.GetByIdAsync(courseId);
+
+            if (course == null)
+                return null;
+
+            // To access enrollments using lazy loading so the enrollments are loaded
+            var _ = course.Enrollments?.Count;
+            // - => it is just to trigger the loading of enrollments
+
+            return course;
+        }
+
     }
 }
