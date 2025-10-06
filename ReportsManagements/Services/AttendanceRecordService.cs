@@ -14,7 +14,7 @@ namespace ReportsManagements.Services
         {
             { "Pending", new[] { "Present", "Late", "Absent" } }
         };
-
+        // Constructor with dependency injection
         public AttendanceRecordService(IAttendanceRepository repo) => _repo = repo;
 
         // Create new attendance record

@@ -4,7 +4,7 @@
     {
         private readonly string[] allowedExtensions = { ".jpg", ".png", ".pdf", ".docx" };
         private const long MaxSizeInBytes = 5 * 1024 * 1024; // 5 MB
-
+        // Validate file by extension, size, and optional content check
         public bool IsValidFile(string fileName, long fileSize, byte[]? content = null)
         {
             var extension = Path.GetExtension(fileName).ToLower();

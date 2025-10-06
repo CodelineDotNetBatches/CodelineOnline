@@ -4,6 +4,7 @@ namespace ReportsManagements.Services
 {
     public class UploadRateLimiterService
     {
+        // Simple in-memory rate limiter for upload requests
         private readonly IMemoryCache _cache;
         private const int LIMIT = 20;
         private static readonly TimeSpan PERIOD = TimeSpan.FromMinutes(1);

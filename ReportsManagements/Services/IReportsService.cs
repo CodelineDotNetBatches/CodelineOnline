@@ -4,6 +4,7 @@ using ReportsManagements.Models;
 namespace ReportsManagements.Services;
 public interface IReportsService
 {
+    // Upsert in batch mode for better performance
     Task<int> UpsertTrainerBatchAsync(IEnumerable<TrainerReportUpsertDto> items, CancellationToken ct = default);
     Task<int> UpsertCourseBatchAsync(IEnumerable<CourseReportUpsertDto> items, CancellationToken ct = default);
 

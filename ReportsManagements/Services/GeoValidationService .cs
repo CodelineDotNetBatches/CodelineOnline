@@ -18,9 +18,9 @@
             double dLon = DegreesToRadians(Lon2 - lon1);// difference in longitude in radians
 
             double lat1Rad = DegreesToRadians(Lat1);
-            double lat2Rad = DegreesToRadians(Lat2);
+            double lat2Rad = DegreesToRadians(Lat2); // Convert latitudes to radians
 
-           double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+            double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
                Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
                Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
 

@@ -8,6 +8,7 @@ namespace ReportsManagements.Services;
 
 public class ReportsService : IReportsService
 {
+    // Repositories and mapper via dependency injection
     private readonly ITrainerReportRepository _trainerRepo;
     private readonly ICourseReportRepository _courseRepo;
     private readonly IMapper _mapper;

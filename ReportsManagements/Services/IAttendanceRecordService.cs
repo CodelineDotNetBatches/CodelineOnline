@@ -5,7 +5,7 @@ namespace ReportsManagements.Services
 {
     public interface IAttendanceRecordService
     {
-
+        // Create new attendance record
         Task<AttendanceRecord> CreateAsync(AttendanceRecord record);
         Task<AttendanceRecord?> GetByIdAsync(int id);
         Task<IEnumerable<AttendanceRecord>> GetFilteredAsync(int? studentId,
