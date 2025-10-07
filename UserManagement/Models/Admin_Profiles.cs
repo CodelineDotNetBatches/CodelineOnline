@@ -11,10 +11,17 @@ namespace UserManagement.Models
 
         public int AdminId { get; set; }
 
+        [ForeignKey("Branch")]
+        public int  BranchId { get; set; }
+
         // Navigation property for related responsibilities
         // One Admin can have many Responsibilities
         public ICollection<Responsibility> Responsibilitys {  get; set; }
         public ICollection<Batch> Batchs { get; set; } // one admin can manage many batch 
+
+        public Room rooms { get; set; }
+
+
 
     }
 
