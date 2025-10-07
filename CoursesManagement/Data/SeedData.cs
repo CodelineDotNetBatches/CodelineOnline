@@ -31,7 +31,7 @@ namespace CoursesManagement.Data
             };
             var prog2 = new Programs
             {
-                ProgramId = Guid.NewGuid(),
+                ProgramId = prog2Id,
                 ProgramName = "Data Science",
                 ProgramDescription = "Learn Python, statistics, and ML models.",
                 Roadmap = "Python → Statistics → ML → Deployment",
