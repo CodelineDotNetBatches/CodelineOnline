@@ -110,7 +110,7 @@ namespace CoursesManagement
                     j => j.HasOne<Programs>().WithMany().HasForeignKey("ProgramsProgramId"),
                     j =>
                     {
-                        j.HasKey("ProgramsProgramId", "CategoriesCategoryId"); // ✅ Now correctly inside
+                        j.HasKey("ProgramsProgramId", "CategoriesCategoryId"); 
                         j.ToTable("ProgramCategories");
                     });
 
