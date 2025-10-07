@@ -32,7 +32,6 @@ namespace CoursesManagement.Services
         // CREATE
         // =========================================================
         Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto dto);
-
         // =========================================================
         // UPDATE
         // =========================================================

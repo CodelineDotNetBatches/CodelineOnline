@@ -102,9 +102,17 @@ namespace CoursesManagement
             // MANY-TO-MANY RELATIONSHIPS
             // ===================================================
             mb.Entity<Programs>()
-              .HasMany(p => p.Categories)
-              .WithMany(c => c.Programs)
-              .UsingEntity(j => j.ToTable("ProgramCategories"));
+                .HasMany(p => p.Categories)
+                .WithMany(c => c.Programs)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProgramCategories",
+                    j => j.HasOne<Category>().WithMany().HasForeignKey("CategoriesCategoryId"),
+                    j => j.HasOne<Programs>().WithMany().HasForeignKey("ProgramsProgramId"),
+                    j =>
+                    {
+                        j.HasKey("ProgramsProgramId", "CategoriesCategoryId"); // ✅ Now correctly inside
+                        j.ToTable("ProgramCategories");
+                    });
 
             mb.Entity<Programs>()
               .HasMany(p => p.Courses)

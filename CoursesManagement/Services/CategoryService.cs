@@ -154,7 +154,7 @@ namespace CoursesManagement.Services
         {
             var category = _mapper.Map<Category>(dto);
 
-            // Attach programs (M:M)
+            // Attach selected programs (if provided)
             if (dto.ProgramIds != null && dto.ProgramIds.Any())
             {
                 var programs = await _programRepo.GetQueryable()
@@ -164,12 +164,17 @@ namespace CoursesManagement.Services
                 category.Programs = programs;
             }
 
+            //  Save new category to the database
             await _repo.AddAsync(category);
             await _repo.SaveAsync();
 
+            //  Clear cache (so next GetAll fetches updated data)
             _cache.Remove("AllCategories");
 
-            return _mapper.Map<CategoryDto>(category);
+            //  Reload category with related programs to show full list in response
+            var created = await _repo.GetCategoryFullAsync(category.CategoryId);
+
+            return _mapper.Map<CategoryDto>(created);
         }
 
         // =========================================================
