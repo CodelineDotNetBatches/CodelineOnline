@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using UserManagement.DTOs;
 using UserManagement.Models;
 using UserManagement.Services;
 
@@ -21,18 +22,27 @@ namespace UserManagement.Controllers
         // ---------------------------------------------------------
         // GET: api/room
         // ---------------------------------------------------------
-        [HttpGet]
+
+        [HttpGet("All_Rooms")]
         public async Task<ActionResult<IEnumerable<Room>>> GetAllRooms([FromQuery] bool includeBranch = false)
         {
-            var rooms = await _service.GetAllAsync(includeBranch);
-            return Ok(rooms);
+            try
+            {
+                var rooms = await _service.GetAllAsync(includeBranch);
+                return Ok(rooms);
+            }
+            catch (System.Exception ex)
+            {
+                // Log the exception (not shown here for brevity)
+                return StatusCode(500, new { message = "An error occurred while processing your request.", details = ex.Message });
+            }
         }
 
         // ---------------------------------------------------------
         // GET: api/room/{roomNumber}
         // ---------------------------------------------------------
-        [HttpGet("{roomNumber}")]
-        public async Task<ActionResult<Room>> GetRoom(string roomNumber, [FromQuery] bool includeBranch = false)
+        [HttpGet("GetRoomByRoomNumber")]
+        public async Task<ActionResult<Room>> GetRoomByRoomNumber(string roomNumber, [FromQuery] bool includeBranch = false)
         {
             var room = await _service.GetByNumberAsync(roomNumber, includeBranch);
             if (room == null)
@@ -55,25 +65,31 @@ namespace UserManagement.Controllers
         // POST: api/room
         // ---------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult> CreateRoom([FromBody] Room room)
+        [HttpPost("AddRoom")]
+        public async Task<ActionResult> AddRoom([FromBody] RoomDTO roomDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var created = await _service.CreateAsync(room);
-            return CreatedAtAction(nameof(GetRoom), new { roomNumber = created.RoomNumber }, created);
+            // Create the room via service (service now expects RoomDTO)
+            var createdRoom = await _service.CreateAsync(roomDto);
+
+            // Return the created room with its route
+            return CreatedAtAction(nameof(GetRoomByRoomNumber),
+                new { roomNumber = createdRoom.RoomNumber },
+                createdRoom);
         }
 
         // ---------------------------------------------------------
         // PUT: api/room/{roomNumber}
         // ---------------------------------------------------------
-        [HttpPut("{roomNumber}")]
-        public async Task<ActionResult> UpdateRoom(string roomNumber, [FromBody] Room room)
+        [HttpPut("update code")]
+        public async Task<ActionResult> UpdateRoom(string roomNumber, [FromBody] RoomDTO roomDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var updated = await _service.UpdateAsync(roomNumber, room);
+            var updated = await _service.UpdateAsync(roomNumber, roomDto);
             if (!updated)
                 return NotFound(new { message = $"Room '{roomNumber}' not found." });
 
