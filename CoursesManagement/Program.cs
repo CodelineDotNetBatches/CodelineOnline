@@ -4,6 +4,7 @@ using CoursesManagement.Repos;
 using CoursesManagement.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,9 @@ builder.Services.AddDbContext<CoursesDbContext>(options =>
            .UseSqlServer(
                builder.Configuration.GetConnectionString("Default"),
                sql => sql.MigrationsHistoryTable("__Migrations_App", "Courses")
-           ));
+           )
+           .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
+           );
 
 // ==========================================
 // 2. Repositories (DAL)
