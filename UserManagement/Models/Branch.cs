@@ -17,5 +17,8 @@ namespace UserManagement.Models
         [StringLength(100, ErrorMessage = "Country name cannot exceed 100 characters.")]
         public string Country { get; set; } //The country where the branch is located
 
+        [EmailAddress(ErrorMessage = "Invalid email address format.")]
+        public string? Email { get; set; } //Optional email for branch contact
+
     }
 }
