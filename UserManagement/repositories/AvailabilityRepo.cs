@@ -12,26 +12,28 @@ namespace UserManagement.Repositories
 
         public IQueryable<Availability> Query() => _db.Availabilities.AsQueryable();
 
-        public Task<Availability?> GetAsync(int instructorId, int availabilityId, CancellationToken ct = default) =>
-            _db.Availabilities.FirstOrDefaultAsync(a => a.InstructorId == instructorId && a.avilabilityId == availabilityId, ct);
+        public Task<Availability?> GetAsync(int instructorId) =>
+            _db.Availabilities.FirstOrDefaultAsync(a => a.InstructorId == instructorId);
 
-        public async Task AddAsync(Availability entity, CancellationToken ct = default) =>
-            await _db.Availabilities.AddAsync(entity, ct);
+        public async Task AddAsync(Availability entity) =>
+            await _db.Availabilities.AddAsync(entity);
 
         public void Update(Availability entity) => _db.Availabilities.Update(entity);
         public void Remove(Availability entity) => _db.Availabilities.Remove(entity);
 
-        public Task<int> SaveAsync(CancellationToken ct = default) => _db.SaveChangesAsync(ct);
+        public Task<int> SaveAsync() => _db.SaveChangesAsync();
         public int Save() => _db.SaveChanges();
 
-        // simple per-instructor incremental availabilityId
-        public async Task<int> NextAvailabilityIdAsync(int instructorId, CancellationToken ct = default)
+        public async Task<int> NextAvailabilityIdAsync(int instructorId)
         {
-            var max = await _db.Availabilities
+            // Get the current highest AvailabilityId for this instructor
+            var maxId = await _db.Availabilities
                 .Where(a => a.InstructorId == instructorId)
-                .Select(a => (int?)a.avilabilityId)
-                .MaxAsync(ct) ?? 0;
-            return max + 1;
+                .Select(a => (int?)a.avilabilityId)   // nullable to handle empty case
+                .MaxAsync();
+
+            // If no records exist, start from 1
+            return (maxId ?? 0) + 1;
         }
     }
 

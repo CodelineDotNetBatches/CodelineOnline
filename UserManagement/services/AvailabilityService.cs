@@ -35,12 +35,12 @@ namespace UserManagement.Services
             if (exists)
                 throw new InvalidOperationException("Slot already exists for this instructor.");
 
-            var nextId = await _repo.NextAvailabilityIdAsync(dto.InstructorId, ct);
+            var nextId = await _repo.NextAvailabilityIdAsync(dto.InstructorId);
             var entity = _mapper.Map<Availability>(dto);
             entity.avilabilityId = nextId;
 
-            await _repo.AddAsync(entity, ct);
-            await _repo.SaveAsync(ct);
+            await _repo.AddAsync(entity);
+            await _repo.SaveAsync();
 
             _cache.Remove(CalendarKey(dto.InstructorId));
             return _mapper.Map<AvailabilityReadDto>(entity);
@@ -55,7 +55,7 @@ namespace UserManagement.Services
             AvailabilityUpdateDto dto,
             CancellationToken ct = default)
         {
-            var entity = await _repo.GetAsync(instructorId, availabilityId, ct)
+            var entity = await _repo.GetAsync(instructorId)
                 ?? throw new KeyNotFoundException("Availability not found.");
 
             // prevent time/day conflicts
@@ -79,7 +79,7 @@ namespace UserManagement.Services
             //entity.BatchId = dto.BatchId;
 
             _repo.Update(entity);
-            await _repo.SaveAsync(ct);
+            await _repo.SaveAsync();
 
             _cache.Remove(CalendarKey(instructorId));
             return _mapper.Map<AvailabilityReadDto>(entity);
@@ -90,11 +90,11 @@ namespace UserManagement.Services
         // -------------------------------
         public async Task RemoveAsync(int instructorId, int availabilityId, CancellationToken ct = default)
         {
-            var entity = await _repo.GetAsync(instructorId, availabilityId, ct)
+            var entity = await _repo.GetAsync(instructorId)
                 ?? throw new KeyNotFoundException("Availability not found.");
 
             _repo.Remove(entity);
-            await _repo.SaveAsync(ct);
+            await _repo.SaveAsync();
             _cache.Remove(CalendarKey(instructorId));
         }
 

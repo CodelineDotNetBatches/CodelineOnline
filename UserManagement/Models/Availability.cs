@@ -6,7 +6,7 @@ namespace UserManagement.Models
 {
     public class Availability
     {
-        // Weak entity (composite key with InstructorId)        
+        [Required]
         public int avilabilityId { get; set; } // spelled as provided; consider renaming -> AvailabilityId
 
         // Foreign Key to Instructor

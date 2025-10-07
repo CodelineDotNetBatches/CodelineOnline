@@ -65,7 +65,10 @@ namespace UserManagement
             // 3️⃣ Availability Configuration
             // ==================================================
             mb.Entity<Availability>()
-                .HasKey(a => new { a.InstructorId, a.avilabilityId });
+                .HasKey(a => new { a.InstructorId, a.time });
+
+            mb.Entity<Availability>()
+                .HasIndex(a => new { a.avilabilityId }).IsUnique();
 
             mb.Entity<Availability>()
                 .HasIndex(a => a.Avail_Status);
@@ -97,19 +100,19 @@ namespace UserManagement
             // 6️⃣ TraineeSkills Configuration
             // ==================================================
             mb.Entity<TraineeSkill>()
-                .HasIndex(ts => ts.SkillName);
+                .HasIndex(ts => ts.TraineeSkillId);
 
             mb.Entity<TraineeSkill>()
-                .HasKey(ts => new { ts.TraineeId, ts.TraineeSkillId });
+                .HasKey(ts => new { ts.TraineeId, ts.SkillName });
 
             // ==================================================
             // 7️⃣ InstructorSkills Configuration
             // ==================================================
             mb.Entity<InstructorSkill>()
-                .HasIndex(isk => isk.SkillName);
+                .HasIndex(isk => isk.InstructorSkillId);
 
             mb.Entity<InstructorSkill>()
-                .HasKey(isk => new { isk.InstructorId, isk.InstructorSkillId });
+                .HasKey(isk => new { isk.InstructorId, isk.SkillName});
 
 
             //===========================
@@ -122,8 +125,14 @@ namespace UserManagement
             // ==================================================
             // 8️⃣ Other Seeds
             // ==================================================
-            InstructorsSeedData.InstructorsSeed(mb);
-            AvailabilitiesSeedData.AvailabilitiesSeed(mb);
+            //InstructorsSeedData.InstructorsSeed(mb);
+            //AvailabilitiesSeedData.AvailabilitiesSeed(mb);
+            //BranchSeed.Seed(mb);
+            //AdminProfileSeed.Seed(mb);
+            
+
+
+
         }
     }
 }

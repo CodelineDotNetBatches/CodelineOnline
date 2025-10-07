@@ -13,6 +13,10 @@ namespace UserManagement.Models
         [StringLength(100, ErrorMessage = "City name cannot exceed 100 characters.")]
         public string City { get; set; } // The city where the branch is located
 
+        [Required]
+        public string BranchName { get; set; } // The city where the branch is located
+
+
         [Required(ErrorMessage = "Country is required.")]
         [StringLength(100, ErrorMessage = "Country name cannot exceed 100 characters.")]
         public string Country { get; set; } //The country where the branch is located
@@ -22,8 +26,7 @@ namespace UserManagement.Models
         public string? Email { get; set; } //Optional email for branch contact
 
         [Required]
-        [StringLength(300, ErrorMessage = "Description cannot exceed 300 characters.")]
-        public string? Description { get; set; }  // Optional description of the branch
+        public bool IsActive { get; set; }  // Optional description of the branch
 
 
         // nav
