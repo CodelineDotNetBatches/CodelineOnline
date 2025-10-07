@@ -21,6 +21,11 @@ namespace UserManagement
         public DbSet<InstructorSkill> InstructorSkills { get; set; }
         public DbSet<Admin_Profile> AdminProfiles { get; set; }
         public DbSet<Responsibility> Responsibilities { get; set; }
+        public DbSet<Branch> branchs { get; set; }
+        public DbSet<BranchPN> branchPNs { get; set; }
+        public DbSet<Room> rooms  { get; set; }
+
+
 
         // ===============================================
         // OnModelCreating Configuration
@@ -105,6 +110,14 @@ namespace UserManagement
 
             mb.Entity<InstructorSkill>()
                 .HasKey(isk => new { isk.InstructorId, isk.InstructorSkillId });
+
+
+            //===========================
+            //8. branch phone
+            //===============
+            mb.Entity<BranchPN>()
+               .HasKey(pn => new { pn.BranchId, pn.PhoneNumber });
+
 
             // ==================================================
             // 8️⃣ Other Seeds
