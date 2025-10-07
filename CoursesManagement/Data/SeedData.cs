@@ -16,7 +16,7 @@ namespace CoursesManagement.Data
                 ProgramName = "Software Engineering",
                 ProgramDescription = "Full stack software engineering program.",
                 Roadmap = "Backend → Frontend → DevOps",
-                CreatedAt = DateTime.UtcNow
+                //CreatedAt = DateTime.UtcNow
             };
             var prog2 = new Programs
             {
@@ -24,21 +24,21 @@ namespace CoursesManagement.Data
                 ProgramName = "Data Science",
                 ProgramDescription = "Learn Python, statistics, and ML models.",
                 Roadmap = "Python → Statistics → ML → Deployment",
-                CreatedAt = DateTime.UtcNow
+                //CreatedAt = DateTime.UtcNow
             };
             var cat1 = new Category
             {
                 CategoryId = Guid.NewGuid(),
                 CategoryName = "Backend Development",
                 CategoryDescription = "C#, ASP.NET Core, SQL Server, APIs",
-                CreatedAt = DateTime.UtcNow
+                //CreatedAt = DateTime.UtcNow
             };
             var cat2 = new Category
             {
                 CategoryId = Guid.NewGuid(),
                 CategoryName = "Data Analytics",
                 CategoryDescription = "Data visualization and analytics tools.",
-                CreatedAt = DateTime.UtcNow
+                //CreatedAt = DateTime.UtcNow
             };
             var course1 = new Course
             {
@@ -48,7 +48,7 @@ namespace CoursesManagement.Data
                 CourseLevel = LevelType.Intermediate,
                
                 CategoryId = cat1.CategoryId,
-                CreatedAt = DateTime.UtcNow
+                //CreatedAt = DateTime.UtcNow
             };
             var course2 = new Course
             {
@@ -56,9 +56,9 @@ namespace CoursesManagement.Data
                 CourseName = "SQL Server & EF Core",
                 CourseDescription = "Database management with SQL Server and EF Core ORM.",
                 CourseLevel = LevelType.Beginner,
-               
+
                 CategoryId = cat1.CategoryId,
-                CreatedAt = DateTime.UtcNow
+                //CreatedAt = DateTime.UtcNow
             };
             var course3 = new Course
             {
@@ -68,7 +68,7 @@ namespace CoursesManagement.Data
                 CourseLevel = LevelType.Intermediate,
                 
                 CategoryId = cat2.CategoryId,
-                CreatedAt = DateTime.UtcNow
+                //CreatedAt = DateTime.UtcNow
             };
 
             //to add the objects to the database ...
