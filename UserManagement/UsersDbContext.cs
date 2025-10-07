@@ -9,10 +9,10 @@ namespace UserManagement
     {
         public UsersDbContext(DbContextOptions<UsersDbContext> options)
             : base(options) { }
-        // ===============================================       
-        // DbSet
-        // =======================================
 
+        // ===============================================
+        // DbSet Declarations
+        // ===============================================
         public DbSet<Trainee> Trainees { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Availability> Availabilities { get; set; }
@@ -22,119 +22,95 @@ namespace UserManagement
         public DbSet<Admin_Profile> AdminProfiles { get; set; }
         public DbSet<Responsibility> Responsibilities { get; set; }
 
-
+        // ===============================================
+        // OnModelCreating Configuration
+        // ===============================================
         protected override void OnModelCreating(ModelBuilder mb)
         {
             // Default schema
             mb.HasDefaultSchema("users");
 
-            // ==========================================
+            // ==================================================
+            // 1️⃣ Admin Profile Configuration + Seed
+            // ==================================================
+            mb.Entity<Admin_Profile>().HasKey(a => a.AdminId);
 
-            // 1. Instructor entity configuration
+            // ✅ Add explicit seeding for Admins
+            mb.Entity<Admin_Profile>().HasData(
+                new Admin_Profile { AdminId = 1 },
+                new Admin_Profile { AdminId = 2 },
+                new Admin_Profile { AdminId = 3 }
+            );
 
-            //==========================================
-
-          
-            // optional: index for specialization + experience
+            // ==================================================
+            // 2️⃣ Instructor Configuration
+            // ==================================================
             mb.Entity<Instructor>()
-                .HasIndex(i => new
-                {
-                    i.Specialization
-                });
+                .HasIndex(i => new { i.Specialization });
 
-            // Enum to int conversions
             mb.Entity<Instructor>()
-                .Property(x => x.Experience_Level).HasConversion<int>();
+                .Property(x => x.Experience_Level)
+                .HasConversion<int>();
+
             mb.Entity<Instructor>()
-                .Property(x => x.Teaching_Style).HasConversion<int>();
+                .Property(x => x.Teaching_Style)
+                .HasConversion<int>();
 
-            // ===========================================
-
-            // 2. Availability entity configuration
-
-            // ===========================================
-
-            // Availability composite key
+            // ==================================================
+            // 3️⃣ Availability Configuration
+            // ==================================================
             mb.Entity<Availability>()
-            .HasKey(a => new { a.InstructorId, a.avilabilityId });
+                .HasKey(a => new { a.InstructorId, a.avilabilityId });
 
-          
             mb.Entity<Availability>()
                 .HasIndex(a => a.Avail_Status);
-
-
-            // Enum to int conversions
 
             mb.Entity<Availability>()
                 .Property(x => x.Avail_Status).HasConversion<int>();
             mb.Entity<Availability>()
                 .Property(x => x.day_of_week).HasConversion<int>();
 
-            // ================================================
-            // 3. Batch entity configuration
-
-            // ================================================
+            // ==================================================
+            // 4️⃣ Batch Configuration
+            // ==================================================
             mb.Entity<Batch>(entity =>
             {
-                // indexing by batch name 
                 entity.HasIndex(b => b.BatchName).IsUnique();
             });
 
-
             // ==================================================
-            // 4. Admin_Resposibilities entity configuration
+            // 5️⃣ Responsibility Configuration
             // ==================================================
-
-            // Composite key
             mb.Entity<Responsibility>()
+                .HasKey(r => new { r.AdminId, r.ResponsibilityTitle });
 
-                .HasKey(r => new { r.AdminId, r.ResponsibilityTitle});
-            // indexing by responsibility name
             mb.Entity<Responsibility>()
-                .HasIndex(r => r.ResponsibilityTitle).IsUnique();
+                .HasIndex(r => r.ResponsibilityTitle)
+                .IsUnique();
 
             // ==================================================
-            // 5. TraineeSkills entity configuration
+            // 6️⃣ TraineeSkills Configuration
             // ==================================================
             mb.Entity<TraineeSkill>()
-                .HasIndex(TS => TS.SkillName);
-            // Composite key
+                .HasIndex(ts => ts.SkillName);
+
             mb.Entity<TraineeSkill>()
-                .HasKey(ts => new { ts.TraineeId, ts.TraineeSkillId }); // to not allow duplicate skills for a trainee
-
+                .HasKey(ts => new { ts.TraineeId, ts.TraineeSkillId });
 
             // ==================================================
-            // 6. InstructorSkills entity configuration
+            // 7️⃣ InstructorSkills Configuration
             // ==================================================
             mb.Entity<InstructorSkill>()
-                .HasIndex(IS => IS.SkillName);
+                .HasIndex(isk => isk.SkillName);
 
-            // Composite key
             mb.Entity<InstructorSkill>()
-                .HasKey(isk => new { isk.InstructorId, isk.InstructorSkillId }); // to not allow duplicate skills for an instructor
+                .HasKey(isk => new { isk.InstructorId, isk.InstructorSkillId });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // ==============================================
-            // 7. Seed data 
-
-            //====================================
-
+            // ==================================================
+            // 8️⃣ Other Seeds
+            // ==================================================
             InstructorsSeedData.InstructorsSeed(mb);
             AvailabilitiesSeedData.AvailabilitiesSeed(mb);
-
-
         }
     }
 }

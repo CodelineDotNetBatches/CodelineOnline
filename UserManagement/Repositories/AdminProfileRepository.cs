@@ -1,23 +1,20 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
-using System;
-using UserManagement.Models;
-using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
-
-//gg
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using UserManagement.Models;
 
 namespace UserManagement.Repositories
 {
     public class AdminProfileRepository : IAdminProfileRepository
     {
-        private readonly UsersDbContext _context; // Database context
-        private readonly IMemoryCache _memoryCache;  // In-Memory Cache
-        private readonly IDistributedCache _distributedCache;  // Distributed Cache
+        private readonly UsersDbContext _context;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IDistributedCache _distributedCache;
 
-        private const string CacheKey = "AdminProfiles"; // Key for caching
-
+        private const string CacheKey = "AdminProfiles";
 
         public AdminProfileRepository(UsersDbContext context, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
@@ -26,121 +23,101 @@ namespace UserManagement.Repositories
             _distributedCache = distributedCache;
         }
 
-        // -------------------
-        // SYNC METHODS
-        // -------------------
-
-        //Get all AdminProfiles(sync) using IQueryable for extensibility
-        public IQueryable<Admin_Profile> GetAllAdmins()
-        {
-            // Try to get data from Memory Cache
-            if (!_memoryCache.TryGetValue(CacheKey, out List<Admin_Profile> admins))
-            {
-                admins = _context.AdminProfiles.ToList(); // Load from DB (sync)
-
-                _memoryCache.Set(CacheKey, admins); // Save to Memory Cache
-            }
-
-            return admins.AsQueryable(); // Return as IQueryable
-        }
-
-
-        //Get AdminProfile by Id (sync)
-        public Admin_Profile GetAdminById(int id)
-        {
-            return _context.AdminProfiles.FirstOrDefault(a => a.AdminId == id);
-        }
-
-
-        // Add new AdminProfile (sync) 
+        // ======================================================
+        // CREATE
+        // ======================================================
 
         public void AddAdminProfile(Admin_Profile admin)
         {
             _context.AdminProfiles.Add(admin);
             _context.SaveChanges();
-            _memoryCache.Remove(CacheKey); // Clear cache after insert
         }
 
+        public async Task AddAdminProfileAsync(Admin_Profile admin)
+        {
+            await _context.AdminProfiles.AddAsync(admin);
+            await _context.SaveChangesAsync();
+        }
 
-        //Add a new  Responsibility (sync)
         public void AddResponsibility(Responsibility responsibility)
         {
-            _context.Responsibilities.Add(responsibility);   // Add new record
-            _context.SaveChanges();                          // Save to DB
+            _context.Responsibilities.Add(responsibility);
+            _context.SaveChanges();
         }
 
-        //update an existing Responsibility (Sync).
-
-        public void UpdateResponsibility(Responsibility responsibility)
+        public async Task AddResponsibilityAsync(Responsibility responsibility)
         {
-            _context.Responsibilities.Update(responsibility); // Update record
-            _context.SaveChanges();                           // Save changes
+            await _context.Responsibilities.AddAsync(responsibility);
+            await _context.SaveChangesAsync();
         }
 
+        // ======================================================
+        // READ
+        // ======================================================
 
-        //-------------------
-        // ASYNC METHODS
-        //-------------------
-        // Get all AdminProfiles (async) with Distributed Caching 
+        public IQueryable<Admin_Profile> GetAllAdmins()
+        {
+            return _context.AdminProfiles.AsQueryable();
+        }
 
         public async Task<IQueryable<Admin_Profile>> GetAllAdminsAsync()
         {
-            // Try Distributed Cache first
-            var cachedAdmins = await _distributedCache.GetStringAsync(CacheKey);
-
-            List<Admin_Profile> admins;
-
-            if (!string.IsNullOrEmpty(cachedAdmins))
-            {
-                admins = JsonSerializer.Deserialize<List<Admin_Profile>>(cachedAdmins);
-            }
-            else
-            {
-                // If not cached, load from DB
-                admins = await _context.AdminProfiles.ToListAsync();
-
-                // Save in distributed cache 
-                var serializedData = JsonSerializer.Serialize(admins);
-                await _distributedCache.SetStringAsync(CacheKey, serializedData);
-            }
-
-            // Convert List to IQueryable before returning
+            var admins = await _context.AdminProfiles.ToListAsync();
             return admins.AsQueryable();
         }
 
+        public Admin_Profile GetAdminById(int id)
+        {
+            return _context.AdminProfiles.FirstOrDefault(a => a.AdminId == id);
+        }
 
-
-        // Get AdminProfile by Id (async)
         public async Task<Admin_Profile> GetAdminByIdAsync(int id)
         {
             return await _context.AdminProfiles.FirstOrDefaultAsync(a => a.AdminId == id);
         }
 
-        // Add new AdminProfile (async)
-        public async Task AddAdminProfileAsync(Admin_Profile admin)
+        // ======================================================
+        // UPDATE
+        // ======================================================
+
+        public void UpdateAdminProfile(Admin_Profile admin)
         {
-            await _context.AdminProfiles.AddAsync(admin);
+            _context.AdminProfiles.Update(admin);
+            _context.SaveChanges();
+        }
+
+        public async Task UpdateAdminProfileAsync(Admin_Profile admin)
+        {
+            _context.AdminProfiles.Update(admin);
             await _context.SaveChangesAsync();
-
-            // Clear distributed cache
-            await _distributedCache.RemoveAsync(CacheKey);
         }
 
-        // Add a new  Responsibility (ASync).
-
-        public async Task AddResponsibilityAsync(Responsibility responsibility)
+        public void UpdateResponsibility(Responsibility responsibility)
         {
-            await _context.Responsibilities.AddAsync(responsibility); // Add new record asynchronously
-            await _context.SaveChangesAsync();                        // Save to DB
+            _context.Responsibilities.Update(responsibility);
+            _context.SaveChanges();
         }
-
-        // update an existing Responsibility (Async).
 
         public async Task UpdateResponsibilityAsync(Responsibility responsibility)
         {
-            _context.Responsibilities.Update(responsibility);  // Update record
-            await _context.SaveChangesAsync();                 // Save changes
+            _context.Responsibilities.Update(responsibility);
+            await _context.SaveChangesAsync();
+        }
+
+        // ======================================================
+        // DELETE
+        // ======================================================
+
+        public void DeleteAdminProfile(Admin_Profile admin)
+        {
+            _context.AdminProfiles.Remove(admin);
+            _context.SaveChanges();
+        }
+
+        public async Task DeleteAdminProfileAsync(Admin_Profile admin)
+        {
+            _context.AdminProfiles.Remove(admin);
+            await _context.SaveChangesAsync();
         }
     }
-
 }

@@ -12,18 +12,15 @@ namespace UserManagement.DTOs
         [Required] public TimeOnly Time { get; set; }
     }
 
-    public class AvailabilityUpdateDto : AvailabilityCreateDto
-    {
-    }
+    public class AvailabilityUpdateDto : AvailabilityCreateDto { }
 
     public class AvailabilityReadDto
     {
         public int AvailablityId { get; set; }
         public int InstructorId { get; set; }
-        public int? BatchId { get; set; }
+        //public int? BatchId { get; set; }
         public AvailabilityStatus Avail_Status { get; set; }
         public DaysOfWeek Day_Of_Week { get; set; }
         public TimeOnly Time { get; set; }
     }
-
 }

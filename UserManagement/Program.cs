@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using AutoMapper;
-
 using UserManagement;                       // UsersDbContext
 using UserManagement.Caching;               // ICacheService, MemoryCacheService
-using UserManagement.Repositories;          // Repos interfaces & impls
-using UserManagement.Services;              // Services interfaces & impls
-using UserManagement.Mapping;               // AutoMapper profiles (BatchMapping, etc.)
 using UserManagement.Controllers.Middleware;// ErrorHandlingMiddleware
-using UserManagement.SeedData;              // BatchSeedData, TraineeSeedData, etc.
+using UserManagement.Mapping;               // AutoMapper profiles (BatchMapping, etc.)
+using UserManagement.Repositories;          // Repository interfaces & implementations
+using UserManagement.SeedData;              // Seed data classes
+using UserManagement.Services;
+// Service interfaces & implementations
 
 namespace CodeLine_Online
 {
@@ -24,7 +24,7 @@ namespace CodeLine_Online
             builder.Services.AddDbContext<UsersDbContext>(options =>
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("Default"),
-                    sql => sql.MigrationsHistoryTable("__Migrations_App", "users") // 👈 keep history inside 'users' schema
+                    sql => sql.MigrationsHistoryTable("__Migrations_App", "users")
                 )
             );
 
@@ -32,6 +32,7 @@ namespace CodeLine_Online
             // 2) Caching
             // ========================================
             builder.Services.AddMemoryCache();
+            builder.Services.AddDistributedMemoryCache();
             builder.Services.AddScoped<ICacheService, MemoryCacheService>();
 
             // ========================================
@@ -42,6 +43,8 @@ namespace CodeLine_Online
             builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
             builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
             builder.Services.AddScoped<IInstructorSkillRepository, InstructorSkillRepository>();
+
+            // ✅ Register Admin repository (important for DI)
             builder.Services.AddScoped<IAdminProfileRepository, AdminProfileRepository>();
 
             // ========================================
@@ -52,12 +55,14 @@ namespace CodeLine_Online
             builder.Services.AddScoped<IInstructorService, InstructorService>();
             builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
             builder.Services.AddScoped<IInstructorSkillService, InstructorSkillService>();
+
+            // ✅ Register Admin service (this fixes your Swagger error)
             builder.Services.AddScoped<IAdminProfileService, AdminProfileService>();
 
-
             // ========================================
-            // 5) AutoMapper (scan all mapping profiles)
+            // 5) AutoMapper
             // ========================================
+            // Scans all Mapping Profiles in your assembly (Batch, Admin, Instructor, etc.)
             builder.Services.AddAutoMapper(typeof(BatchMapping).Assembly);
 
             // ========================================
@@ -67,6 +72,10 @@ namespace CodeLine_Online
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
+            });
 
 
             var app = builder.Build();
@@ -78,12 +87,13 @@ namespace CodeLine_Online
             {
                 var db = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
                 await db.Database.MigrateAsync();
-
-                // ✅ optional: clear tracking cache to ensure seed data consistency
                 db.ChangeTracker.Clear();
 
-            
-           
+                // Optionally, run seeders:
+                // await BatchSeedData.SeedAsync(db);
+                // await TraineeSeedData.SeedAsync(db);
+                // ✅ You can also seed AdminProfiles here if you wish:
+                // await AdminProfileSeedData.SeedAsync(db);
             }
 
             // ========================================

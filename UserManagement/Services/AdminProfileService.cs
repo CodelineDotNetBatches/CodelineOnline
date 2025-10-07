@@ -10,101 +10,132 @@ namespace UserManagement.Services
 {
     public class AdminProfileService : IAdminProfileService
     {
-        private readonly AdminProfileRepository _repository; // Reference to repository
-        private readonly IMapper _mapper;                    // Reference to AutoMapper
+        private readonly IAdminProfileRepository _repository;
+        private readonly IMapper _mapper;
 
-        // Constructor injection: Repository + IMapper are injected by Dependency Injection
-        public AdminProfileService(AdminProfileRepository repository, IMapper mapper)
+        public AdminProfileService(IAdminProfileRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        // -------------------
+        // ======================================================
         // SYNC METHODS
-        // -------------------
+        // ======================================================
 
-        //Get all AdminProfile (sync) and return DTOs
-        /// Uses IEnumerable since the data is already materialized
-
+        // GET ALL ADMINS
         public IEnumerable<AdminProfileDTO> GetAllAdmins()
         {
-            var admins = _repository.GetAllAdmins().ToList();       // Get entities
-            return _mapper.Map<IEnumerable<AdminProfileDTO>>(admins); // Map to DTOs
+            var admins = _repository.GetAllAdmins().ToList();
+            return _mapper.Map<IEnumerable<AdminProfileDTO>>(admins);
         }
 
-        // Get AdminProfile by Id (sync)
-
+        // GET ADMIN BY ID
         public AdminProfileDTO GetAdminById(int id)
         {
-            var admin = _repository.GetAdminById(id);              // Get entity
-            return _mapper.Map<AdminProfileDTO>(admin);            // Map to DTO
+            var admin = _repository.GetAdminById(id);
+            return _mapper.Map<AdminProfileDTO>(admin);
         }
 
-        // Add new AdminProfile (sync)
-
+        // ADD ADMIN
         public void AddAdminProfile(AdminProfileDTO adminDto)
         {
-            var adminEntity = _mapper.Map<Admin_Profile>(adminDto); // Map DTO -> Entity
-            _repository.AddAdminProfile(adminEntity);               // Save to DB
+            var adminEntity = _mapper.Map<Admin_Profile>(adminDto);
+            _repository.AddAdminProfile(adminEntity);
         }
 
-        // Add a new Responsibility (sync)
+        // UPDATE ADMIN
+        public bool UpdateAdminProfile(AdminProfileDTO dto)
+        {
+            var existingAdmin = _repository.GetAdminById(dto.AdminId);
+            if (existingAdmin == null)
+                return false;
+
+            _mapper.Map(dto, existingAdmin); // maps changes from DTO → entity
+            _repository.UpdateAdminProfile(existingAdmin);
+            return true;
+        }
+
+        // DELETE ADMIN
+        public bool DeleteAdminProfile(int id)
+        {
+            var admin = _repository.GetAdminById(id);
+            if (admin == null)
+                return false;
+
+            _repository.DeleteAdminProfile(admin);
+            return true;
+        }
+
+        // ADD RESPONSIBILITY
         public void AddResponsibility(Responsibility responsibility)
         {
-            // Calls repository sync method
             _repository.AddResponsibility(responsibility);
         }
 
-        // Update an existing Responsibility (sync).
-
+        // UPDATE RESPONSIBILITY
         public void UpdateResponsibility(Responsibility responsibility)
         {
-            // Calls repository sync method
             _repository.UpdateResponsibility(responsibility);
         }
 
-
-        // -------------------
+        // ======================================================
         // ASYNC METHODS
-        // -------------------
+        // ======================================================
 
-        // Get AdminProfile by Id (async) and return DTOs
-        // Returns IEnumerable since data is materialized
+        // GET ALL ADMINS (ASYNC)
         public async Task<IEnumerable<AdminProfileDTO>> GetAllAdminsAsync()
         {
-            var admins = await _repository.GetAllAdminsAsync();         // Get entities
-            return _mapper.Map<IEnumerable<AdminProfileDTO>>(admins);   // Map to DTOs
+            var admins = await _repository.GetAllAdminsAsync();
+            return _mapper.Map<IEnumerable<AdminProfileDTO>>(admins);
         }
 
-
-        // Get AdminProfile by Id (async) 
+        // GET ADMIN BY ID (ASYNC)
         public async Task<AdminProfileDTO> GetAdminByIdAsync(int id)
         {
-            var admin = await _repository.GetAdminByIdAsync(id);        // Get entity
-            return _mapper.Map<AdminProfileDTO>(admin);                 // Map to DTO
+            var admin = await _repository.GetAdminByIdAsync(id);
+            return _mapper.Map<AdminProfileDTO>(admin);
         }
 
-
-
-        //Add new AdminProfile (async)
+        // ADD ADMIN (ASYNC)
         public async Task AddAdminAsync(AdminProfileDTO adminDto)
         {
-            var adminEntity = _mapper.Map<Admin_Profile>(adminDto);     // Map DTO -> Entity
-            await _repository.AddAdminProfileAsync(adminEntity);        // Save to DB
+            var adminEntity = _mapper.Map<Admin_Profile>(adminDto);
+            await _repository.AddAdminProfileAsync(adminEntity);
         }
-        // Add a new Responsibility (async).
 
+        // UPDATE ADMIN (ASYNC)
+        public async Task<bool> UpdateAdminAsync(AdminProfileDTO dto)
+        {
+            var existingAdmin = await _repository.GetAdminByIdAsync(dto.AdminId);
+            if (existingAdmin == null)
+                return false;
+
+            _mapper.Map(dto, existingAdmin);
+            await _repository.UpdateAdminProfileAsync(existingAdmin);
+            return true;
+        }
+
+        // DELETE ADMIN (ASYNC)
+        public async Task<bool> DeleteAdminAsync(int id)
+        {
+            var admin = await _repository.GetAdminByIdAsync(id);
+            if (admin == null)
+                return false;
+
+            await _repository.DeleteAdminProfileAsync(admin);
+            return true;
+        }
+
+        // ADD RESPONSIBILITY (ASYNC)
         public async Task AddResponsibilityAsync(Responsibility responsibility)
         {
-            // Calls repository async method
             await _repository.AddResponsibilityAsync(responsibility);
         }
 
-        // Update an existing Responsibility (async)
+        // UPDATE RESPONSIBILITY (ASYNC)
         public async Task UpdateResponsibilityAsync(Responsibility responsibility)
         {
-            // Calls repository async method
             await _repository.UpdateResponsibilityAsync(responsibility);
         }
     }

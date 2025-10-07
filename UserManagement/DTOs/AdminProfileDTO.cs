@@ -8,7 +8,7 @@ namespace UserManagement.DTOs
         // Unique idenifier Admin Profile data between layers (Service , Controller , etc)
 
         [Required(ErrorMessage = "Id is required")]
-        public int Id { get; set; }
+        public int AdminId { get; set; }
 
         
     }

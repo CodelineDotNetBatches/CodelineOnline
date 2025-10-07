@@ -5,7 +5,7 @@ using UserManagement.Services;
 namespace UserManagement.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class TraineeController : ControllerBase
     {
         private readonly ITraineeService _service;
@@ -18,7 +18,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Get all trainees.
         /// </summary>
-        [HttpGet]
+        [HttpGet("GetAllTrainees")]
         public async Task<IActionResult> GetAll()
         {
             var trainees = await _service.GetAllTraineesAsync();
@@ -28,7 +28,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Get a trainee by ID.
         /// </summary>
-        [HttpGet("{id}")]
+        [HttpGet("GetTraineeById")]
         public async Task<IActionResult> GetById(int id)
         {
             var trainee = await _service.GetTraineeByIdAsync(id);
@@ -39,7 +39,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Create a new trainee.
         /// </summary>
-        [HttpPost]
+        [HttpPost("CreateNewTrainee")]
         public async Task<IActionResult> Create([FromBody] TraineeDTO dto)
         {
             var created = await _service.CreateTraineeAsync(dto);
@@ -49,7 +49,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Update an existing trainee.
         /// </summary>
-        [HttpPut("{id}")]
+        [HttpPut("UpdateTraineeById")]
         public async Task<IActionResult> Update(int id, [FromBody] TraineeDTO dto)
         {
             if (id != dto.TraineeId) return BadRequest();
@@ -61,7 +61,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Delete a trainee by ID.
         /// </summary>
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteTraineeById")]
         public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteTraineeAsync(id);

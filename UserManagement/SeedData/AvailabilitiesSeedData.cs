@@ -1,12 +1,12 @@
 ﻿using UserManagement.Models;
-//using static UserManagement.SeedData.InstructorsSeedData;
+using Microsoft.EntityFrameworkCore;
+
 namespace UserManagement.SeedData
 {
-    public class AvailabilitiesSeedData
+    public static class AvailabilitiesSeedData
     {
-        public static void AvailabilitiesSeed(Microsoft.EntityFrameworkCore.ModelBuilder mb)
+        public static void AvailabilitiesSeed(ModelBuilder mb)
         {
-
             mb.Entity<Availability>().HasData(
                 new Availability
                 {
@@ -14,9 +14,8 @@ namespace UserManagement.SeedData
                     avilabilityId = 1,
                     day_of_week = DaysOfWeek.Monday,
                     Avail_Status = AvailabilityStatus.Active,
-                    time = new TimeOnly(9, 0) // 9:00 AM
-
-
+                    // EF Core stores TimeOnly as TimeSpan internally
+                    time = new TimeOnly(9, 0)
                 },
                 new Availability
                 {
@@ -24,8 +23,7 @@ namespace UserManagement.SeedData
                     avilabilityId = 2,
                     day_of_week = DaysOfWeek.Wednesday,
                     Avail_Status = AvailabilityStatus.Busy,
-                    time = new TimeOnly(14, 0) // 2:00 PM
-
+                    time = new TimeOnly(14, 0)
                 },
                 new Availability
                 {
@@ -33,8 +31,7 @@ namespace UserManagement.SeedData
                     avilabilityId = 3,
                     day_of_week = DaysOfWeek.Tuesday,
                     Avail_Status = AvailabilityStatus.Inactive,
-                    time = new TimeOnly(11, 0) // 11:00 AM
-
+                    time = new TimeOnly(11, 0)
                 },
                 new Availability
                 {
@@ -42,8 +39,7 @@ namespace UserManagement.SeedData
                     avilabilityId = 4,
                     day_of_week = DaysOfWeek.Thursday,
                     Avail_Status = AvailabilityStatus.Completed,
-                    time = new TimeOnly(16, 0) // 4:00 PM
-
+                    time = new TimeOnly(16, 0)
                 },
                 new Availability
                 {
@@ -51,8 +47,7 @@ namespace UserManagement.SeedData
                     avilabilityId = 5,
                     day_of_week = DaysOfWeek.Friday,
                     Avail_Status = AvailabilityStatus.Active,
-                    time = new TimeOnly(10, 0) // 10:00 AM
-
+                    time = new TimeOnly(10, 0)
                 },
                 new Availability
                 {
@@ -60,12 +55,9 @@ namespace UserManagement.SeedData
                     avilabilityId = 6,
                     day_of_week = DaysOfWeek.Saturday,
                     Avail_Status = AvailabilityStatus.Busy,
-                    time = new TimeOnly(13, 0) // 1:00 PM
-
-
+                    time = new TimeOnly(13, 0)
                 }
-                );
+            );
         }
-
     }
 }

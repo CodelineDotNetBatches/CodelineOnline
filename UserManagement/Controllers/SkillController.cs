@@ -6,7 +6,7 @@ using UserManagement.Repositories;
 namespace UserManagement.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class InsSkillController : ControllerBase
     {
         private readonly IInstructorSkillService _instructorSkillService;
@@ -17,35 +17,35 @@ namespace UserManagement.Controllers
             _instructorSkillService = skillService;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllSkills")]
         public async Task<IActionResult> GetAll()
         {
             var skills = await _instructorSkillService.GetAllSkillsAsync();
             return Ok(skills);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetSkillByID")]
         public async Task<IActionResult> GetById(int id)
         {
             var skill = await _instructorSkillService.GetSkillByIdAsync(id);
             return skill == null ? NotFound() : Ok(skill);
         }
 
-        [HttpPost]
+        [HttpPost("CrateNewSkill")]
         public async Task<IActionResult> Add(InsSkillDto dto)
         {
             await _instructorSkillService.AddSkillAsync(dto);
             return Ok("Skill added successfully.");
         }
 
-        [HttpPut]
+        [HttpPut("UpdateSkill")]
         public async Task<IActionResult> Update(InsSkillDto dto)
         {
             await _instructorSkillService.UpdateSkillAsync(dto);
             return Ok("Skill updated successfully.");
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteSkillById")]
         public async Task<IActionResult> Delete(int id)
         {
             await _instructorSkillService.DeleteSkillAsync(id);

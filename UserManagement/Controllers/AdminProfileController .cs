@@ -5,90 +5,74 @@ using UserManagement.Services;
 
 namespace UserManagement.Controllers
 {
-    [ApiController]                     // Marks this class as an API controller 
-    [Route("api/[controller]")]        // Defines the base route -> API/AdminProfile 
+    [ApiController]
+    [Route("[controller]")]
     public class AdminProfileController : ControllerBase
     {
-        private readonly AdminProfileService _service;  // Reference to service Layer 
+        private readonly IAdminProfileService _service;
 
-        // Constructor injection: The service is injected by dependency injection (DI)
-        public AdminProfileController(AdminProfileService service)
+        public AdminProfileController(IAdminProfileService service)
         {
-            _service = service; // Store reference for later use
+            _service = service;
         }
 
         // -------------------
         // SYNC ENDPOINTS
         // -------------------
 
-        //Get all Admin Profile (sync)
-
-        [HttpGet("sync/all")]        // GET api/AdminProfile/sync/all 
-
-        public ActionResult<IQueryable<Admin_Profile>> GetAllAdmins()
+        [HttpGet("GetAllAdmin")]
+        public ActionResult<IEnumerable<Admin_Profile>> GetAllAdmins()
         {
-            var admins = _service.GetAllAdmins();      // Call service to get admins
-            return Ok(admins);                         // Return 200 OK with data
+            var admins = _service.GetAllAdmins();
+            return Ok(admins);
         }
 
-
-        // Get Admin Profile by Id (sync)
-
-        [HttpGet("sync/{id}")]                    // GET api/AdminProfile/sync/5
-
+        [HttpGet("GetAdminById/{id}")]
         public ActionResult<Admin_Profile> GetAdminById(int id)
         {
-            var admin = _service.GetAdminById(id);       // Call service 
-            if (admin == null)                          // if Not found 
-                return NotFound();                      // return 404 
-            return Ok(admin);                           // return 200 OK 
-
+            var admin = _service.GetAdminById(id);
+            if (admin == null)
+                return NotFound($"Admin with ID {id} not found.");
+            return Ok(admin);
         }
 
-
-        // Add new Admine Profile (sync)
-
-        [HttpPost("sync/add")]                 // POST api/Admin Profile /sync /add 
-
+        [HttpPost("AddAdmin")]
         public IActionResult AddAdmin([FromBody] AdminProfileDTO adminDto)
         {
-            _service.AddAdminProfile(adminDto); // Call service with DTO
-            return CreatedAtAction(nameof(GetAdminById), new { id = adminDto.Id }, adminDto);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _service.AddAdminProfile(adminDto);
+            return CreatedAtAction(nameof(GetAdminById), new { id = adminDto.AdminId }, adminDto);
         }
+
         // -------------------
-        // ASYNC ENDPOINTS
+        // UPDATE ADMIN (PUT)
         // -------------------
-
-
-        // Get all Admin Profile (async)
-
-        [HttpGet("async/all")]             // GET api/AdminProfile/async/all
-        public async Task<ActionResult<IEnumerable<Admin_Profile>>> GetAllAdminsAsync()
+        [HttpPut("UpdateAdmin/{id}")]
+        public IActionResult UpdateAdmin(int id, [FromBody] AdminProfileDTO adminDto)
         {
-            var admins = await _service.GetAllAdminsAsync(); // Call async service method
-            return Ok(admins);                         // Return 200 OK
+            if (id != adminDto.AdminId)
+                return BadRequest("ID mismatch.");
+
+            var updated = _service.UpdateAdminProfile(adminDto);
+            if (!updated)
+                return NotFound($"Admin with ID {id} not found.");
+
+            return Ok($"Admin with ID {id} updated successfully.");
         }
 
-        // Get AdminProfile by Id (async) 
-
-        [HttpGet("async/{id}")]                // GET api/Admin Profile/async/5 
-        public async Task<ActionResult<Admin_Profile>> GetAdminByIdAsync(int id)
+        // -------------------
+        // DELETE ADMIN
+        // -------------------
+        [HttpDelete("DeleteAdmin/{id}")]
+        public IActionResult DeleteAdmin(int id)
         {
-            var admin = await _service.GetAdminByIdAsync(id); // Call async service method
-            if (admin == null)                         // If not found
-                return NotFound();                     // Return 404
-            return Ok(admin);                          // Return 200 OK
-        }
+            var deleted = _service.DeleteAdminProfile(id);
+            if (!deleted)
+                return NotFound($"Admin with ID {id} not found.");
 
-
-        // Add new AdminProfile (async)
-
-        [HttpPost("async/add")]                        // POST api/AdminProfile/async/add
-
-        public async Task<IActionResult> AddAdminProfileAsync([FromBody] AdminProfileDTO adminDto)
-        {
-            await _service.AddAdminAsync(adminDto); // Service expects DTO
-            return CreatedAtAction(nameof(GetAdminByIdAsync), new { id = adminDto.Id }, adminDto);
+            return Ok($"Admin with ID {id} deleted successfully.");
         }
     }
 }

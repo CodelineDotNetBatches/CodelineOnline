@@ -5,14 +5,27 @@ namespace UserManagement.Services
 {
     public interface IAdminProfileService
     {
-        Task AddAdminAsync(AdminProfileDTO adminDto);
+        // CREATE
         void AddAdminProfile(AdminProfileDTO adminDto);
-        void AddResponsibility(Responsibility responsibility);
-        Task AddResponsibilityAsync(Responsibility responsibility);
-        AdminProfileDTO GetAdminById(int id);
-        Task<AdminProfileDTO> GetAdminByIdAsync(int id);
+        Task AddAdminAsync(AdminProfileDTO adminDto);
+
+        // READ
         IEnumerable<AdminProfileDTO> GetAllAdmins();
         Task<IEnumerable<AdminProfileDTO>> GetAllAdminsAsync();
+        AdminProfileDTO GetAdminById(int id);
+        Task<AdminProfileDTO> GetAdminByIdAsync(int id);
+
+        // UPDATE
+        bool UpdateAdminProfile(AdminProfileDTO adminDto);
+        Task<bool> UpdateAdminAsync(AdminProfileDTO adminDto);
+
+        // DELETE
+        bool DeleteAdminProfile(int id);
+        Task<bool> DeleteAdminAsync(int id);
+
+        // RESPONSIBILITIES
+        void AddResponsibility(Responsibility responsibility);
+        Task AddResponsibilityAsync(Responsibility responsibility);
         void UpdateResponsibility(Responsibility responsibility);
         Task UpdateResponsibilityAsync(Responsibility responsibility);
     }

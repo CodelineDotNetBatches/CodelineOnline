@@ -5,7 +5,7 @@ using UserManagement.Services;
 namespace UserManagement.Controllers
 {
     [ ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class BatchController : ControllerBase
     {
         private readonly IBatchService _service;
@@ -18,7 +18,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Get all batches.
         /// </summary>
-        [HttpGet]
+        [HttpGet("GetAllBatch")]
         public async Task<IActionResult> GetAll()
         {
             var batches = await _service.GetAllBatchesAsync();
@@ -28,7 +28,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Get batch by ID.
         /// </summary>
-        [HttpGet("{id}")]
+        [HttpGet("GetBatchById")]
         public async Task<IActionResult> GetById(int id)
         {
             var batch = await _service.GetBatchByIdAsync(id);
@@ -39,7 +39,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Create a new batch.
         /// </summary>
-        [HttpPost]
+        [HttpPost("CreateBatch")]
         public async Task<IActionResult> Create([FromBody] BatchDTO dto)
         {
             var created = await _service.CreateBatchAsync(dto);
@@ -49,7 +49,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Update a batch.
         /// </summary>
-        [HttpPut("{id}")]
+        [HttpPut("UpdateBatchById")]
         public async Task<IActionResult> Update(int id, [FromBody] BatchDTO dto)
         {
             if (id != dto.BatchId) return BadRequest();
@@ -61,7 +61,7 @@ namespace UserManagement.Controllers
         /// <summary>
         /// Delete a batch.
         /// </summary>
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteBatchById")]
         public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteBatchAsync(id);
