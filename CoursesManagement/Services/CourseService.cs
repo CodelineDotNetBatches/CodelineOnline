@@ -67,16 +67,32 @@ namespace CoursesManagement.Services
         // =======================
         // GET BY LEVEL (optional cache, transient)
         // =======================
-        public async Task<IEnumerable<Course>> GetCoursesByLevelAsync(LevelType level)
+        public async Task<IEnumerable<CourseListDto>> GetCoursesByLevelAsync(LevelType level)
         {
             var cacheKey = $"courses_level_{level}";
-            if (!_cache.TryGetValue(cacheKey, out IEnumerable<Course>? cachedCourses))
+
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<CourseListDto>? cachedCourseDtos))
             {
                 var query = await _courseRepo.GetCoursesByLevelAsync(level);
-                cachedCourses = await query.ToListAsync();
-                _cache.Set(cacheKey, cachedCourses, TimeSpan.FromMinutes(10));
+                var courses = await query.ToListAsync();
+
+                // Map entities to DTOs
+                cachedCourseDtos = _mapper.Map<IEnumerable<CourseListDto>>(courses);
+
+                // Populate ProgramNames for each DTO
+                foreach (var dto in cachedCourseDtos)
+                {
+                    var course = courses.First(c => c.CourseId == dto.CourseId);
+                    dto.ProgramNames = course.Programs?.Where(p => p != null)
+                                                       .Select(p => p!.ProgramName)
+                                                       .ToList() ?? new List<string>();
+                }
+
+                // Set in cache for 10 minutes
+                _cache.Set(cacheKey, cachedCourseDtos, TimeSpan.FromMinutes(10));
             }
-            return cachedCourses!;
+
+            return cachedCourseDtos;
         }
 
         // =======================
