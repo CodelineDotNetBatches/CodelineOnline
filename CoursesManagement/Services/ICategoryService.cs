@@ -3,56 +3,44 @@
 namespace CoursesManagement.Services
 {
     /// <summary>
-    /// Contract for Category business logic services.
-    /// Defines all methods for managing categories, including
-    /// related Courses and Programs.
+    /// Business service interface for Category operations.
+    /// Handles CRUD operations and category relationships with Programs and Courses.
     /// </summary>
     public interface ICategoryService
     {
         // =========================================================
-        // Core CRUD Operations
+        // GET ALL
         // =========================================================
-
-        /// <summary>
-        /// Retrieves all categories, including their programs and courses.
-        /// </summary>
         Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync();
 
-        /// <summary>
-        /// Retrieves a specific category by its unique identifier,
-        /// including all related programs and courses.
-        /// </summary>
-        Task<CategoryDetailDto?> GetCategoryByIdAsync(Guid id);
+        // =========================================================
+        // GET CATEGORY (By Id OR Name)
+        // =========================================================
+        Task<CategoryDetailDto?> GetCategoryAsync(Guid? id = null, string? name = null);
 
-        /// <summary>
-        /// Creates a new category and links it to the specified programs (if provided).
-        /// </summary>
+        // =========================================================
+        // GET COURSES BY CATEGORY (By Id OR Name)
+        // =========================================================
+        Task<IEnumerable<CourseListDto>> GetCoursesByCategoryAsync(Guid? id = null, string? name = null);
+
+        // =========================================================
+        // GET PROGRAMS BY CATEGORY (By Id OR Name)
+        // =========================================================
+        Task<IEnumerable<ProgramDetailsDto>> GetProgramsByCategoryAsync(Guid? id = null, string? name = null);
+
+        // =========================================================
+        // CREATE
+        // =========================================================
         Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto dto);
 
-        /// <summary>
-        /// Updates an existing category and re-assigns its programs if provided.
-        /// </summary>
+        // =========================================================
+        // UPDATE
+        // =========================================================
         Task UpdateCategoryAsync(Guid id, UpdateCategoryDto dto);
 
-        /// <summary>
-        /// Deletes a category if it has no related courses.
-        /// </summary>
+        // =========================================================
+        // DELETE
+        // =========================================================
         Task DeleteCategoryAsync(Guid id);
-
-        /// <summary>
-        /// Retrieves a category by its name (case-insensitive).
-        /// Includes both programs and courses.
-        /// </summary>
-        Task<CategoryDetailDto?> GetCategoryByNameAsync(string name);
-
-        /// <summary>
-        /// Retrieves all courses that belong to a specific category.
-        /// </summary>
-        Task<IEnumerable<CourseListDto>> GetCoursesByCategoryAsync(Guid categoryId);
-
-        /// <summary>
-        /// Retrieves all programs linked to a specific category.
-        /// </summary>
-        Task<IEnumerable<ProgramDetailsDto>> GetProgramsByCategoryAsync(Guid categoryId);
     }
 }

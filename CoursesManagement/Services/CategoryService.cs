@@ -3,6 +3,7 @@ using CoursesManagement.DTOs;
 using CoursesManagement.Models;
 using CoursesManagement.Repos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CoursesManagement.Services
 {
@@ -15,12 +16,21 @@ namespace CoursesManagement.Services
         private readonly ICategoryRepo _repo;
         private readonly IProgramsRepo _programRepo;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _cache;
+        private readonly MemoryCacheEntryOptions _cacheOptions;
 
-        public CategoryService(ICategoryRepo repo, IProgramsRepo programRepo, IMapper mapper)
+        public CategoryService(ICategoryRepo repo, IProgramsRepo programRepo, IMapper mapper, IMemoryCache cache)
         {
             _repo = repo;
             _programRepo = programRepo;
             _mapper = mapper;
+            _cache = cache;
+
+            _cacheOptions = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+                SlidingExpiration = TimeSpan.FromMinutes(2)
+            };
         }
 
         // =========================================================
@@ -28,6 +38,11 @@ namespace CoursesManagement.Services
         // =========================================================
         public async Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync()
         {
+            const string cacheKey = "AllCategories";
+
+            if (_cache.TryGetValue(cacheKey, out IEnumerable<CategoryDto>? cached))
+                return cached!;
+
             var categories = await _repo.GetQueryable()
                 .AsNoTracking()
                 .Include(c => c.Programs)
@@ -35,49 +50,101 @@ namespace CoursesManagement.Services
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
 
-            return _mapper.Map<IEnumerable<CategoryDto>>(categories);
+            var mapped = _mapper.Map<IEnumerable<CategoryDto>>(categories);
+            _cache.Set(cacheKey, mapped, _cacheOptions);
+            return mapped;
         }
 
         // =========================================================
-        // GET BY ID (Use GetCategoryFullAsync)
+        // GET CATEGORY (by Id OR Name)
         // =========================================================
-        public async Task<CategoryDetailDto?> GetCategoryByIdAsync(Guid id)
+        public async Task<CategoryDetailDto?> GetCategoryAsync(Guid? id = null, string? name = null)
         {
-            var category = await _repo.GetCategoryFullAsync(id);
-            return _mapper.Map<CategoryDetailDto?>(category);
+            if (id == null && string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Either Category ID or Name must be provided.");
+
+            string cacheKey = id != null && id != Guid.Empty
+                ? $"Category_{id}"
+                : $"Category_Name_{name!.ToLower()}";
+
+            if (_cache.TryGetValue(cacheKey, out CategoryDetailDto? cached))
+                return cached!;
+
+            Category? category;
+
+            if (id != null && id != Guid.Empty)
+                category = await _repo.GetCategoryFullAsync(id.Value);
+            else
+                category = await _repo.GetByNameAsync(name!);
+
+            var mapped = _mapper.Map<CategoryDetailDto?>(category);
+
+            if (mapped != null)
+                _cache.Set(cacheKey, mapped, _cacheOptions);
+
+            return mapped;
         }
 
         // =========================================================
-        // GET BY NAME (Use GetByNameAsync)
+        // GET COURSES BY CATEGORY (ID or Name)
         // =========================================================
-        public async Task<CategoryDetailDto?> GetCategoryByNameAsync(string name)
+        public async Task<IEnumerable<CourseListDto>> GetCoursesByCategoryAsync(Guid? id = null, string? name = null)
         {
-            var category = await _repo.GetByNameAsync(name);
-            return _mapper.Map<CategoryDetailDto?>(category);
-        }
+            if (id == null && string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Either Category ID or Name must be provided.");
 
-        // =========================================================
-        // GET COURSES BY CATEGORY (Uses GetCategoryWithCoursesAsync)
-        // =========================================================
-        public async Task<IEnumerable<CourseListDto>> GetCoursesByCategoryAsync(Guid categoryId)
-        {
-            var category = await _repo.GetCategoryWithCoursesAsync(categoryId);
+            string cacheKey = id != null && id != Guid.Empty
+                ? $"CategoryCourses_{id}"
+                : $"CategoryCourses_Name_{name!.ToLower()}";
+
+            if (_cache.TryGetValue(cacheKey, out IEnumerable<CourseListDto>? cached))
+                return cached!;
+
+            Category? category;
+
+            if (id != null && id != Guid.Empty)
+                category = await _repo.GetCategoryWithCoursesAsync(id.Value);
+            else
+                category = await _repo.GetByNameAsync(name!);
+
             if (category == null)
                 throw new KeyNotFoundException("Category not found.");
 
-            return _mapper.Map<IEnumerable<CourseListDto>>(category.Courses);
+            var mapped = _mapper.Map<IEnumerable<CourseListDto>>(category.Courses);
+            _cache.Set(cacheKey, mapped, _cacheOptions);
+
+            return mapped;
         }
 
         // =========================================================
-        // GET PROGRAMS BY CATEGORY (Uses GetCategoryWithProgramsAsync)
+        // GET PROGRAMS BY CATEGORY (ID or Name)
         // =========================================================
-        public async Task<IEnumerable<ProgramDetailsDto>> GetProgramsByCategoryAsync(Guid categoryId)
+        public async Task<IEnumerable<ProgramDetailsDto>> GetProgramsByCategoryAsync(Guid? id = null, string? name = null)
         {
-            var category = await _repo.GetCategoryWithProgramsAsync(categoryId);
+            if (id == null && string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Either Category ID or Name must be provided.");
+
+            string cacheKey = id != null && id != Guid.Empty
+                ? $"CategoryPrograms_{id}"
+                : $"CategoryPrograms_Name_{name!.ToLower()}";
+
+            if (_cache.TryGetValue(cacheKey, out IEnumerable<ProgramDetailsDto>? cached))
+                return cached!;
+
+            Category? category;
+
+            if (id != null && id != Guid.Empty)
+                category = await _repo.GetCategoryWithProgramsAsync(id.Value);
+            else
+                category = await _repo.GetByNameAsync(name!);
+
             if (category == null)
                 throw new KeyNotFoundException("Category not found.");
 
-            return _mapper.Map<IEnumerable<ProgramDetailsDto>>(category.Programs);
+            var mapped = _mapper.Map<IEnumerable<ProgramDetailsDto>>(category.Programs);
+            _cache.Set(cacheKey, mapped, _cacheOptions);
+
+            return mapped;
         }
 
         // =========================================================
@@ -99,6 +166,8 @@ namespace CoursesManagement.Services
 
             await _repo.AddAsync(category);
             await _repo.SaveAsync();
+
+            _cache.Remove("AllCategories");
 
             return _mapper.Map<CategoryDto>(category);
         }
@@ -128,6 +197,10 @@ namespace CoursesManagement.Services
 
             _repo.Update(category);
             await _repo.SaveAsync();
+
+            // Invalidate cache for that category
+            _cache.Remove("AllCategories");
+            _cache.Remove($"Category_{id}");
         }
 
         // =========================================================
@@ -136,7 +209,6 @@ namespace CoursesManagement.Services
         public async Task DeleteCategoryAsync(Guid id)
         {
             var category = await _repo.GetCategoryFullAsync(id);
-
             if (category == null)
                 throw new KeyNotFoundException("Category not found.");
 
@@ -145,6 +217,10 @@ namespace CoursesManagement.Services
 
             _repo.Delete(category);
             await _repo.SaveAsync();
+
+            // Invalidate cache
+            _cache.Remove("AllCategories");
+            _cache.Remove($"Category_{id}");
         }
     }
 }
