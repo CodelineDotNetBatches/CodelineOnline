@@ -5,10 +5,13 @@ namespace UserManagement.Models
     public class Room
     {
 
-        [Required(ErrorMessage = "Room number is required.")]
-        [StringLength(10, ErrorMessage = "Room number cannot exceed 10 characters.")]
-        public string RoomNumber { get; set; } // Unique room number 
+        [Key]
+        public string RoomNumber { get; set; } // Praimary Key for the Room Number 
 
+
+        [Required(ErrorMessage = "Room type is required.")]
+        [StringLength(50, ErrorMessage = "Room type cannot exceed 50 characters.")]
+        public string RoomType { get; set; }
 
     }
 }
