@@ -41,6 +41,31 @@ namespace CoursesManagement.Mapping
                 .ForMember(dest => dest.Courses, opt => opt.Ignore())
                 .ReverseMap();
 
+            // Programs -> ProgramsWithCategoryDto
+            CreateMap<Programs, ProgramsWithCategoryDto>()
+                .ForMember(d => d.CreatedAtUtc, o => o.MapFrom(s => s.CreatedAt))
+                .ForMember(d => d.ProgramCategory,
+                    o => o.MapFrom(s => s.Categories ?? new List<Category>()));
+
+            // Programs -> ProgramsWithCoursesDto
+            CreateMap<Programs, ProgramsWithCoursesDto>()
+                .ForMember(d => d.CreatedAtUtc, o => o.MapFrom(s => s.CreatedAt))
+                .ForMember(d => d.ProgramCourses,
+                    o => o.MapFrom(s => s.Courses ?? new List<Course>()));
+
+            // Programs -> ProgramsWithEnrollmentDto
+            CreateMap<Programs, ProgramsWithEnrollmentDto>()
+                .ForMember(d => d.CreatedAtUtc, o => o.MapFrom(s => s.CreatedAt))
+                .ForMember(d => d.ProgramsEnrollments, o => o.MapFrom(s =>
+                    (s.Courses ?? new List<Course>())
+                        .Where(c => c.Enrollments != null)
+                        .SelectMany(c => c.Enrollments!)
+                        
+                        .GroupBy(e => e.EnrollmentId)     // replace with your key prop name
+                        .Select(g => g.First())
+                        .ToList()
+                ));
+
             // =========================================================
             //  CATEGORY MAPPINGS
             // =========================================================
