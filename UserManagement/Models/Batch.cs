@@ -41,7 +41,7 @@ namespace UserManagement.Models
         [MaxLength(500)]
         public string? BatchDescription { get; set; }
 
-        public Branch branchs { get; set; } 
+        public virtual Branch branchs { get; set; } 
 
         // navigation property
 
