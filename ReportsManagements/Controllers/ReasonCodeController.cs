@@ -71,15 +71,5 @@ namespace ReportsManagements.Controllers
             await _repository.DeleteAsync(id);
             return NoContent();
         }
-        [HttpPut("{id}/deactivate")]
-        public async Task<IActionResult> Deactivate(int id)
-        {
-            var reasonCode = await _repository.GetByIdAsync(id);
-            if (reasonCode == null)
-                return NotFound(new ErrorResponse { Status = 404, Code = "NOT_FOUND", Message = "Reason code not found" });
-            reasonCode.IsActive = false;
-            await _repository.UpdateAsync(reasonCode);
-            return NoContent();
-        }
     }
 }
