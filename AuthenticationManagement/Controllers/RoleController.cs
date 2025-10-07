@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AuthenticationManagement.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _service;
@@ -18,7 +18,7 @@ namespace AuthenticationManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll() => Ok(await _service.GetAllAsync());
 
-        [HttpGet("{id}")]
+        [HttpGet("GetRoleById/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var role = await _service.GetByIdAsync(id);
