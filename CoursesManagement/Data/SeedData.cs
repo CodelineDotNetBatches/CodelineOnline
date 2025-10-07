@@ -86,6 +86,9 @@ namespace CoursesManagement.Data
             mb.Entity<Programs>().HasData(prog1, prog2);
             mb.Entity<Category>().HasData(cat1, cat2);
             mb.Entity<Course>().HasData(course1, course2, course3);
+
+
+
         }
 
     }

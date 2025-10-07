@@ -60,9 +60,6 @@ namespace CoursesManagement.Mapping
                     (s.Courses ?? new List<Course>())
                         .Where(c => c.Enrollments != null)
                         .SelectMany(c => c.Enrollments!)
-                        
-                        .GroupBy(e => e.EnrollmentId)     // replace with your key prop name
-                        .Select(g => g.First())
                         .ToList()
                 ));
 
