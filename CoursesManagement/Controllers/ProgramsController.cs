@@ -38,7 +38,7 @@ namespace CoursesManagement.Controllers
 
         // GET: api/programs/{id}
 
-        [HttpGet("GetProgramById{id:guid}")] // Route to get a program by its GUID
+        [HttpGet("GetProgramById/{id:guid}")] // Route to get a program by its GUID
         public async Task<IActionResult> GetProgramById(Guid id)
         {
             try
@@ -104,7 +104,7 @@ namespace CoursesManagement.Controllers
 
         // PUT: api/programs/{id}
 
-        [HttpPut("UpdateProgramByProgramId{id:guid}")]
+        [HttpPut("UpdateProgramByProgramId/{id:guid}")]
         [ProducesResponseType(204)] // Represents a successful update response with no content
         [ProducesResponseType(404)] // Represents a not found response
         //[SwaggerResponse(204, "Program updated successfully.")] // Swagger documentation for a successful update response
@@ -151,14 +151,14 @@ namespace CoursesManagement.Controllers
 
         //// GET: api/programs/{id}/courses
 
-        [HttpGet("GetProgramWithCoursesByProgramId{id:guid}")]
+        [HttpGet("GetProgramWithCoursesByProgramId/{id:guid}")]
         [ProducesResponseType(204)] // Represents a successful deletion response with no content
         [ProducesResponseType(404)] // Represents a not found response
         public async Task<IActionResult> GetProgramWithCourses(Guid id)
         {
             try
             {
-                var result = await _service.GetProgramByIdAsync(id);
+                var result = await _service.GetProgramWithCoursesAsync(id);
                 if (result == null)
                     return NotFound("Program not found.");
                 return Ok(result);
@@ -190,7 +190,7 @@ namespace CoursesManagement.Controllers
 
 
         // GET: api/programs/{id}/categories
-        [HttpGet("GetProgramWithCategoriesByProgramId{id:guid}")]
+        [HttpGet("GetProgramWithCategoriesByProgramId/{id:guid}")]
         public async Task<IActionResult> GetProgramWithCategories(Guid id)
         {
             try
@@ -207,13 +207,16 @@ namespace CoursesManagement.Controllers
         }
 
         // GET: api/programs/{id}/Enrollments
-        [HttpGet("GetAllEnrollmentsInProgramByProgramId{id:guid}")]
+        [HttpGet("GetAllEnrollmentsInProgramByProgramId/{id:guid}")]
         public async Task<IActionResult> GetAllEnrollmentsInProgramByProgramId(Guid id)
         {
             try
             {
-                var result = await _service.GetProgramWithEnrollmentsAsync(id);
-                return Ok(result);
+                var dto = await _service.GetProgramWithEnrollmentsAsync(id);
+                if (dto == null)
+                    return NotFound("Program not found.");
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
