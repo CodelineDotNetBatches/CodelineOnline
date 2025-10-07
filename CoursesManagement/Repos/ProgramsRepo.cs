@@ -91,6 +91,8 @@ namespace CoursesManagement.Repos
         public async Task<Programs?> GetProgramWithCoursesOnlyAsync(Guid programId)
         {
             return await _context.Programs
+                .Include(p => p.Categories)
+                    .Include(p => p.Courses)
                 .Include(p => p.Courses)
                 .FirstOrDefaultAsync(p => p.ProgramId == programId);
         }
@@ -99,9 +101,9 @@ namespace CoursesManagement.Repos
         public async Task<List<Enrollment>> GetAllEnrollmentsInProgramAsync(Guid programId)
         {
             var program = await _context.Programs
-        .Include(p => p.Courses)
-            .ThenInclude(c => c.Enrollments)
-        .FirstOrDefaultAsync(p => p.ProgramId == programId);
+                    .Include(p => p.Courses)
+                    .ThenInclude(c => c.Enrollments)
+                    .FirstOrDefaultAsync(p => p.ProgramId == programId);
 
             if (program?.Courses == null)
                 return new List<Enrollment>();
@@ -113,7 +115,14 @@ namespace CoursesManagement.Repos
             return enrollments;
         }
 
-
+        // Get the Program with Courses and their Enrollments
+        public async Task<Programs?> GetProgramWithEnrollmentsAsync(Guid programId)
+        {
+            return await _context.Programs
+                .Include(p => p.Courses)
+                    .ThenInclude(c => c.Enrollments)
+                .FirstOrDefaultAsync(p => p.ProgramId == programId);
+        }
 
 
 
