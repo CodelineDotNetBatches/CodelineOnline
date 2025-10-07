@@ -36,6 +36,11 @@ namespace CoursesManagement.Mapping
                 .ForMember(dest => dest.Courses, opt => opt.Ignore())
                 .ReverseMap();
 
+            CreateMap<ProgramsDto, Programs>()
+                .ForMember(dest => dest.Categories, opt => opt.Ignore())
+                .ForMember(dest => dest.Courses, opt => opt.Ignore())
+                .ReverseMap();
+
             // =========================================================
             //  CATEGORY MAPPINGS
             // =========================================================
