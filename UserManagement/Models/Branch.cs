@@ -6,7 +6,7 @@ namespace UserManagement.Models
     public class Branch
     {
         [Key]
-      
+
         public int BranchId { get; set; } // Primary Key for the Branch table
 
         [Required(ErrorMessage = "City is required.")]
@@ -23,5 +23,28 @@ namespace UserManagement.Models
 
         [StringLength(300, ErrorMessage = "Description cannot exceed 300 characters.")]
         public string? Description { get; set; }  // Optional description of the branch
-    } 
+
+
+        // nav
+        public ICollection<BranchPN> branchPNs { get; set; }
+
+    }
+
+    public class BranchPN
+    {
+        [ForeignKey("Branch")]
+        public int BranchId { get; set; }
+
+        [Phone(ErrorMessage = "Invalid phone number format.")]
+        [StringLength(15, ErrorMessage = "Phone number cannot exceed 15 digits.")]
+        public int PhoneNumber { get; set; }
+
+
+
+        //nevegation 
+        public Branch branchs { get; set; }
+    }
+ 
+
+
 }
