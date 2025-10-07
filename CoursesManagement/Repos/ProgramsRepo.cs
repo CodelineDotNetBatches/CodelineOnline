@@ -3,6 +3,7 @@ using CoursesManagement.Repos;
 using CoursesManagement;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
+using System.Linq;
 
 namespace CoursesManagement.Repos
 {
@@ -94,22 +95,27 @@ namespace CoursesManagement.Repos
                 .FirstOrDefaultAsync(p => p.ProgramId == programId);
         }
 
-        // Get All Enrolled Students in a Program
-        public async Task<List<Enrollment>> GetAllEnrolledStudentsInProgramAsync(Guid programId, List<Enrollment> User)
+        // Get All Enrolled  in a Program
+        public async Task<List<Enrollment>> GetAllEnrollmentsInProgramAsync(Guid programId)
         {
             var program = await _context.Programs
-                .Include(p => p.Courses)
-                    .ThenInclude(c => c.Enrollments)
-                        .ThenInclude(e => e.UserId)
-                .FirstOrDefaultAsync(p => p.ProgramId == programId);
-            if (program == null) return new List<Enrollment>();
-            var students = program.Courses
-                .SelectMany(c => c.Enrollments)
-                .Select(e => e.UserId)
-                .Distinct()
+        .Include(p => p.Courses)
+            .ThenInclude(c => c.Enrollments)
+        .FirstOrDefaultAsync(p => p.ProgramId == programId);
+
+            if (program?.Courses == null)
+                return new List<Enrollment>();
+
+            var enrollments = program.Courses
+                .SelectMany(c => c.Enrollments ?? Enumerable.Empty<Enrollment>())
                 .ToList();
-            return User;
+
+            return enrollments;
         }
+
+
+
+
 
     }
 }
