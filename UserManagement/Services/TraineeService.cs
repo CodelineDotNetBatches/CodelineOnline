@@ -27,10 +27,13 @@ namespace UserManagement.Services
                 EducationalBackground = t.EducationalBackground,
                 TraineeCV = t.TraineeCV,
                 LearningObjectives = t.LearningObjectives,
-                ExperienceLevel = t.Experience_Level.ToString()
-
+                ExperienceLevel = t.Experience_Level.ToString(),
+                Years_of_Experience = t.Years_of_Experience,
+                Learning_Style = t.Learning_Style,
+                Study_Focus = t.Study_Focus
             });
         }
+
 
         public async Task<TraineeDTO?> GetTraineeByIdAsync(int id)
         {
@@ -45,7 +48,7 @@ namespace UserManagement.Services
                 EducationalBackground = t.EducationalBackground,
                 TraineeCV = t.TraineeCV,
                 LearningObjectives = t.LearningObjectives,
-                
+
             };
         }
 
@@ -90,5 +93,8 @@ namespace UserManagement.Services
         {
             await _repository.DeleteAsync(id);
         }
+
+
+
     }
 }

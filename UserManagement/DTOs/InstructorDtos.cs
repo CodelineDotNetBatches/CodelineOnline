@@ -12,6 +12,7 @@ namespace UserManagement.DTOs
         public string? InstructorCV { get; set; }
         [Required] public ExperienceLevel Experience_Level { get; set; }
         [Required] public TeachingStyle Teaching_Style { get; set; }
+
     }
     public class InstructorReadDto
     {
@@ -22,6 +23,7 @@ namespace UserManagement.DTOs
         public string? InstructorCV { get; set; }
         public ExperienceLevel Experience_Level { get; set; }
         public TeachingStyle Teaching_Style { get; set; }
+        public Specializations Specialization { get; set; }   // ✅ add this line
     }
 
     public class InstructorUpdateDto : InstructorCreateDto 

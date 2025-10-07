@@ -1,4 +1,6 @@
-﻿namespace UserManagement.DTOs
+﻿using UserManagement.Models;
+
+namespace UserManagement.DTOs
 {
 
     /// <summary>
@@ -13,5 +15,11 @@
         public string? TraineeCV { get; set; }
         public string? LearningObjectives { get; set; }
         public string ExperienceLevel { get; set; } = default!;
+
+
+        public int Years_of_Experience { get; set; }
+        public LearningStyle Learning_Style { get; set; }
+        public StudyFocus Study_Focus { get; set; }
+
     }
 }

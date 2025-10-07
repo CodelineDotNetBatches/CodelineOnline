@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.DTOs;
+using UserManagement.Models;
 using UserManagement.Services;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace UserManagement.Controllers
 {
@@ -12,9 +17,10 @@ namespace UserManagement.Controllers
         private readonly IAvailabilityService _svc;
         public AvailabilitiesController(IAvailabilityService svc) => _svc = svc;
 
-        // -------------------------------
-        // POST: Create new availability
-        // -------------------------------
+        // ============================================================
+        // CRUD-LIKE ENDPOINTS
+        // ============================================================
+
         [HttpPost("AddNewAvailability")]
         public async Task<ActionResult<AvailabilityReadDto>> Create(
             [FromRoute] int instructorId,
@@ -26,9 +32,6 @@ namespace UserManagement.Controllers
             return CreatedAtAction(nameof(GetByInstructor), new { instructorId }, created);
         }
 
-        // -------------------------------
-        // GET: All availabilities by instructor
-        // -------------------------------
         [HttpGet("GetAllAvailabilities")]
         public async Task<ActionResult<IEnumerable<AvailabilityReadDto>>> GetByInstructor(
             [FromRoute] int instructorId,
@@ -38,10 +41,7 @@ namespace UserManagement.Controllers
             return Ok(list);
         }
 
-        // -------------------------------
-        // PUT: Update an availability
-        // -------------------------------
-        [HttpPut("UpdateAavailabilityById")]
+        [HttpPut("UpdateAvailabilityById")]
         public async Task<ActionResult<AvailabilityReadDto>> Update(
             [FromRoute] int instructorId,
             [FromRoute] int availabilityId,
@@ -52,9 +52,6 @@ namespace UserManagement.Controllers
             return Ok(updated);
         }
 
-        // -------------------------------
-        // DELETE: Remove an availability
-        // -------------------------------
         [HttpDelete("DeleteAvailabilityById")]
         public async Task<IActionResult> Delete(
             [FromRoute] int instructorId,
@@ -65,9 +62,6 @@ namespace UserManagement.Controllers
             return NoContent();
         }
 
-        // -------------------------------
-        // GET: Instructor availability calendar
-        // -------------------------------
         [HttpGet("GetAvailabilityByCalendar")]
         public async Task<ActionResult<IEnumerable<AvailabilityReadDto>>> GetCalendar(
             [FromRoute] int instructorId,
@@ -75,6 +69,78 @@ namespace UserManagement.Controllers
         {
             var list = await _svc.GenerateCalendarAsync(instructorId, ct);
             return Ok(list);
+        }
+
+        // ============================================================
+        // FILTERING ENDPOINTS
+        // ============================================================
+
+        /// <summary>
+        /// Filter availabilities by status (e.g. Available, Unavailable).
+        /// Example: /Availabilities/FilterByStatus?instructorId=5&status=Available
+        /// </summary>
+        [HttpGet("FilterByStatus")]
+        public async Task<IActionResult> FilterByStatus(
+            [FromQuery] int instructorId,
+            [FromQuery] AvailabilityStatus status,
+            CancellationToken ct)
+        {
+            var all = await _svc.GetByInstructorAsync(instructorId, ct);
+            var filtered = all.Where(a => a.Avail_Status == status).ToList();
+            return Ok(filtered);
+        }
+
+        /// <summary>
+        /// Filter availabilities by day of week (e.g. Monday, Tuesday).
+        /// Example: /Availabilities/FilterByDay?instructorId=5&day=Monday
+        /// </summary>
+        [HttpGet("FilterByDay")]
+        public async Task<IActionResult> FilterByDay(
+            [FromQuery] int instructorId,
+            [FromQuery] DaysOfWeek day,
+            CancellationToken ct)
+        {
+            var all = await _svc.GetByInstructorAsync(instructorId, ct);
+            var filtered = all.Where(a => a.Day_Of_Week == day).ToList();
+            return Ok(filtered);
+        }
+
+        /// <summary>
+        /// Filter availabilities by specific time (e.g. 09:00, 14:30).
+        /// Example: /Availabilities/FilterByTime?instructorId=5&time=09:00
+        /// </summary>
+        [HttpGet("FilterByTime")]
+        public async Task<IActionResult> FilterByTime(
+            [FromQuery] int instructorId,
+            [FromQuery] TimeOnly time,
+            CancellationToken ct)
+        {
+            var all = await _svc.GetByInstructorAsync(instructorId, ct);
+            var filtered = all.Where(a => a.Time == time).ToList();
+            return Ok(filtered);
+        }
+
+        /// <summary>
+        /// Combined filter (status, day, and time).
+        /// Example: /Availabilities/FilterCombined?instructorId=5&status=Available&day=Monday&time=09:00
+        /// </summary>
+        [HttpGet("FilterCombined")]
+        public async Task<IActionResult> FilterCombined(
+            [FromQuery] int instructorId,
+            [FromQuery] AvailabilityStatus? status,
+            [FromQuery] DaysOfWeek? day,
+            [FromQuery] TimeOnly? time,
+            CancellationToken ct)
+        {
+            var all = await _svc.GetByInstructorAsync(instructorId, ct);
+
+            var filtered = all.Where(a =>
+                (!status.HasValue || a.Avail_Status == status) &&
+                (!day.HasValue || a.Day_Of_Week == day) &&
+                (!time.HasValue || a.Time == time))
+                .ToList();
+
+            return Ok(filtered);
         }
     }
 }

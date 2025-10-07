@@ -1,52 +1,130 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using UserManagement.DTOs;
+using UserManagement.Models;
 using UserManagement.Services;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace UserManagement.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class InstructorsController : Controller
+    public class InstructorController : ControllerBase
     {
-        private readonly IInstructorService _svc;
-        public InstructorsController(IInstructorService svc) => _svc = svc;
+        private readonly IInstructorService _service;
 
-        // Called after User module creates a user with role = Instructor
-        [HttpPost("CreateInstructor")]
-        public async Task<ActionResult<InstructorReadDto>> Create([FromBody] InstructorCreateDto dto, CancellationToken ct)
+        public InstructorController(IInstructorService service)
         {
-            var created = await _svc.CreateFromUserAsync(dto, ct);
+            _service = service;
+        }
+
+        // ============================================================
+        // BASIC CRUD-LIKE OPERATIONS
+        // ============================================================
+
+        [HttpGet("GetInstructorById")]
+        public async Task<IActionResult> GetById(int id, CancellationToken ct)
+        {
+            var instructor = await _service.GetAsync(id, ct);
+            if (instructor == null) return NotFound($"Instructor {id} not found.");
+            return Ok(instructor);
+        }
+
+        [HttpGet("GetAllInstructors")]
+        public IActionResult GetAll([FromQuery] PagingFilter filter)
+        {
+            var instructors = _service.GetAll(filter);
+            return Ok(instructors);
+        }
+
+        [HttpPost("CreateInstructor")]
+        public async Task<IActionResult> Create([FromBody] InstructorCreateDto dto, CancellationToken ct)
+        {
+            var created = await _service.CreateFromUserAsync(dto, ct);
             return CreatedAtAction(nameof(GetById), new { id = created.InstructorId }, created);
         }
 
-        [HttpGet("GetInstructorById")]
-        public async Task<ActionResult<InstructorReadDto>> GetById([FromRoute] int id, CancellationToken ct)
+        [HttpPut("UpdateInstructor/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] InstructorUpdateDto dto, CancellationToken ct)
         {
-            var result = await _svc.GetAsync(id, ct);
-            return result is null ? NotFound() : Ok(result);
-        }
-
-        [HttpGet("GetAllInstructor")]
-        public async Task<ActionResult<IEnumerable<InstructorReadDto>>> GetAll([FromQuery] PagingFilter filter, CancellationToken ct)
-        {
-            var list = await _svc.GetAllAsync(filter, ct);
-            return Ok(list);
-        }
-
-        [HttpPut("UpdateInstructorById")]
-        public async Task<ActionResult<InstructorReadDto>> Update([FromRoute] int id, [FromBody] InstructorUpdateDto dto, CancellationToken ct)
-        {
-            var updated = await _svc.UpdateAsync(id, dto, ct);
+            var updated = await _service.UpdateAsync(id, dto, ct);
             return Ok(updated);
         }
 
-        [HttpDelete("DeleteInstructorById")]
-        public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken ct)
+        [HttpDelete("DeleteInstructor/{id}")]
+        public async Task<IActionResult> Delete(int id, CancellationToken ct)
         {
-            await _svc.DeleteAsync(id, ct);
+            await _service.DeleteAsync(id, ct);
             return NoContent();
+        }
+
+        // ============================================================
+        // FILTERING ENDPOINTS
+        // ============================================================
+
+        /// <summary>
+        /// Filter instructors by years of experience range.
+        /// Example: /Instructor/FilterByExperienceYears?min=3&max=10
+        /// </summary>
+        [HttpGet("FilterByExperienceYears")]
+        public IActionResult FilterByExperienceYears([FromQuery] int? min, [FromQuery] int? max)
+        {
+            var instructors = _service.GetAll(new PagingFilter { Page = 1, PageSize = 9999 });
+
+            var filtered = instructors.Where(i =>
+                (!min.HasValue || i.Years_of_Experience >= min) &&
+                (!max.HasValue || i.Years_of_Experience <= max));
+
+            return Ok(filtered);
+        }
+
+        /// <summary>
+        /// Filter instructors by teaching style.
+        /// Example: /Instructor/FilterByTeachingStyle?style=ProjectBased
+        /// </summary>
+        [HttpGet("FilterByTeachingStyle")]
+        public IActionResult FilterByTeachingStyle([FromQuery] TeachingStyle style)
+        {
+            var instructors = _service.GetAll(new PagingFilter { Page = 1, PageSize = 9999 });
+            var filtered = instructors.Where(i => i.Teaching_Style == style);
+            return Ok(filtered);
+        }
+
+        /// <summary>
+        /// Filter instructors by specialization (expertise).
+        /// Example: /Instructor/FilterBySpecialization?spec=WebDevelopment
+        /// </summary>
+        [HttpGet("FilterBySpecialization")]
+        public IActionResult FilterBySpecialization([FromQuery] Specializations spec)
+        {
+            var instructors = _service.GetAll(new PagingFilter { Page = 1, PageSize = 9999 });
+            var filtered = instructors.Where(i =>
+                i is { } && i.GetType().GetProperty("Specialization") != null &&
+                ((Specializations)i.GetType().GetProperty("Specialization")!.GetValue(i)!) == spec);
+
+            return Ok(filtered);
+        }
+
+        /// <summary>
+        /// Combined filter for multiple criteria.
+        /// Example: /Instructor/FilterCombined?style=HandsOn&spec=Java&min=2&max=10
+        /// </summary>
+        [HttpGet("FilterCombined")]
+        public IActionResult FilterCombined(
+            [FromQuery] TeachingStyle? style,
+            [FromQuery] Specializations? spec,
+            [FromQuery] int? min,
+            [FromQuery] int? max)
+        {
+            var instructors = _service.GetAll(new PagingFilter { Page = 1, PageSize = 9999 });
+
+            var filtered = instructors.Where(i =>
+                (!style.HasValue || i.Teaching_Style == style) &&
+                (!spec.HasValue || i.GetType().GetProperty("Specialization")?.GetValue(i)?.Equals(spec) == true) &&
+                (!min.HasValue || i.Years_of_Experience >= min) &&
+                (!max.HasValue || i.Years_of_Experience <= max));
+
+            return Ok(filtered);
         }
     }
 }
-
