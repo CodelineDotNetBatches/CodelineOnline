@@ -46,10 +46,10 @@ namespace UserManagement.Models
         // navigation property
 
 
-        public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>(); // one batch can has many trainee
+        public virtual ICollection<Trainee> Trainees { get; set; } = new List<Trainee>(); // one batch can has many trainee
 
-        public Admin_Profile admin_Profile { get; set; } //batch can managed by one admin
+        public virtual Admin_Profile admin_Profile { get; set; } //batch can managed by one admin
 
-        public ICollection<Instructor> Instructors { get; set; } = new List<Instructor>(); // one batch can has many instructor
+        public virtual ICollection<Instructor> Instructors { get; set; } = new List<Instructor>(); // one batch can has many instructor
     } 
 }

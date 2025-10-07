@@ -8,6 +8,7 @@ using UserManagement.Mapping;               // AutoMapper profiles (BatchMapping
 using UserManagement.Repositories;          // Repository interfaces & implementations
 using UserManagement.SeedData;              // Seed data classes
 using UserManagement.Services;
+
 // Service interfaces & implementations
 
 namespace CodeLine_Online
@@ -22,7 +23,8 @@ namespace CodeLine_Online
             // 1) Database Context
             // ========================================
             builder.Services.AddDbContext<UsersDbContext>(options =>
-                options.UseSqlServer(
+                options.UseLazyLoadingProxies()
+                .UseSqlServer(
                     builder.Configuration.GetConnectionString("Default"),
                     sql => sql.MigrationsHistoryTable("__Migrations_App", "users")
                 )
@@ -48,7 +50,7 @@ namespace CodeLine_Online
             builder.Services.AddScoped<IAdminProfileRepository, AdminProfileRepository>();
 
             builder.Services.AddScoped<IBranchRepository, BranchRepository>();
-            //builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+            builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
             // ========================================
             // 4) Services
@@ -62,7 +64,7 @@ namespace CodeLine_Online
             // ✅ Register Admin service (this fixes your Swagger error)
             builder.Services.AddScoped<IAdminProfileService, AdminProfileService>();
             builder.Services.AddScoped<IBranchService, BranchService>();
-            //builder.Services.AddScoped<IRoomService, RoomService>();
+            builder.Services.AddScoped<IRoomService, RoomService>();
 
             // ========================================
             // 5) AutoMapper

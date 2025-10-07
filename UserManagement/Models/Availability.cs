@@ -23,7 +23,7 @@ namespace UserManagement.Models
         public TimeOnly time { get; set; } // 12:00 AM/PM
 
         // navs
-        public Instructor? Instructor { get; set; }
+        public virtual Instructor? Instructor { get; set; }
 
     }
     public enum AvailabilityStatus 

@@ -26,7 +26,7 @@ namespace UserManagement.Models
         [ForeignKey("Branch")]
         public int BranchId { get; set; } // Foreign Key linking Room to a Branch
 
-        public Branch branchs { get; set; } // Navigation property
+        public virtual Branch branchs { get; set; } // Navigation property
 
     }
 }
