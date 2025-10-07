@@ -62,6 +62,6 @@ namespace CoursesManagement.Models
         public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
 
         // Required by EF Core proxy generation
-        protected Enrollment() { }
+        public Enrollment() { }
     }
 }
