@@ -16,6 +16,7 @@
         public List<string>? CategoryNames { get; set; }
         public List<string>? CourseNames { get; set; }
 
+        
         public int EnrollmentsCount { get; set; }
     }
 }
