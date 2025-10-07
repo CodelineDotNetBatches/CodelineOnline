@@ -20,5 +20,8 @@ namespace UserManagement.Models
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
         public string? Email { get; set; } //Optional email for branch contact
 
-    }
+
+        [StringLength(300, ErrorMessage = "Description cannot exceed 300 characters.")]
+        public string? Description { get; set; }  // Optional description of the branch
+    } 
 }
