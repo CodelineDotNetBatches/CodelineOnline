@@ -11,15 +11,23 @@ namespace UserManagement.SeedData
             modelBuilder.Entity<Admin_Profile>().HasData(
                 new Admin_Profile
                 {
-                    AdminId = 1
+                    AdminId = 1,
+                    BranchId = 1 
+
+
                 },
                 new Admin_Profile
                 {
-                    AdminId = 2
+                    AdminId = 2,
+                    BranchId = 2
+
+
                 },
                 new Admin_Profile
                 {
-                    AdminId = 3
+                    AdminId = 3,
+                    BranchId = 2
+
                 }
             );
         }

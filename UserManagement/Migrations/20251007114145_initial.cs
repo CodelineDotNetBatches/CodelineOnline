@@ -17,15 +17,61 @@ namespace UserManagement.Migrations
                 name: "users");
 
             migrationBuilder.CreateTable(
+                name: "branchs",
+                schema: "users",
+                columns: table => new
+                {
+                    BranchId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    BranchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_branchs", x => x.BranchId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AdminProfiles",
                 schema: "users",
                 columns: table => new
                 {
-                    AdminId = table.Column<int>(type: "int", nullable: false)
+                    AdminId = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AdminProfiles", x => x.AdminId);
+                    table.ForeignKey(
+                        name: "FK_AdminProfiles_branchs_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "users",
+                        principalTable: "branchs",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "branchPNs",
+                schema: "users",
+                columns: table => new
+                {
+                    BranchId = table.Column<int>(type: "int", nullable: false),
+                    PhoneNumber = table.Column<int>(type: "int", maxLength: 15, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_branchPNs", x => new { x.BranchId, x.PhoneNumber });
+                    table.ForeignKey(
+                        name: "FK_branchPNs_branchs_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "users",
+                        principalTable: "branchs",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,11 +86,42 @@ namespace UserManagement.Migrations
                     InstructorCV = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Experience_Level = table.Column<int>(type: "int", maxLength: 30, nullable: false),
                     Teaching_Style = table.Column<int>(type: "int", maxLength: 50, nullable: false),
-                    Specialization = table.Column<int>(type: "int", maxLength: 80, nullable: false)
+                    Specialization = table.Column<int>(type: "int", maxLength: 80, nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Instructors", x => x.InstructorId);
+                    table.ForeignKey(
+                        name: "FK_Instructors_branchs_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "users",
+                        principalTable: "branchs",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "rooms",
+                schema: "users",
+                columns: table => new
+                {
+                    RoomNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoomType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_rooms", x => x.RoomNumber);
+                    table.ForeignKey(
+                        name: "FK_rooms_branchs_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "users",
+                        principalTable: "branchs",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,6 +132,7 @@ namespace UserManagement.Migrations
                     BatchId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AdminId = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false),
                     BatchName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     BatchStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BatchStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -73,6 +151,13 @@ namespace UserManagement.Migrations
                         principalTable: "AdminProfiles",
                         principalColumn: "AdminId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Batches_branchs_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "users",
+                        principalTable: "branchs",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,15 +187,15 @@ namespace UserManagement.Migrations
                 schema: "users",
                 columns: table => new
                 {
-                    avilabilityId = table.Column<int>(type: "int", nullable: false),
                     InstructorId = table.Column<int>(type: "int", nullable: false),
+                    time = table.Column<TimeOnly>(type: "time", nullable: false),
+                    avilabilityId = table.Column<int>(type: "int", nullable: false),
                     Avail_Status = table.Column<int>(type: "int", maxLength: 20, nullable: false),
-                    day_of_week = table.Column<int>(type: "int", maxLength: 10, nullable: false),
-                    time = table.Column<TimeOnly>(type: "time", nullable: false)
+                    day_of_week = table.Column<int>(type: "int", maxLength: 10, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Availabilities", x => new { x.InstructorId, x.avilabilityId });
+                    table.PrimaryKey("PK_Availabilities", x => new { x.InstructorId, x.time });
                     table.ForeignKey(
                         name: "FK_Availabilities_Instructors_InstructorId",
                         column: x => x.InstructorId,
@@ -125,15 +210,15 @@ namespace UserManagement.Migrations
                 schema: "users",
                 columns: table => new
                 {
-                    InstructorSkillId = table.Column<int>(type: "int", nullable: false),
-                    InstructorId = table.Column<int>(type: "int", nullable: false),
                     SkillName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    InstructorId = table.Column<int>(type: "int", nullable: false),
+                    InstructorSkillId = table.Column<int>(type: "int", nullable: false),
                     SkillLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MonthsOfExperience = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InstructorSkills", x => new { x.InstructorId, x.InstructorSkillId });
+                    table.PrimaryKey("PK_InstructorSkills", x => new { x.InstructorId, x.SkillName });
                     table.ForeignKey(
                         name: "FK_InstructorSkills_Instructors_InstructorId",
                         column: x => x.InstructorId,
@@ -167,7 +252,7 @@ namespace UserManagement.Migrations
                         principalSchema: "users",
                         principalTable: "Instructors",
                         principalColumn: "InstructorId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,7 +270,8 @@ namespace UserManagement.Migrations
                     Learning_Style = table.Column<int>(type: "int", nullable: false),
                     Study_Focus = table.Column<int>(type: "int", nullable: false),
                     EducationalBackground = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    LearningObjectives = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                    LearningObjectives = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -197,6 +283,13 @@ namespace UserManagement.Migrations
                         principalTable: "Batches",
                         principalColumn: "BatchId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Trainees_branchs_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "users",
+                        principalTable: "branchs",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -223,7 +316,7 @@ namespace UserManagement.Migrations
                         principalSchema: "users",
                         principalTable: "Trainees",
                         principalColumn: "TraineeId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,15 +324,15 @@ namespace UserManagement.Migrations
                 schema: "users",
                 columns: table => new
                 {
-                    TraineeSkillId = table.Column<int>(type: "int", nullable: false),
-                    TraineeId = table.Column<int>(type: "int", nullable: false),
                     SkillName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    TraineeSkillId = table.Column<int>(type: "int", nullable: false),
                     SkillLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MonthsOfExperience = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TraineeSkills", x => new { x.TraineeId, x.TraineeSkillId });
+                    table.PrimaryKey("PK_TraineeSkills", x => new { x.TraineeId, x.SkillName });
                     table.ForeignKey(
                         name: "FK_TraineeSkills_Trainees_TraineeId",
                         column: x => x.TraineeId,
@@ -249,37 +342,46 @@ namespace UserManagement.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                schema: "users",
-                table: "Instructors",
-                columns: new[] { "InstructorId", "Experience_Level", "GithubUserName", "InstructorCV", "ProfileImage", "Specialization", "Teaching_Style", "Years_of_Experience" },
-                values: new object[,]
-                {
-                    { 101, 1, "aliceGH", "https://example.com/cv/alice.pdf", "https://example.com/images/alice.jpg", 0, 0, 5 },
-                    { 102, 2, "bobDev", "https://example.com/cv/bob.pdf", "https://example.com/images/bob.jpg", 4, 1, 8 },
-                    { 103, 0, "carolCode", "https://example.com/cv/carol.pdf", "https://example.com/images/carol.jpg", 5, 2, 3 },
-                    { 104, 2, "daveTech", "https://example.com/cv/dave.pdf", "https://example.com/images/dave.jpg", 7, 3, 10 }
-                });
+    //        migrationBuilder.InsertData(
+    //            schema: "users",
+    //            table: "AdminProfiles",
+    //            columns: new[] { "AdminId", "BranchId" },
+    //            values: new object[,]
+    //            {
+    //                { 1, 1 },
+    //                { 2, 2 },
+    //                { 3, 1 }
+    //            });
 
-            migrationBuilder.InsertData(
+    //        migrationBuilder.InsertData(
+    //schema: "users",
+    //table: "Branch",
+    //columns: new[] { "BranchId", "City", "BranchName", "Country", "Email", "IsActive" },
+    //values: new object[,]
+    //{
+    //    { 1, "Muscat", "Main Branch", "Oman", "muscat@center.com", true },
+    //    { 2, "Salalah", "South Branch", "Oman", "salalah@center.com", true }
+    //});
+
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminProfiles_BranchId",
                 schema: "users",
-                table: "Availabilities",
-                columns: new[] { "InstructorId", "avilabilityId", "Avail_Status", "day_of_week", "time" },
-                values: new object[,]
-                {
-                    { 101, 1, 1, 1, new TimeOnly(9, 0, 0) },
-                    { 101, 2, 3, 3, new TimeOnly(14, 0, 0) },
-                    { 102, 3, 2, 2, new TimeOnly(11, 0, 0) },
-                    { 102, 4, 4, 4, new TimeOnly(16, 0, 0) },
-                    { 103, 5, 1, 5, new TimeOnly(10, 0, 0) },
-                    { 104, 6, 3, 6, new TimeOnly(13, 0, 0) }
-                });
+                table: "AdminProfiles",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Availabilities_Avail_Status",
                 schema: "users",
                 table: "Availabilities",
                 column: "Avail_Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Availabilities_avilabilityId",
+                schema: "users",
+                table: "Availabilities",
+                column: "avilabilityId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Batches_admin_ProfileAdminId",
@@ -295,10 +397,22 @@ namespace UserManagement.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Batches_BranchId",
+                schema: "users",
+                table: "Batches",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BatchInstructor_InstructorsInstructorId",
                 schema: "users",
                 table: "BatchInstructor",
                 column: "InstructorsInstructorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Instructors_BranchId",
+                schema: "users",
+                table: "Instructors",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Instructors_Specialization",
@@ -307,10 +421,10 @@ namespace UserManagement.Migrations
                 column: "Specialization");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InstructorSkills_SkillName",
+                name: "IX_InstructorSkills_InstructorSkillId",
                 schema: "users",
                 table: "InstructorSkills",
-                column: "SkillName");
+                column: "InstructorSkillId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InstructorTrainee_TraineesTraineeId",
@@ -332,16 +446,28 @@ namespace UserManagement.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_rooms_BranchId",
+                schema: "users",
+                table: "rooms",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Trainees_BatchId",
                 schema: "users",
                 table: "Trainees",
                 column: "BatchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TraineeSkills_SkillName",
+                name: "IX_Trainees_BranchId",
+                schema: "users",
+                table: "Trainees",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TraineeSkills_TraineeSkillId",
                 schema: "users",
                 table: "TraineeSkills",
-                column: "SkillName");
+                column: "TraineeSkillId");
         }
 
         /// <inheritdoc />
@@ -356,6 +482,10 @@ namespace UserManagement.Migrations
                 schema: "users");
 
             migrationBuilder.DropTable(
+                name: "branchPNs",
+                schema: "users");
+
+            migrationBuilder.DropTable(
                 name: "InstructorSkills",
                 schema: "users");
 
@@ -365,6 +495,10 @@ namespace UserManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "Responsibilities",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "rooms",
                 schema: "users");
 
             migrationBuilder.DropTable(
@@ -385,6 +519,10 @@ namespace UserManagement.Migrations
 
             migrationBuilder.DropTable(
                 name: "AdminProfiles",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "branchs",
                 schema: "users");
         }
     }

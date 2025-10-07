@@ -75,6 +75,11 @@ namespace UserManagement.Models
         [MaxLength(256)]
         public string? LearningObjectives { get; set; }
 
+        [ForeignKey ("Branch")]
+        public int BranchId { get; set; }
+
+        public Branch branch { get; set; }
+
         // Navigation
 
         public ICollection<TraineeSkill> traineeSkills { get; set; } = new List<TraineeSkill>(); // one trainee can has many skills 

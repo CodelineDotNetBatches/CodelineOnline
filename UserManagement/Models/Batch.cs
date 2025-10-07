@@ -18,6 +18,9 @@ namespace UserManagement.Models
 
         public int AdminId { get; set; }
 
+        [ForeignKey("Branch")]
+        public int BranchId { get; set; } 
+
         [Required]
         [MaxLength(100)]
         public string BatchName { get; set; } = default!;
@@ -37,6 +40,8 @@ namespace UserManagement.Models
 
         [MaxLength(500)]
         public string? BatchDescription { get; set; }
+
+        public Branch branchs { get; set; } 
 
         // navigation property
 
