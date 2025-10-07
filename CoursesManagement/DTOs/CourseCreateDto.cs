@@ -8,6 +8,6 @@ namespace CoursesManagement.DTOs
         public string? CourseDescription { get; set; }
         public LevelType CourseLevel { get; set; }
         public decimal Price { get; set; }
-        public int CategoryId { get; set; } // Just ID, not full Category object
+        public Guid CategoryId { get; set; } // Just ID, not full Category object
     }
 }
