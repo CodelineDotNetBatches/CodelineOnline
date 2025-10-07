@@ -147,26 +147,48 @@ namespace CoursesManagement.Services
 
         // ======================
         // Get Program By Program Name
-        public async Task<Programs?> GetProgramByNameAsync(string programName)
+        public async Task<ProgramDetailsDto?> GetProgramByNameAsync(string programName)
         {
-            return await _repo.GetByNameAsync(programName);
+            if (string.IsNullOrWhiteSpace(programName))
+                return null;
+
+            string normalized = programName.Trim().ToLower();
+
+            if (!_cache.TryGetValue(normalized, out ProgramDetailsDto? cachedProgram))
+            {
+                var program = await _repo.GetQueryable()
+                    .Include(p => p.Categories)
+                    .Include(p => p.Courses)
+                    .FirstOrDefaultAsync(p => p.ProgramName.ToLower() == normalized);
+
+                cachedProgram = _mapper.Map<ProgramDetailsDto?>(program);
+
+                if (cachedProgram != null)
+                    _cache.Set(normalized, cachedProgram, TimeSpan.FromMinutes(10));
+            }
+
+            return cachedProgram;
+
         }
 
         // ======================
         // Get Program with Courses
-        public async Task<Programs?> GetProgramWithCoursesAsync(Guid programId)
+        public async Task<ProgramDetailsDto?> GetProgramWithCoursesAsync(Guid programId)
         {
-            return await _repo.GetProgramWithCoursesAsync(programId);
+            var entity = await _repo.GetProgramWithCoursesAsync(programId);
+            return _mapper.Map<ProgramDetailsDto?>(entity);
         }
 
         // ======================
 
         // Get Program with Categories
 
-        public async Task<Programs?> GetProgramWithCategoriesAsync(Guid programId)
+        public async Task<ProgramDetailsDto?> GetProgramWithCategoriesAsync(Guid programId)
         {
-            return await _repo.GetProgramWithCategoriesAsync(programId);
+            var entity = await _repo.GetProgramWithCategoriesAsync(programId);
+            return _mapper.Map<ProgramDetailsDto?>(entity);
         }
 
+    
     }
 }

@@ -11,11 +11,11 @@ namespace CoursesManagement.Services
         Task<ProgramDetailsDto?> GetProgramByIdAsync(Guid id);
         Task UpdateProgramAsync(Guid id, ProgramUpdateDto dto);
 
-        Task<Programs?> GetProgramByNameAsync(string programName);
+        Task<ProgramDetailsDto?> GetProgramByNameAsync(string programName);
 
-        Task<Programs?> GetProgramWithCoursesAsync(Guid programId);
+        Task<ProgramDetailsDto?> GetProgramWithCoursesAsync(Guid programId);
 
-        Task<Programs?> GetProgramWithCategoriesAsync(Guid programId);
+        Task<ProgramDetailsDto?> GetProgramWithCategoriesAsync(Guid programId);
 
     }
 }
