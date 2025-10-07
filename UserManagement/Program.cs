@@ -43,9 +43,12 @@ namespace CodeLine_Online
             builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
             builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
             builder.Services.AddScoped<IInstructorSkillRepository, InstructorSkillRepository>();
-
-            // ✅ Register Admin repository (important for DI)
+            builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepository<>)); // Generic repository
+            // Register Admin repository (important for DI)
             builder.Services.AddScoped<IAdminProfileRepository, AdminProfileRepository>();
+
+            builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+            //builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
             // ========================================
             // 4) Services
@@ -58,6 +61,8 @@ namespace CodeLine_Online
 
             // ✅ Register Admin service (this fixes your Swagger error)
             builder.Services.AddScoped<IAdminProfileService, AdminProfileService>();
+            builder.Services.AddScoped<IBranchService, BranchService>();
+            //builder.Services.AddScoped<IRoomService, RoomService>();
 
             // ========================================
             // 5) AutoMapper
