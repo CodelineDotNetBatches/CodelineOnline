@@ -8,7 +8,7 @@ using ReportsManagements.Services;
 namespace ReportsManagements.Controllers
 {
     [ApiController]
-    [Route("api/v1/geo")]
+    [Route("geo")]
     public class GeoController: ControllerBase
     {
         private readonly IGeoValidationService _geoService;
@@ -22,7 +22,7 @@ namespace ReportsManagements.Controllers
             _branchRepo = branchRepository;
         }
 
-        [HttpPost("validate")]
+        [HttpPost("validate-point")]
         public async Task<IActionResult> Validate([FromBody] GeoValidateRequest request)
         {
             var geo = await _geoRepo.GetByIdAsync(request.GeolocationId);
@@ -46,7 +46,7 @@ namespace ReportsManagements.Controllers
             return Ok(new { isInside, distanceMeters });
         }
 
-        [HttpGet("health")]
+        [HttpGet("health-check")]
         public async Task<IActionResult> GetHealth()
         {
             var branchesCount = await _branchRepo.GetBranchCountAsync();

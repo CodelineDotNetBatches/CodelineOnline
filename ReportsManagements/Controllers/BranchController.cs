@@ -7,7 +7,7 @@ using static ReportsManagements.DTOs.BranchDtos;
 namespace ReportsManagements.Controllers
 {
     [ApiController]
-    [Route("api/v1/branch")]
+    [Route("branch")]
     public class BranchController : ControllerBase
     {
         private readonly BranchService _service;
@@ -17,7 +17,7 @@ namespace ReportsManagements.Controllers
             _service = service;
         }
 
-        [HttpGet]
+        [HttpGet("AllBranchs")]
         public async Task<IActionResult> Get()
         {
             var branches = await _service.GetAllBranchesAsync();
@@ -30,7 +30,7 @@ namespace ReportsManagements.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}/Details")]
         public async Task<IActionResult> Get(int id)
         {
             var branch = await _service.GetBranchByIdAsync(id);
@@ -47,36 +47,48 @@ namespace ReportsManagements.Controllers
 
 
 
-        [HttpPost]
+        
+        [HttpPost("Create")]
         public async Task<IActionResult> Post([FromBody] BranchCreateDto dto)
         {
-            var created = await _service.CreateBranchAsync(dto.Name);
+            var created = await _service.CreateBranchAsync(dto.Name, dto.Address);
+
             return CreatedAtAction(nameof(Get), new { id = created.BranchId }, new BranchResponseDto
             {
                 BranchId = created.BranchId,
                 Name = created.Name,
                 IsActive = created.IsActive
             });
+
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Branch branch)
-        {
-            var updated = await _service.UpdateBranchAsync(id, branch);
-            if (updated == null)
-                return NotFound($"Branch with ID:{id} not found or ID mismatch");
 
+        [HttpPut("{id}/Update")]
+        public async Task<IActionResult> Put(int id, [FromBody] BranchDtos.BranchUpdateDto dto)
+        {
+            var branch = await _service.GetBranchByIdAsync(id);
+            if (branch == null)
+                return NotFound($"Branch with ID:{id} not found");
+
+            branch.Name = dto.Name;
+            branch.Address = dto.Address;
+            branch.IsActive = dto.IsActive;
+
+            var updated = await _service.UpdateBranchAsync(id, branch);
             return Ok(updated);
         }
 
-        [HttpDelete("{id}")]
+
+
+
+        [HttpDelete("{id}/Delete")]
         public async Task<IActionResult> Delete(int id)
         {
             await _service.DeleteBranchAsync(id);
             return NoContent();
         }
 
-        [HttpGet("{id}/geolocations")]
+        [HttpGet("{id}/Geolocations")]
         public async Task<IActionResult> GetBranchGeolocations(int id)
         {
             var geolocations = await _service.GetBranchGeolocationsAsync(id);

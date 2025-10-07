@@ -5,7 +5,10 @@ namespace ReportsManagements.Models
 {
     public class AttendanceRecord
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AttId { get; set; }
+
         public int SessionId { get; set; }
         public int StudentId { get; set; }
         public DateTime? CheckIn { get; set; }

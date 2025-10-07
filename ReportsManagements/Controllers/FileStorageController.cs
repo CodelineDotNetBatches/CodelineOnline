@@ -8,7 +8,7 @@ using System.Threading.RateLimiting;
 namespace ReportsManagements.Controllers
 {
     // API controller for managing file storage operations
-    [Route("api/v1/files")]
+    [Route("files")]
     [ApiController] 
     public class FileStorageController : ControllerBase
     {
@@ -27,7 +27,7 @@ namespace ReportsManagements.Controllers
 
         // GET: api/files
         // Retrieves all file storage records
-        [HttpGet]
+        [HttpGet("view-all")]
         public async Task<IActionResult> GetAll()
         {
             var list = await _repository.GetAllAsync();
@@ -36,7 +36,7 @@ namespace ReportsManagements.Controllers
 
         // GET: api/files/{id}
         // Retrieves a specific file storage record by ID
-        [HttpGet("{id}")]
+        [HttpGet("view/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var entity = await _repository.GetByIdAsync(id);
@@ -46,7 +46,7 @@ namespace ReportsManagements.Controllers
 
         // POST: api/files
         // Creates a new file storage record
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] FileStorage file)
         {
             string userKey = User.Identity?.Name ?? HttpContext.Connection.RemoteIpAddress?.ToString() ?? "anonymous";
@@ -85,7 +85,7 @@ namespace ReportsManagements.Controllers
 
         // PUT: api/files/{id}
         // Updates an existing file storage record
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] FileStorage file)
         {
             if (id != file.FileStorageId) return BadRequest();
@@ -95,7 +95,7 @@ namespace ReportsManagements.Controllers
 
         // DELETE: api/files/{id}
         // Deletes a file storage record by ID
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var entity = await _repository.GetByIdAsync(id);
@@ -107,7 +107,7 @@ namespace ReportsManagements.Controllers
 
         // POST: api/files/presign
         // Generates a presigned URL for file upload 
-        [HttpPost("presign")]
+        [HttpPost("presign-url")]
         public IActionResult Presign([FromBody] FileDto fileDto)
         {
             if (!_fileCodeService.IsValidFile(fileDto.FileName, fileDto.FileSize))
@@ -131,7 +131,7 @@ namespace ReportsManagements.Controllers
             });
         }
 
-        [HttpGet("{id}/download")]
+        [HttpGet("download/{id}")]
         public async Task<IActionResult> Download(int id)
         {
             var file = await _repository.GetByIdAsync(id);

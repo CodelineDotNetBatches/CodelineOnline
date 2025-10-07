@@ -12,7 +12,7 @@ public class ReportsController : ControllerBase
     private readonly IReportsService _svc;
     public ReportsController(IReportsService svc) => _svc = svc;
 
-    // ========== Day 2 ==========
+    
     [HttpPost("trainer/rebuild")]
     public async Task<IActionResult> RebuildTrainer([FromBody] IEnumerable<TrainerReportUpsertDto> body, CancellationToken ct)
         => Ok(new { upserts = await _svc.UpsertTrainerBatchAsync(body, ct) });
@@ -33,13 +33,11 @@ public class ReportsController : ControllerBase
     [HttpGet("course")]
     public IActionResult QueryCourses([FromQuery] PagingQuery q) => Ok(_svc.QueryCourses(q));
 
-    // ========== Day 3 ==========
-
-    // ✅ Overview Endpoint
+    
     [HttpGet("overview")]
     public IActionResult Overview() => Ok(_svc.Overview());
 
-    // ✅ Trainer Export مع فلترة وترتيب
+    
     [HttpGet("trainer/export")]
     public IActionResult ExportTrainers([FromQuery] int? trainerId, [FromQuery] int? courseId,
                                         [FromQuery] string? sortBy, [FromQuery] bool desc = false)
@@ -64,7 +62,7 @@ public class ReportsController : ControllerBase
         return File(Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", "trainer_reports.csv");
     }
 
-    // ✅ Course Export مع فلترة وترتيب
+    
     [HttpGet("course/export")]
     public IActionResult ExportCourses([FromQuery] int? courseId,
                                        [FromQuery] string? sortBy, [FromQuery] bool desc = false)

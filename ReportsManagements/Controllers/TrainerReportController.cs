@@ -1,68 +1,66 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReportsManagements.Repositories;
+using ReportsManagements.DTOs;
+using ReportsManagements.Services;
+using static ReportsManagements.DTOs.TrainerReportDtos;
 
 namespace ReportsManagements.Controllers
 {
     [ApiController]
-    [Route("reports/trainer")]
-    public class TrainerReportController: ControllerBase
+    [Route("api/v1/reports/trainer")]
+    public class TrainerReportController : ControllerBase
     {
-        private readonly TrainerReportRepository _repo;
-        public TrainerReportController(TrainerReportRepository repo)
+        private readonly TrainerReportService _service;
+
+        public TrainerReportController(TrainerReportService service)
         {
-            _repo = repo;
+            _service = service;
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll()
         {
-            var reports = await _repo.GetAllAsync();
+            var reports = await _service.GetAllAsync();
             return Ok(reports);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var report = await _repo.GetByIdAsync(id);
+            var report = await _service.GetByIdAsync(id);
             if (report == null)
-                return NotFound();
+                return NotFound(new { Message = "Trainer report not found" });
+
             return Ok(report);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Models.TrainerReport report)
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody] TrainerReportCreateDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var created = await _repo.AddAsync(report);
+
+            var created = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.TrainerReportId }, created);
-
         }
 
-        private object GetById()
+        [HttpPut("{id}/update")]
+        public async Task<IActionResult> Update(int id, [FromBody] TrainerReportUpdateDto dto)
         {
-            throw new NotImplementedException();
-        }
+            var updated = await _service.UpdateAsync(id, dto);
+            if (!updated)
+                return NotFound(new { Message = "Trainer report not found" });
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Models.TrainerReport report)
-        {
-            if (id != report.TrainerReportId)
-                return BadRequest("ID mismatch");
-            var updated = await _repo.UpdateAsync(report);
-            if (updated == null)
-                return NotFound();
-            return Ok(updated);
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            await _repo.DeleteAsync(id);
             return NoContent();
         }
 
+        [HttpDelete("{id}/delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
+                return NotFound(new { Message = "Trainer report not found" });
 
-
+            return NoContent();
+        }
     }
 }

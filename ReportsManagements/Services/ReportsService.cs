@@ -83,7 +83,7 @@ public class ReportsService : IReportsService
         var totalTrainers = trainers.Select(t => t.TrainerId).Distinct().Count();
         var totalCourses = courses.Select(c => c.CourseId).Distinct().Count();
 
-        // نحسب متوسط الحضور من بيانات المدربين إن وُجدت، وإلا من الكورسات
+       
         var avgFromTrainers = trainers.Any()
             ? trainers.Average(t => (double)t.AttendanceRate)
             : (double?)null;

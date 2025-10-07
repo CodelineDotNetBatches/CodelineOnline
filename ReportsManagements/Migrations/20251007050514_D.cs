@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ReportsManagements.Migrations
 {
     /// <inheritdoc />
-    public partial class inatial : Migration
+    public partial class D : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,24 +30,6 @@ namespace ReportsManagements.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Branches", x => x.BranchId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BranchReports",
-                schema: "reports",
-                columns: table => new
-                {
-                    BranchReportId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TotalSessions = table.Column<int>(type: "int", nullable: false),
-                    TotalStudents = table.Column<int>(type: "int", nullable: false),
-                    AttendanceRate = table.Column<int>(type: "int", nullable: false),
-                    TotalInstructors = table.Column<int>(type: "int", nullable: false),
-                    BranchId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BranchReports", x => x.BranchReportId);
                 });
 
             migrationBuilder.CreateTable(
@@ -118,6 +100,31 @@ namespace ReportsManagements.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TrainerReports", x => x.TrainerReportId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BranchReports",
+                schema: "reports",
+                columns: table => new
+                {
+                    BranchReportId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TotalSessions = table.Column<int>(type: "int", nullable: false),
+                    TotalStudents = table.Column<int>(type: "int", nullable: false),
+                    AttendanceRate = table.Column<int>(type: "int", nullable: false),
+                    TotalInstructors = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BranchReports", x => x.BranchReportId);
+                    table.ForeignKey(
+                        name: "FK_BranchReports_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "reports",
+                        principalTable: "Branches",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -249,6 +256,12 @@ namespace ReportsManagements.Migrations
                 schema: "reports",
                 table: "AttendanceRecord",
                 column: "ReasonCodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BranchReports_BranchId",
+                schema: "reports",
+                table: "BranchReports",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CourseReports_CourseId",

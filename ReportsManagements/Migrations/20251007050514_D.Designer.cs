@@ -12,8 +12,8 @@ using ReportsManagements;
 namespace ReportsManagements.Migrations
 {
     [DbContext(typeof(ReportsDbContext))]
-    [Migration("20251006054335_inatial")]
-    partial class inatial
+    [Migration("20251007050514_D")]
+    partial class D
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,6 +148,8 @@ namespace ReportsManagements.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("BranchReportId");
+
+                    b.HasIndex("BranchId");
 
                     b.ToTable("BranchReports", "reports");
                 });
@@ -383,6 +385,15 @@ namespace ReportsManagements.Migrations
                     b.Navigation("Geolocation");
 
                     b.Navigation("ReasonCode");
+                });
+
+            modelBuilder.Entity("ReportsManagements.Models.BranchReport", b =>
+                {
+                    b.HasOne("ReportsManagements.Models.Branch", null)
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ReportsManagements.Models.GeoRadiusAudit", b =>

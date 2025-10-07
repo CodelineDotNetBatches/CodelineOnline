@@ -25,12 +25,12 @@ namespace ReportsManagements.Repositories
         // Add method
         public async Task<Branch> AddAsync(Branch branch)
         {
-            // Add the new branch to the DbSet
-            _context.Branches.Add(branch);
-            // Save changes to the database
+            await _context.Branches.AddAsync(branch);
             await _context.SaveChangesAsync();
             return branch;
         }
+
+
 
         // Update method
         public async Task<Branch?> UpdateAsync(Branch branch)

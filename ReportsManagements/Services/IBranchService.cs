@@ -4,7 +4,7 @@ namespace ReportsManagements.Services
 {
     public interface IBranchService
     {
-        Task<Branch> CreateBranchAsync(string name);
+        Task<Branch> CreateBranchAsync(string name,string address);
         Task DeleteBranchAsync(int id);
         Task<IEnumerable<Branch>> GetAllBranchesAsync();
         Task<Branch?> GetBranchByIdAsync(int id);

@@ -19,7 +19,7 @@ namespace ReportsManagements
         public DbSet<ReasonCode> ReasonCodes { get; set; }
         public DbSet<FileStorage> FileStorages { get; set; }
         public DbSet<AttendanceRecord> AttendanceRecord { get; set; }
-       
+        
        
         public DbSet<GeoRadiusAudit> GeoRadiusAudits { get; set; }
 
@@ -76,6 +76,18 @@ namespace ReportsManagements
               .HasForeignKey(a => a.GeolocationId)
               .OnDelete(DeleteBehavior.Cascade);
 
+            mb.Entity<BranchReport>(entity =>
+            {
+                entity.HasKey(br => br.BranchReportId);
+
+               
+                entity.HasOne<Branch>()
+                      .WithMany() 
+                      .HasForeignKey(br => br.BranchId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                
+            });
 
             // default schema keeps everything under "users"
             mb.HasDefaultSchema("reports");

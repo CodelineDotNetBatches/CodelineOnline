@@ -146,6 +146,8 @@ namespace ReportsManagements.Migrations
 
                     b.HasKey("BranchReportId");
 
+                    b.HasIndex("BranchId");
+
                     b.ToTable("BranchReports", "reports");
                 });
 
@@ -380,6 +382,15 @@ namespace ReportsManagements.Migrations
                     b.Navigation("Geolocation");
 
                     b.Navigation("ReasonCode");
+                });
+
+            modelBuilder.Entity("ReportsManagements.Models.BranchReport", b =>
+                {
+                    b.HasOne("ReportsManagements.Models.Branch", null)
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ReportsManagements.Models.GeoRadiusAudit", b =>

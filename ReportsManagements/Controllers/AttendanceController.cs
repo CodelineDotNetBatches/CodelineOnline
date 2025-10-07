@@ -10,7 +10,7 @@ namespace ReportsManagements.Controllers
 {
 
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("Attendance")]
     public class AttendanceController : Controller
     {
         private readonly IAttendanceRecordService _service;
@@ -45,7 +45,7 @@ namespace ReportsManagements.Controllers
        // }
 
         // GET: api/v1/attendance/{id}
-        [HttpGet("{id}")]
+        [HttpGet("view/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var record = await _service.GetByIdAsync(id);
@@ -55,7 +55,7 @@ namespace ReportsManagements.Controllers
             return Ok(_mapper.Map<AttendanceRecordDto>(record));
         }
 
-        [HttpGet]
+        [HttpGet("view-all")]
         public async Task<IActionResult> GetFiltered([FromQuery] int? studentId, [FromQuery] int? sessionId,
            [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate, [FromQuery] string? reviewStatus)
         {
@@ -64,7 +64,7 @@ namespace ReportsManagements.Controllers
         }
 
         // PUT: api/v1/attendance/{id}
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] AttendanceRecordUpdateDto dto)
         {
             var record = await _service.GetByIdAsync(id);
@@ -78,7 +78,7 @@ namespace ReportsManagements.Controllers
         }
 
         // DELETE: api/v1/attendance/{id}
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _service.DeleteAsync(id);
@@ -88,7 +88,7 @@ namespace ReportsManagements.Controllers
             return NoContent();
         }
         // POST: api/v1/attendance/{id}/checkout
-        [HttpPost("{id}/checkout")]
+        [HttpPost("checkout/{id}")]
         public async Task<IActionResult> Checkout(int id, [FromBody] CheckoutDto dto)
         {
             try
@@ -103,7 +103,7 @@ namespace ReportsManagements.Controllers
             }
         }
         // POST: api/v1/attendance/{id}/review
-        [HttpPost("{id}/review")]
+        [HttpPost("review/{id}")]
         public async Task<IActionResult> Review(int id, [FromBody] ReviewDto dto)
         {
             try
@@ -121,21 +121,28 @@ namespace ReportsManagements.Controllers
         [HttpGet("export")]
         public async Task<IActionResult> Export()
         {
-            var records = await _context.AttendanceRecord.ToListAsync();
-
+            var records = await _context.AttendanceRecord
+                .Include(a => a.Geolocation)
+                .Include(a => a.ReasonCode)
+                .AsNoTracking()
+                .ToListAsync();
             var csv = new StringBuilder();
-            csv.AppendLine("Id,StudentId,SessionId,CheckIn,CheckOut,Status,ReviewStatus");
-
+            csv.AppendLine("Id,StudentId,SessionId,CheckIn,CheckOut,Status,ReviewStatus,ReasonCodeId,GeolocationId");
             foreach (var r in records)
             {
-                csv.AppendLine($"{r.AttId},{r.StudentId},{r.SessionId},{r.CheckIn},{r.CheckOut},{r.Status},{r.ReviewStatus}");
+                string checkIn = r.CheckIn.HasValue ? r.CheckIn.Value.ToString("o") : "";
+                string checkOut = r.CheckOut.HasValue ? r.CheckOut.Value.ToString("o") : "";
+                string reasonCodeId = r.ReasonCodeId.HasValue ? r.ReasonCodeId.Value.ToString() : "";
+                string geolocationId = r.GeolocationId != 0 ? r.GeolocationId.ToString() : "";
+                string status = r.Status ?? "";
+                string reviewStatus = r.ReviewStatus ?? "";
+                csv.AppendLine($"{r.AttId},{r.StudentId},{r.SessionId},{checkIn},{checkOut},{status},{reviewStatus},{reasonCodeId},{geolocationId}");
             }
-
             var bytes = Encoding.UTF8.GetBytes(csv.ToString());
             return File(bytes, "text/csv", "attendance_export.csv");
         }
 
-        [HttpDelete("{id}/soft")]
+        [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(int id)
         {
             var deleted = await _service.SoftDeleteAsync(id);
@@ -144,7 +151,7 @@ namespace ReportsManagements.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] AttendanceRecord record)
         {
             if (!string.IsNullOrEmpty(record.IdempotencyKey))

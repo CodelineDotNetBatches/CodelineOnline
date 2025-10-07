@@ -23,7 +23,7 @@
 //                    new ReasonCode { Code = "LATE", Name = "Late Arrival", Category = "Attendance", IsActive = true },
 //                    new ReasonCode { Code = "ABS", Name = "Absent", Category = "Attendance", IsActive = true }
 //                );
-//                context.SaveChanges(); 
+//                context.SaveChanges();
 //            }
 
 //            // Seed FileStorage
@@ -46,38 +46,38 @@
 //                new AttendanceRecord
 //                {
 //                    SessionId = 101,
-//                   StudentId = 1001,
-//                   CheckIn = DateTime.UtcNow.AddMinutes(-45),
-//                   CheckOut = DateTime.UtcNow,
-//                   Status = "Present",
-//                   ReviewStatus = "Approved",
-//                   GeolocationId = geo1.GeolocationId,
+//                    StudentId = 1001,
+//                    CheckIn = DateTime.UtcNow.AddMinutes(-45),
+//                    CheckOut = DateTime.UtcNow,
+//                    Status = "Present",
+//                    ReviewStatus = "Approved",
+//                    GeolocationId = geo1.GeolocationId,
 //                    FaceMatchScore = 0.95,
-//                  LivenessScore = 0.98,
-//                      CreatedBy = "System",
-//                  CreatedAt = DateTime.UtcNow,
-//                 UploadedBy = "Admin",
-//                   UploadedAt = DateTime.UtcNow,
-//                   IdempotencyKey = Guid.NewGuid().ToString()
-//                   },
-//                   new AttendanceRecord
-//                      {
-//                    SessionId = 101,
-//                    StudentId = 1002,
-//                    CheckIn = DateTime.UtcNow.AddMinutes(-30),
-//                    Status = "Late",
-//                    ReviewStatus = "Pending",
-//                    ReasonCodeId = context.ReasonCodes.First().ReasonCodeId,
-//                     GeolocationId = geo2.GeolocationId,
-//                     FaceMatchScore = 0.80,
-//                     LivenessScore = 0.75,
-//                     CreatedBy = "System",
-//                     CreatedAt = DateTime.UtcNow,
+//                    LivenessScore = 0.98,
+//                    CreatedBy = "System",
+//                    CreatedAt = DateTime.UtcNow,
 //                    UploadedBy = "Admin",
 //                    UploadedAt = DateTime.UtcNow,
-//                    IdempotencyKey = Guid.NewGuid().ToString() 
+//                    IdempotencyKey = Guid.NewGuid().ToString()
+//                },
+//                   new AttendanceRecord
+//                   {
+//                       SessionId = 101,
+//                       StudentId = 1002,
+//                       CheckIn = DateTime.UtcNow.AddMinutes(-30),
+//                       Status = "Late",
+//                       ReviewStatus = "Pending",
+//                       ReasonCodeId = context.ReasonCodes.First().ReasonCodeId,
+//                       GeolocationId = geo2.GeolocationId,
+//                       FaceMatchScore = 0.80,
+//                       LivenessScore = 0.75,
+//                       CreatedBy = "System",
+//                       CreatedAt = DateTime.UtcNow,
+//                       UploadedBy = "Admin",
+//                       UploadedAt = DateTime.UtcNow,
+//                       IdempotencyKey = Guid.NewGuid().ToString()
 
-//                      }
+//                   }
 //                         );
 
 //            }

@@ -14,17 +14,33 @@ namespace ReportsManagements.Services
         public async Task<IEnumerable<Branch>> GetAllBranchesAsync() =>
            await _repo.GetAllAsync();
 
-        public async Task<Branch> CreateBranchAsync(string name)
+        public async Task<Branch> CreateBranchAsync(string name, string address)
         {
-            var branch = new Branch { Name = name, IsActive = true };
-            return await _repo.AddAsync(branch);
+            var branch = new Branch
+            {
+                Name = name,
+                Address = address,
+                IsActive = true
+            };
+
+            await _repo.AddAsync(branch);
+            return branch;
         }
+
 
         public async Task<Branch?> UpdateBranchAsync(int id, Branch branch)
         {
-            if (id != branch.BranchId) return null;
-            return await _repo.UpdateAsync(branch);
+            var existingBranch = await _repo.GetByIdAsync(id);
+            if (existingBranch == null || existingBranch.BranchId != id)
+                return null;
+
+            existingBranch.Name = branch.Name;
+            existingBranch.Address = branch.Address;
+            existingBranch.IsActive = branch.IsActive;
+
+            return await _repo.UpdateAsync(existingBranch);
         }
+
 
         public async Task DeleteBranchAsync(int id) =>
             await _repo.DeleteAsync(id);
