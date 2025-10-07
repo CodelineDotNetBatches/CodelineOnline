@@ -15,13 +15,20 @@ namespace AuthenticationManagement
         protected override void OnModelCreating(ModelBuilder mb)
         {
             // default schema keeps everything under "courses"
-            mb.HasDefaultSchema("courses");
+            mb.HasDefaultSchema("Authentication");
 
             // Define relationships
             mb.Entity<User>()
                 .HasOne(u => u.Role)
                 .WithMany(r => r.Users)
                 .HasForeignKey(u => u.RoleID);
+
+            //  Seed Roles
+            //mb.Entity<Role>().HasData(
+            //    new Role { RoleID = 1, RoleName = "Admin" },
+            //    new Role { RoleID = 2, RoleName = "Instructor" },
+            //    new Role { RoleID = 3, RoleName = "User" }
+            //);
 
             base.OnModelCreating(mb);
         }

@@ -1,9 +1,11 @@
 ﻿using AuthenticationManagement.DTOs;
 using AuthenticationManagement.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationManagement.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[controller]")]
     public class RoleController : ControllerBase
@@ -15,7 +17,7 @@ namespace AuthenticationManagement.Controllers
             _service = service;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllRole/")]
         public async Task<IActionResult> GetAll() => Ok(await _service.GetAllAsync());
 
         [HttpGet("GetRoleById/{id}")]
@@ -25,21 +27,21 @@ namespace AuthenticationManagement.Controllers
             return role == null ? NotFound() : Ok(role);
         }
 
-        [HttpPost]
+        [HttpPost("CreateRole/")]
         public async Task<IActionResult> Create([FromBody] CreateRoleDto dto)
         {
             var role = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = role.RoleID }, role);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateRoleByID/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateRoleDto dto)
         {
             var updated = await _service.UpdateAsync(id, dto);
             return updated == null ? NotFound() : Ok(updated);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteRoleByID/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _service.DeleteAsync(id);

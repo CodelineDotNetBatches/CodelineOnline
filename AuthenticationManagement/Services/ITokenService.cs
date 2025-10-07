@@ -1,6 +1,6 @@
 ﻿using AuthenticationManagement.Models;
 
-namespace AuthenticationManagement.Repositories
+namespace AuthenticationManagement.Services
 {
     public interface ITokenService
     {

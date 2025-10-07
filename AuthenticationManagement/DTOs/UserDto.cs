@@ -12,8 +12,9 @@
         public DateTime CreatedAt { get; set; }
 
         // Role info
-        public int RoleID { get; set; }
-        public string RoleType { get; set; } = default!;
+       // public int RoleID { get; set; }
+       // public string RoleType { get; set; } = default!;
+        public string? RoleName { get; set; }
     }
 
     public class CreateUserDto
@@ -21,8 +22,8 @@
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;
         public string Email { get; set; } = default!;
-        public string PasswordHash { get; set; } = default!;
-        public int RoleID { get; set; }
+        public string Password { get; set; } = default!;
+        public string RoleName { get; set; } = "User";
     }
 
     public class UpdateUserDto
@@ -32,6 +33,6 @@
         public string? PhoneNumber { get; set; }
         public string? Gender { get; set; }
         public string? Status { get; set; }
-        public int RoleID { get; set; }
+        public string RoleName { get; set; } = "User";
     }
 }

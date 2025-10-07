@@ -6,7 +6,7 @@ using AuthenticationManagement.Services;
 namespace AuthenticationManagement.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _auth;
@@ -31,6 +31,8 @@ namespace AuthenticationManagement.Controllers
         // Example protected endpoint
         [HttpGet("me")]
         [Authorize]
+        [ApiExplorerSettings(IgnoreApi = true)]// hide this api from user
+
         public IActionResult Me()
         {
             return Ok(new

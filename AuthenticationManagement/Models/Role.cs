@@ -6,9 +6,9 @@ namespace AuthenticationManagement.Models
     {
         [Key]
         public int RoleID { get; set; }
-
-        [Required, MaxLength(50)]
-        public string RoleType { get; set; } = default!;
+        public string RoleName { get; set; } = string.Empty;
+        //[MaxLength(50)]
+        //public string RoleType { get; set; } = default!;
 
         [MaxLength(200)]
         public string? Description { get; set; }

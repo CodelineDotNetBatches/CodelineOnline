@@ -4,14 +4,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace AuthenticationManagement.Repositories
+namespace AuthenticationManagement.Services
 {
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _config;
         public TokenService(IConfiguration config) => _config = config;
 
-        public (string token, DateTime expiresUtc) CreateToken(User user, string roleType)
+        public (string token, DateTime expiresUtc) CreateToken(User user, string roleName)
         {
             var jwt = _config.GetSection("Jwt");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Key"]!));
@@ -24,7 +24,7 @@ namespace AuthenticationManagement.Repositories
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserID.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-                new Claim(ClaimTypes.Role, roleType)
+                 new Claim(ClaimTypes.Role, roleName)
             };
 
             var token = new JwtSecurityToken(

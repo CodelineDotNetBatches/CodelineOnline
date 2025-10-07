@@ -6,7 +6,8 @@
         public string LastName { get; set; } = default!;
         public string Email { get; set; } = default!;
         public string Password { get; set; } = default!;
-        public int RoleID { get; set; }  // e.g., default=User role
+        public string? RoleName { get; set; } = "User"; // Default rolepublic string Password { get; set; } = default!;
+       // public int RoleID { get; set; }  // e.g., default=User role
     }
 
     public class LoginDto

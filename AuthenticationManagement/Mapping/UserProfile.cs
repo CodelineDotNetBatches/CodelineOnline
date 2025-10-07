@@ -9,7 +9,7 @@ namespace AuthenticationManagement.Mapping
         public UserProfile()
         {
             CreateMap<User, UserDto>()
-                .ForMember(dest => dest.RoleType, opt => opt.MapFrom(src => src.Role.RoleType));
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName));
 
             CreateMap<CreateUserDto, User>();
             CreateMap<UpdateUserDto, User>();

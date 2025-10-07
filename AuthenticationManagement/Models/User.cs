@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthenticationManagement.Models
 {
@@ -36,6 +37,7 @@ namespace AuthenticationManagement.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Foreign Key
+        [ForeignKey(nameof(Role))]
         public int RoleID { get; set; }
         public Role Role { get; set; } = default!;
     }
