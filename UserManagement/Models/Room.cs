@@ -14,9 +14,11 @@ namespace UserManagement.Models
         [StringLength(50, ErrorMessage = "Room type cannot exceed 50 characters.")]
         public string RoomType { get; set; }
 
+        [Required]
         [StringLength(300, ErrorMessage = "Room description cannot exceed 300 characters.")]
         public string? Description { get; set; }
 
+        [Required]
         [Range(1, 10, ErrorMessage = "Room capacity must be between 1 and 10.")]
         public int Capacity { get; set; }
 
