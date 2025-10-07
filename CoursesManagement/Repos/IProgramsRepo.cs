@@ -7,8 +7,10 @@ namespace CoursesManagement.Repos
         Task<Programs?> GetProgramWithCoursesAsync(Guid programId);
 
         Task<bool> ExistsByNameAsync(string programName, Guid? excludeId = null);
-        Task<IQueryable<Programs>> GetAllWithDetailsAsync();
-        Task<IQueryable<Programs?>> GetByIdAsync(Guid id);
+        Task<List<Programs>> GetAllWithDetailsAsync();
+        Task<Programs?> GetByIdAsync(Guid id);
         Task<Programs?> GetByNameAsync(string programName);
+
+        Task<Programs?> GetProgramWithCategoriesAsync(Guid programId);
     }
 }
