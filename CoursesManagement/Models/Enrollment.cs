@@ -87,5 +87,7 @@ namespace CoursesManagement.Models
         /// </summary>
         [MaxLength(255)]
         public string? StatusChangeReason { get; set; }
+
+        public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
     }
 }
