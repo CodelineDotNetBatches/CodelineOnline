@@ -8,6 +8,10 @@ namespace CoursesManagement.Services
     /// </summary>
     public interface IEnrollmentService
     {
+        // ==========================================================
+        // 🔹 RETRIEVE METHODS
+        // ==========================================================
+
         /// <summary>
         /// Retrieves all enrollments with related User, Course, and Program data.
         /// Returns summary DTOs for list views.
@@ -42,6 +46,18 @@ namespace CoursesManagement.Services
         /// </summary>
         /// <param name="courseId">The course ID.</param>
         Task<IEnumerable<EnrollmentListDto>> GetByCourseIdAsync(Guid courseId);
+
+        /// <summary>
+        /// Retrieves all enrollments for a specific course name (case-insensitive).
+        /// Includes Course and Program details.
+        /// Returns summary DTOs for list views.
+        /// </summary>
+        /// <param name="courseName">The name of the course to search for.</param>
+        Task<IEnumerable<EnrollmentListDto>> GetByCourseNameAsync(string courseName);
+
+        // ==========================================================
+        // 🔹 CREATE / UPDATE / DELETE METHODS
+        // ==========================================================
 
         /// <summary>
         /// Creates a new enrollment from a DTO.
