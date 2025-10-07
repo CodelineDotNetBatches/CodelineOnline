@@ -9,7 +9,7 @@ namespace CoursesManagement.DTOs
         public decimal Price { get; set; }
         public LevelType CourseLevel { get; set; }
         public string CategoryName { get; set; } = default!;
-        public List<string> ProgramNames { get; set; } = new();
+        public List<string?> ProgramNames { get; set; } = new();
 
 
 

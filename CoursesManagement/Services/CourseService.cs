@@ -37,51 +37,94 @@ namespace CoursesManagement.Services
         // =======================
         // GET BY ID (with caching)
         // =======================
-        public async Task<Course?> GetCourseByIdAsync(Guid id)
+
+        public async Task<CourseListDto?> GetCourseByIdAsync(Guid id)
         {
             var cacheKey = CacheKeys.Course(id);
 
-            if (!_cache.TryGetValue(cacheKey, out Course? cachedCourse))
+            if (!_cache.TryGetValue(cacheKey, out CourseListDto? cachedCourseDto))
             {
-                cachedCourse = await _courseRepo.GetByIdAsync(id);
-                if (cachedCourse != null)
-                    _cache.Set(cacheKey, cachedCourse, TimeSpan.FromMinutes(10));
+                var course = await _courseRepo.GetByIdAsync(id); // fetch entity from repo
+
+                if (course == null)
+                    return null;
+
+                // Use AutoMapper to map entity to DTO
+                cachedCourseDto = _mapper.Map<CourseListDto>(course);
+
+                // Populate ProgramNames (many-to-many)
+                cachedCourseDto.ProgramNames = course.Programs?.Where(p => p != null)
+                                                              .Select(p => p!.ProgramName)
+                                                              .ToList() ?? new List<string>();
+
+                // Set in cache for 10 minutes
+                _cache.Set(cacheKey, cachedCourseDto, TimeSpan.FromMinutes(10));
             }
 
-            return cachedCourse;
+            return cachedCourseDto;
         }
 
         // =======================
         // GET BY LEVEL (optional cache, transient)
         // =======================
-        public async Task<IEnumerable<Course>> GetCoursesByLevelAsync(LevelType level)
+        public async Task<IEnumerable<CourseListDto>> GetCoursesByLevelAsync(LevelType level)
         {
             var cacheKey = $"courses_level_{level}";
-            if (!_cache.TryGetValue(cacheKey, out IEnumerable<Course>? cachedCourses))
+
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<CourseListDto>? cachedCourseDtos))
             {
                 var query = await _courseRepo.GetCoursesByLevelAsync(level);
-                cachedCourses = await query.ToListAsync();
-                _cache.Set(cacheKey, cachedCourses, TimeSpan.FromMinutes(10));
+                var courses = await query.ToListAsync();
+
+                // Map entities to DTOs
+                cachedCourseDtos = _mapper.Map<IEnumerable<CourseListDto>>(courses);
+
+                // Populate ProgramNames for each DTO
+                foreach (var dto in cachedCourseDtos)
+                {
+                    var course = courses.First(c => c.CourseId == dto.CourseId);
+                    dto.ProgramNames = course.Programs?.Where(p => p != null)
+                                                       .Select(p => p!.ProgramName)
+                                                       .ToList() ?? new List<string>();
+                }
+
+                // Set in cache for 10 minutes
+                _cache.Set(cacheKey, cachedCourseDtos, TimeSpan.FromMinutes(10));
             }
-            return cachedCourses!;
+
+            return cachedCourseDtos;
         }
 
         // =======================
         // GET BY CATEGORY (with caching)
         // =======================
-        public async Task<IEnumerable<Course>> GetCoursesByCategoryAsync(Guid categoryId)
-        {
-            var cacheKey = CacheKeys.CoursesByCategory(new Guid(categoryId.ToString()));
-            // or adjust depending on your schema (categoryId as int → cast to Guid if applicable)
 
-            if (!_cache.TryGetValue(cacheKey, out IEnumerable<Course>? cachedCourses))
+        public async Task<IEnumerable<CourseListDto>> GetCoursesByCategoryAsync(Guid categoryId)
+        {
+            var cacheKey = CacheKeys.CoursesByCategory(categoryId);
+
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<CourseListDto>? cachedCourseDtos))
             {
                 var query = await _courseRepo.GetCoursesByCategoryAsync(categoryId);
-                cachedCourses = await query.ToListAsync();
-                _cache.Set(cacheKey, cachedCourses, TimeSpan.FromMinutes(10));
+                var courses = await query.ToListAsync();
+
+                // Map entities to DTOs
+                cachedCourseDtos = _mapper.Map<IEnumerable<CourseListDto>>(courses);
+
+                // Populate ProgramNames for each DTO
+                foreach (var dto in cachedCourseDtos)
+                {
+                    var course = courses.First(c => c.CourseId == dto.CourseId);
+                    dto.ProgramNames = course.Programs?.Where(p => p != null)
+                                                       .Select(p => p!.ProgramName)
+                                                       .ToList() ?? new List<string>();
+                }
+
+                // Set in cache for 10 minutes
+                _cache.Set(cacheKey, cachedCourseDtos, TimeSpan.FromMinutes(10));
             }
 
-            return cachedCourses!;
+            return cachedCourseDtos;
         }
 
         // =======================

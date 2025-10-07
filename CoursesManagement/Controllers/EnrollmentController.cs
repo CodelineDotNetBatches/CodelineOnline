@@ -29,22 +29,6 @@ namespace CoursesManagement.Controllers
         /// <summary>
         /// Retrieves all enrollments.
         /// </summary>
-        /// <remarks>
-        /// **Example Response:**
-        /// ```json
-        /// [
-        ///   {
-        ///     "enrollmentId": "eec7c205-ecb0-4e18-8ad6-63c3c020d6df",
-        ///     "userId": "3f45d2c7-95e2-4f6e-8c71-2afcbe2a12b9",
-        ///     "userName": "Jane Doe",
-        ///     "courseId": "91f258a7-3b29-4b2b-9c92-1ab4a65d8a44",
-        ///     "courseTitle": "C# Fundamentals",
-        ///     "status": "Active",
-        ///     "statusChangeReason": null
-        ///   }
-        /// ]
-        /// ```
-        /// </remarks>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<EnrollmentListDto>), 200)]
         [SwaggerResponse(200, "List of all enrollments retrieved successfully.", typeof(IEnumerable<EnrollmentListDto>))]
@@ -77,7 +61,7 @@ namespace CoursesManagement.Controllers
         // GET: api/enrollment/course/{courseId}
         // =========================================================
         /// <summary>
-        /// Retrieves enrollments for a specific course.
+        /// Retrieves enrollments for a specific course (by ID).
         /// </summary>
         [HttpGet("course/{courseId:guid}")]
         [ProducesResponseType(typeof(IEnumerable<EnrollmentListDto>), 200)]
@@ -89,6 +73,69 @@ namespace CoursesManagement.Controllers
             var result = await _service.GetByCourseIdAsync(courseId);
             if (result == null || !result.Any())
                 return NotFound();
+            return Ok(result);
+        }
+
+        // =========================================================
+        //  GET: api/enrollment/course/name/{courseName}
+        // =========================================================
+        /// <summary>
+        /// Retrieves enrollments for a specific course (by name).
+        /// </summary>
+        /// <remarks>s
+        /// **Example Request:**
+        /// ```
+        /// GET /api/enrollment/course/name/CSharp%20Fundamentals
+        /// ```
+        /// 
+        /// **Example Response:**
+        /// ```json
+        /// [
+        ///   {
+        ///     "enrollmentId": "b1e2e7d9-2d89-4e02-bc3a-7b26c6b4f6e9",
+        ///     "userId": "63a2fc97-cb1e-43a4-9b9d-4c1b66ff48b0",
+        ///     "userName": "Jane Doe",
+        ///     "courseId": "91f258a7-3b29-4b2b-9c92-1ab4a65d8a44",
+        ///     "courseTitle": "C# Fundamentals",
+        ///     "programId": "cb8c8a0d-70d4-4e32-b8d6-33f2296f5f0d",
+        ///     "programName": "Full Stack Developer Program",
+        ///     "status": "Active",
+        ///     "grade": 92.5,
+        ///     "statusChangeReason": null,
+        ///     "enrolledAt": "2025-09-28T14:45:00Z"
+        ///   },
+        ///   {
+        ///     "enrollmentId": "c3f79b11-7ed0-4988-9c47-3b77aa3a9d22",
+        ///     "userId": "3f45d2c7-95e2-4f6e-8c71-2afcbe2a12b9",
+        ///     "userName": "Ahmed Al-Balushi",
+        ///     "courseId": "91f258a7-3b29-4b2b-9c92-1ab4a65d8a44",
+        ///     "courseTitle": "C# Fundamentals",
+        ///     "programId": null,
+        ///     "programName": null,
+        ///     "status": "Completed",
+        ///     "grade": 88.0,
+        ///     "statusChangeReason": "Completed successfully",
+        ///     "enrolledAt": "2025-09-12T09:30:00Z"
+        ///   }
+        /// ]
+        /// ```
+        /// </remarks>
+        [HttpGet("course/name/{courseName}")]
+        [ProducesResponseType(typeof(IEnumerable<EnrollmentListDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [SwaggerResponse(200, "Enrollments for the given course name retrieved successfully.", typeof(IEnumerable<EnrollmentListDto>))]
+        [SwaggerResponse(400, "Course name cannot be empty.")]
+        [SwaggerResponse(404, "No enrollments found for the specified course name.")]
+        public async Task<ActionResult<IEnumerable<EnrollmentListDto>>> GetByCourseName(string courseName)
+        {
+            if (string.IsNullOrWhiteSpace(courseName))
+                return BadRequest("Course name cannot be empty.");
+
+            var result = await _service.GetByCourseNameAsync(courseName);
+            if (result == null || !result.Any())
+                return NotFound($"No enrollments found for course '{courseName}'.");
+
             return Ok(result);
         }
 
@@ -105,6 +152,17 @@ namespace CoursesManagement.Controllers
         ///   "userId": "3f45d2c7-95e2-4f6e-8c71-2afcbe2a12b9",
         ///   "courseId": "91f258a7-3b29-4b2b-9c92-1ab4a65d8a44",
         ///   "programId": "cb8c8a0d-70d4-4e32-b8d6-33f2296f5f0d"
+        /// }
+        /// ```
+        /// 
+        /// **Example Response:**
+        /// ```json
+        /// {
+        ///   "enrollmentId": "eec7c205-ecb0-4e18-8ad6-63c3c020d6df",
+        ///   "userName": "Jane Doe",
+        ///   "courseTitle": "C# Fundamentals",
+        ///   "status": "Active",
+        ///   "enrolledAt": "2025-09-28T14:45:00Z"
         /// }
         /// ```
         /// </remarks>

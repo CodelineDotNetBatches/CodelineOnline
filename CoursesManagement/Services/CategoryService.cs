@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CoursesManagement.DTOs;
 using CoursesManagement.Models;
 using CoursesManagement.Repos;

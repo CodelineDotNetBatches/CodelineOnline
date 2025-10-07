@@ -1,42 +1,50 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoursesManagement.Models
 {
+    /// <summary>
+    /// Represents a certificate issued to a user for completing a course enrollment.
+    /// Each certificate is linked to an enrollment (user + course combination).
+    /// </summary>
     public class Certificate
     {
         [Key]
-        public int CertificateId { get; set; }
+        public Guid CertificateId { get; set; }
 
-        // Foreign Keys
+        // =======================
+        // Foreign Keys & Relations
+        // =======================
+
         [Required]
-        public int CourseId { get; set; }
-        [ForeignKey(nameof(CourseId))] // Navigation property to the associated course
-        public Course Course { get; set; } = default!;
+        public Guid EnrollmentId { get; set; }
 
-        //[Required]
-        public int UserId { get; set; } // Foreign key to the user who earned the certificate
-        //[ForeignKey(nameof(UserId))] // Navigation property to the associated user
-        //public User User { get; set; } = default!;
+        // Marked as virtual to support proxy creation
+        public virtual Enrollment Enrollment { get; set; } = default!;
 
+        [Required]
+        public Guid CourseId { get; set; }
+
+        public virtual Course Course { get; set; } = default!;
+
+        [Required]
+        public Guid UserId { get; set; }
+
+        // Uncomment later when User entity is ready
+        // public virtual User User { get; set; } = default!;
+
+        // =======================
+        // Metadata
+        // =======================
 
         [Required]
         [MaxLength(520)]
-        public string CertificateUrl { get; set; } = default!; // URL to view/verify/download the certificate
-
+        public string CertificateUrl { get; set; } = default!;
 
         [Required]
-        public DateTime IssuedAt { get; set; } = DateTime.UtcNow; // Issue date/time (UTC recommended)
+        public DateTime IssuedAt { get; set; } = DateTime.UtcNow;
 
-        // Fluent API configurations 
-        //        mb.Entity<Certificate>()
-        //                 .HasIndex(c => new { c.UserId, c.CourseId
-        //    })
-        //                 .IsUnique(); // ensures one certificate per user per course
-
-        //    mb.Entity<Certificate>()
-        //                 .HasIndex(c => c.CertificateUrl)
-        //                 .IsUnique(); // ensures no duplicate certificate URLs
-        //
+        // Protected constructor (required for EF proxies)
+        protected Certificate() { }
     }
 }
