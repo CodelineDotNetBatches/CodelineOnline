@@ -82,19 +82,33 @@ namespace CoursesManagement.Services
         // =======================
         // GET BY CATEGORY (with caching)
         // =======================
-        public async Task<IEnumerable<Course>> GetCoursesByCategoryAsync(Guid categoryId)
-        {
-            var cacheKey = CacheKeys.CoursesByCategory(new Guid(categoryId.ToString()));
-            // or adjust depending on your schema (categoryId as int → cast to Guid if applicable)
 
-            if (!_cache.TryGetValue(cacheKey, out IEnumerable<Course>? cachedCourses))
+        public async Task<IEnumerable<CourseListDto>> GetCoursesByCategoryAsync(Guid categoryId)
+        {
+            var cacheKey = CacheKeys.CoursesByCategory(categoryId);
+
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<CourseListDto>? cachedCourseDtos))
             {
                 var query = await _courseRepo.GetCoursesByCategoryAsync(categoryId);
-                cachedCourses = await query.ToListAsync();
-                _cache.Set(cacheKey, cachedCourses, TimeSpan.FromMinutes(10));
+                var courses = await query.ToListAsync();
+
+                // Map entities to DTOs
+                cachedCourseDtos = _mapper.Map<IEnumerable<CourseListDto>>(courses);
+
+                // Populate ProgramNames for each DTO
+                foreach (var dto in cachedCourseDtos)
+                {
+                    var course = courses.First(c => c.CourseId == dto.CourseId);
+                    dto.ProgramNames = course.Programs?.Where(p => p != null)
+                                                       .Select(p => p!.ProgramName)
+                                                       .ToList() ?? new List<string>();
+                }
+
+                // Set in cache for 10 minutes
+                _cache.Set(cacheKey, cachedCourseDtos, TimeSpan.FromMinutes(10));
             }
 
-            return cachedCourses!;
+            return cachedCourseDtos;
         }
 
         // =======================
