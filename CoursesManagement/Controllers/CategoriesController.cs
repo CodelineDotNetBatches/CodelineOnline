@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using CoursesManagement.Services;
 using CoursesManagement.DTOs;
@@ -10,6 +11,7 @@ namespace CoursesManagement.Controllers
     /// </summary>
     [ApiController]
     [Route("[action]")]
+    [Authorize] // Require authentication globally
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
@@ -23,6 +25,9 @@ namespace CoursesManagement.Controllers
         // GET ALL
         // =========================================================
         [HttpGet]
+        [Authorize(Roles = "Admin,Instructor,Trainee")]
+        [ProducesResponseType(typeof(IEnumerable<CategoryDto>), 200)]
+        [ProducesResponseType(500)]
         [SwaggerResponse(200, "List of all categories retrieved successfully.", typeof(IEnumerable<CategoryDto>))]
         [SwaggerResponse(500, "Server error occurred.")]
         public async Task<IActionResult> GetAllCategories()
@@ -45,6 +50,10 @@ namespace CoursesManagement.Controllers
         // GET BY ID
         // =========================================================
         [HttpGet]
+        [Authorize(Roles = "Admin,Instructor,Trainee")]
+        [ProducesResponseType(typeof(CategoryDetailDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [SwaggerResponse(200, "Category details retrieved successfully.", typeof(CategoryDetailDto))]
         [SwaggerResponse(404, "Category not found.")]
         [SwaggerResponse(500, "Server error occurred.")]
@@ -71,6 +80,10 @@ namespace CoursesManagement.Controllers
         // GET BY NAME
         // =========================================================
         [HttpGet]
+        [Authorize(Roles = "Admin,Instructor,Trainee")]
+        [ProducesResponseType(typeof(CategoryDetailDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [SwaggerResponse(200, "Category retrieved successfully by name.", typeof(CategoryDetailDto))]
         [SwaggerResponse(404, "Category not found.")]
         [SwaggerResponse(500, "Server error occurred.")]
@@ -97,6 +110,10 @@ namespace CoursesManagement.Controllers
         // GET COURSES BY CATEGORY
         // =========================================================
         [HttpGet]
+        [Authorize(Roles = "Admin,Instructor,Trainee")]
+        [ProducesResponseType(typeof(IEnumerable<CourseListDto>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [SwaggerResponse(200, "Courses retrieved successfully for this category.", typeof(IEnumerable<CourseListDto>))]
         [SwaggerResponse(404, "Category or courses not found.")]
         [SwaggerResponse(500, "Server error occurred.")]
@@ -123,6 +140,10 @@ namespace CoursesManagement.Controllers
         // GET PROGRAMS BY CATEGORY
         // =========================================================
         [HttpGet]
+        [Authorize(Roles = "Admin,Instructor,Trainee")]
+        [ProducesResponseType(typeof(IEnumerable<ProgramDetailsDto>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [SwaggerResponse(200, "Programs retrieved successfully for this category.", typeof(IEnumerable<ProgramDetailsDto>))]
         [SwaggerResponse(404, "Category or programs not found.")]
         [SwaggerResponse(500, "Server error occurred.")]
@@ -149,6 +170,10 @@ namespace CoursesManagement.Controllers
         // CREATE
         // =========================================================
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(CategoryDto), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         [SwaggerResponse(201, "Category created successfully.", typeof(CategoryDto))]
         [SwaggerResponse(400, "Invalid input data.")]
         [SwaggerResponse(500, "Server error occurred.")]
@@ -172,6 +197,11 @@ namespace CoursesManagement.Controllers
         // UPDATE
         // =========================================================
         [HttpPut]
+        [Authorize(Roles = "Admin,Instructor")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [SwaggerResponse(204, "Category updated successfully.")]
         [SwaggerResponse(400, "Invalid input data.")]
         [SwaggerResponse(404, "Category not found.")]
@@ -203,6 +233,10 @@ namespace CoursesManagement.Controllers
         // DELETE
         // =========================================================
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         [SwaggerResponse(204, "Category deleted successfully.")]
         [SwaggerResponse(404, "Category not found.")]
         [SwaggerResponse(500, "Server error occurred.")]
