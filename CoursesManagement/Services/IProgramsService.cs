@@ -8,14 +8,15 @@ namespace CoursesManagement.Services
         Task<ProgramDetailsDto> CreateProgramAsync(ProgramCreateDto dto);
         Task DeleteProgramAsync(Guid id);
         Task<IEnumerable<ProgramDetailsDto>> GetAllProgramsAsync();
-        Task<ProgramDetailsDto?> GetProgramByIdAsync(Guid id);
+        Task<ProgramsDto?> GetProgramByIdAsync(Guid id);
         Task UpdateProgramAsync(Guid id, ProgramUpdateDto dto);
 
-        Task<ProgramDetailsDto?> GetProgramByNameAsync(string programName);
+        Task<ProgramsDto?> GetProgramByNameAsync(string programName);
 
-        Task<ProgramDetailsDto?> GetProgramWithCoursesAsync(Guid programId);
+        Task<ProgramsWithCoursesDto?> GetProgramWithCoursesAsync(Guid programId);
 
-        Task<ProgramDetailsDto?> GetProgramWithCategoriesAsync(Guid programId);
+        Task<ProgramsWithCategoryDto?> GetProgramWithCategoriesAsync(Guid programId);
 
+        Task<ProgramsWithEnrollmentDto?> GetProgramWithEnrollmentsAsync(Guid programId);
     }
 }
