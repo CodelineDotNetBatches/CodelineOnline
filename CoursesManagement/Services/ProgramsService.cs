@@ -175,9 +175,11 @@ namespace CoursesManagement.Services
         // Get Program with Courses
         public async Task<ProgramDetailsDto?> GetProgramWithCoursesAsync(Guid programId)
         {
-            var entity = await _repo.GetProgramWithCoursesAsync(programId);
-            return _mapper.Map<ProgramDetailsDto?>(entity);
+            var programs = await _repo.GetProgramWithCoursesAsync(programId);
+            return _mapper.Map<ProgramDetailsDto?>(programs);
+
         }
+
 
         // ======================
 
