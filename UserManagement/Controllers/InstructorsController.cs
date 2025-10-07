@@ -23,9 +23,9 @@ namespace UserManagement.Controllers
         // ============================================================
 
         [HttpGet("GetInstructorById")]
-        public async Task<IActionResult> GetById(int id, CancellationToken ct)
+        public async Task<IActionResult> GetById(int id)
         {
-            var instructor = await _service.GetAsync(id, ct);
+            var instructor = await _service.GetAsync(id);
             if (instructor == null) return NotFound($"Instructor {id} not found.");
             return Ok(instructor);
         }
@@ -38,23 +38,23 @@ namespace UserManagement.Controllers
         }
 
         [HttpPost("CreateInstructor")]
-        public async Task<IActionResult> Create([FromBody] InstructorCreateDto dto, CancellationToken ct)
+        public async Task<IActionResult> Create([FromBody] InstructorCreateDto dto)
         {
-            var created = await _service.CreateFromUserAsync(dto, ct);
+            var created = await _service.CreateFromUserAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.InstructorId }, created);
         }
 
         [HttpPut("UpdateInstructor/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] InstructorUpdateDto dto, CancellationToken ct)
+        public async Task<IActionResult> Update(int id, [FromBody] InstructorUpdateDto dto)
         {
-            var updated = await _service.UpdateAsync(id, dto, ct);
+            var updated = await _service.UpdateAsync(id, dto);
             return Ok(updated);
         }
 
         [HttpDelete("DeleteInstructor/{id}")]
-        public async Task<IActionResult> Delete(int id, CancellationToken ct)
+        public async Task<IActionResult> Delete(int id)
         {
-            await _service.DeleteAsync(id, ct);
+            await _service.DeleteAsync(id);
             return NoContent();
         }
 
