@@ -27,8 +27,18 @@ namespace UserManagement.Models
 
         // nav
         public ICollection<BranchPN> branchPNs { get; set; }
+        public ICollection<Room> rooms { get; set; }
 
+        public ICollection<Admin_Profile> Admin_Profiles { get; set; }
+
+        public ICollection<Batch> batches { get; set; }
+
+
+        public ICollection<Instructor> instructors { get; set; }
+
+        public ICollection<Trainee> trainees { get; set; } 
     }
+
 
     public class BranchPN
     {

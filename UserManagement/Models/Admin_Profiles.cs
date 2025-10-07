@@ -19,7 +19,7 @@ namespace UserManagement.Models
         public ICollection<Responsibility> Responsibilitys {  get; set; }
         public ICollection<Batch> Batchs { get; set; } // one admin can manage many batch 
 
-        public Room rooms { get; set; }
+        public Branch branchs { get; set; }
 
 
 
