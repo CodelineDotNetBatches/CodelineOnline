@@ -40,5 +40,15 @@ namespace CoursesManagement.Repos
         /// Returns an enrollment by ID with all related entities loaded.
         /// </summary>
         Task<Enrollment?> GetByIdWithRelationsAsync(Guid id);
+
+        // ==========================================================
+        // 🔹 Get all enrollments by Course Name (NEW)
+        // ==========================================================
+        /// <summary>
+        /// Returns all enrollments associated with a specific course name.
+        /// </summary>
+        /// <param name="courseName">The name of the course to search for.</param>
+        /// <returns>A list of enrollments linked to that course name.</returns>
+        Task<IEnumerable<Enrollment>> GetByCourseNameAsync(string courseName);
     }
 }
