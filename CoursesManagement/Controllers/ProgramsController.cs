@@ -56,6 +56,27 @@ namespace CoursesManagement.Controllers
             }
 
         }
+
+
+        // GET: api/programs/name/{programName}
+        [HttpGet("GetProgramByName{programName}")]
+        public async Task<IActionResult> GetProgramByName(string programName)
+        {
+            try
+            {
+                var result = await _service.GetProgramByNameAsync(programName);
+                if (result == null)
+                    return NotFound("Program not found.");
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Failed to retrieve program by name. {ex.Message}");
+            }
+        }
+
+
+
         // POST: api/programs
 
         [HttpPost("CreateProgram")]
@@ -128,7 +149,7 @@ namespace CoursesManagement.Controllers
         }
 
 
-        // GET: api/programs/{id}/courses
+        //// GET: api/programs/{id}/courses
 
         [HttpGet("GetProgramWithCoursesByProgramId{id:guid}")]
         [ProducesResponseType(204)] // Represents a successful deletion response with no content
@@ -149,23 +170,23 @@ namespace CoursesManagement.Controllers
         }
 
         // Get all Courses in a Program
-        [HttpGet("GetAllCoursesInProgramByProgramId {id:guid}")]
-        [ProducesResponseType(204)] // Represents a successful deletion response with no content
-        [ProducesResponseType(404)] // Represents a not found response
-        public async Task<IActionResult> GetAllCoursesInProgramByProgramId(Guid id)
-        {
-            try
-            {
-                var result = await _service.GetProgramWithCoursesAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to retrieve courses for program. {ex.Message}");
-            }
+        //[HttpGet("GetAllCoursesInProgramByProgramId {id:guid}")]
+        //[ProducesResponseType(204)] // Represents a successful deletion response with no content
+        //[ProducesResponseType(404)] // Represents a not found response
+        //public async Task<IActionResult> GetAllCoursesInProgramByProgramId(Guid id)
+        //{
+        //    try
+        //    {
+        //        var result = await _service.GetProgramWithCoursesAsync(id);
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Failed to retrieve courses for program. {ex.Message}");
+        //    }
 
 
-        }
+        //}
 
 
         // GET: api/programs/{id}/categories
@@ -185,20 +206,18 @@ namespace CoursesManagement.Controllers
             }
         }
 
-        // GET: api/programs/name/{programName}
-        [HttpGet("GetProgramByName{programName}")]
-        public async Task<IActionResult> GetProgramByName(string programName)
+        // GET: api/programs/{id}/Enrollments
+        [HttpGet("GetAllEnrollmentsInProgramByProgramId{id:guid}")]
+        public async Task<IActionResult> GetAllEnrollmentsInProgramByProgramId(Guid id)
         {
             try
             {
-                var result = await _service.GetProgramByNameAsync(programName);
-                if (result == null)
-                    return NotFound("Program not found.");
+                var result = await _service.GetProgramWithEnrollmentsAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Failed to retrieve program by name. {ex.Message}");
+                return StatusCode(500, $"Failed to retrieve enrollments for program. {ex.Message}");
             }
         }
 
