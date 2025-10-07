@@ -44,18 +44,18 @@ namespace CoursesManagement.Services
         // ======================
         // GET BY ID (with caching)
         // ======================
-        public async Task<ProgramDetailsDto?> GetProgramByIdAsync(Guid id)
+        public async Task<ProgramsDto?> GetProgramByIdAsync(Guid id)
         {
             var cacheKey = CacheKeys.Program(id);
 
-            if (!_cache.TryGetValue(cacheKey, out ProgramDetailsDto? cachedProgram))
+            if (!_cache.TryGetValue(cacheKey, out ProgramsDto? cachedProgram))
             {
                 var program = await _repo.GetQueryable()
                     .Include(p => p.Categories)
                     .Include(p => p.Courses)
                     .FirstOrDefaultAsync(p => p.ProgramId == id);
 
-                cachedProgram = _mapper.Map<ProgramDetailsDto?>(program);
+                cachedProgram = _mapper.Map<ProgramsDto?>(program);
 
                 if (cachedProgram != null)
                     _cache.Set(cacheKey, cachedProgram, TimeSpan.FromMinutes(10));
@@ -147,26 +147,59 @@ namespace CoursesManagement.Services
 
         // ======================
         // Get Program By Program Name
-        public async Task<Programs?> GetProgramByNameAsync(string programName)
+        public async Task<ProgramsDto?> GetProgramByNameAsync(string programName)
         {
-            return await _repo.GetByNameAsync(programName);
+            if (string.IsNullOrWhiteSpace(programName))
+                return null;
+
+            string normalized = programName.Trim().ToLower();
+
+            if (!_cache.TryGetValue(normalized, out ProgramsDto? cachedProgram))
+            {
+                var program = await _repo.GetQueryable()
+                    .Include(p => p.Categories)
+                    .Include(p => p.Courses)
+                    .FirstOrDefaultAsync(p => p.ProgramName.ToLower() == normalized);
+
+                cachedProgram = _mapper.Map<ProgramsDto?>(program);
+
+                if (cachedProgram != null)
+                    _cache.Set(normalized, cachedProgram, TimeSpan.FromMinutes(10));
+            }
+            return cachedProgram;
+
+
         }
 
         // ======================
         // Get Program with Courses
-        public async Task<Programs?> GetProgramWithCoursesAsync(Guid programId)
+        public async Task<ProgramsWithCoursesDto?> GetProgramWithCoursesAsync(Guid programId)
         {
-            return await _repo.GetProgramWithCoursesAsync(programId);
+            var programs = await _repo.GetProgramWithCoursesAsync(programId);
+            return _mapper.Map<ProgramsWithCoursesDto?>(programs);
+
         }
+
 
         // ======================
 
         // Get Program with Categories
 
-        public async Task<Programs?> GetProgramWithCategoriesAsync(Guid programId)
+        public async Task<ProgramsWithCategoryDto?> GetProgramWithCategoriesAsync(Guid programId)
         {
-            return await _repo.GetProgramWithCategoriesAsync(programId);
+            var entity = await _repo.GetProgramWithCategoriesAsync(programId);
+            return _mapper.Map<ProgramsWithCategoryDto?>(entity);
         }
+
+        // ======================
+        // Get All enrollments for a program
+        public async Task<ProgramsWithEnrollmentDto?> GetProgramWithEnrollmentsAsync(Guid programId)
+        {
+            var entity = await _repo.GetAllEnrollmentsInProgramAsync(programId);
+            return _mapper.Map<ProgramsWithEnrollmentDto?>(entity);
+        }
+
+
 
     }
 }
