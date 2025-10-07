@@ -1,53 +1,50 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoursesManagement.Models
-{ 
-  //Represents a certificate issued to a user for completing a course enrollment.
+{
+    /// <summary>
+    /// Represents a certificate issued to a user for completing a course enrollment.
+    /// Each certificate is linked to an enrollment (user + course combination).
+    /// </summary>
     public class Certificate
     {
-        
-        
         [Key]
-        public Guid CertificateId { get; set; } // Primary key for the certificate.
+        public Guid CertificateId { get; set; }
 
+        // =======================
+        // Foreign Keys & Relations
+        // =======================
 
-        // Foreign key to the enrollment that generated this certificate.
-        // Each certificate belongs to one enrollment (user + course).
         [Required]
         public Guid EnrollmentId { get; set; }
 
-    
-        
-        public Enrollment Enrollment { get; set; } = default!; // Navigation property to the associated enrollment.
+        // Marked as virtual to support proxy creation
+        public virtual Enrollment Enrollment { get; set; } = default!;
 
-
-        
         [Required]
-        public Guid CourseId { get; set; } // Foreign key to the course for which the certificate was issued.
+        public Guid CourseId { get; set; }
 
+        public virtual Course Course { get; set; } = default!;
 
-        
-        public Course Course { get; set; } = default!; // Navigation property to the related course.
-
-
-        
         [Required]
-        public Guid UserId { get; set; } // Foreign key to the user who earned the certificate.
+        public Guid UserId { get; set; }
 
+        // Uncomment later when User entity is ready
+        // public virtual User User { get; set; } = default!;
 
-        
-      //  public User User { get; set; } = default!; // Navigation property to the related user.
+        // =======================
+        // Metadata
+        // =======================
 
-
-        // URL pointing to the hosted or downloadable version of the certificate.
         [Required]
         [MaxLength(520)]
         public string CertificateUrl { get; set; } = default!;
 
-
-        // The UTC date and time the certificate was issued.
         [Required]
         public DateTime IssuedAt { get; set; } = DateTime.UtcNow;
+
+        // Protected constructor (required for EF proxies)
+        protected Certificate() { }
     }
 }
