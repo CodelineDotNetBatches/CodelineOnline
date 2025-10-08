@@ -35,7 +35,7 @@ namespace UserManagement.Services
             if (cached is not null)
                 return cached;
 
-            var branches =  _repo.GetAll();        
+            var branches = _repo.GetAll();
             var result = _mapper.Map<IEnumerable<BranchDTO>>(branches);
 
             await _cache.SetAsync(AllBranchesCacheKey, result, TimeSpan.FromMinutes(10));
@@ -108,6 +108,16 @@ namespace UserManagement.Services
 
             await _cache.RemoveAsync(AllBranchesCacheKey);
             await _cache.RemoveAsync($"{BranchCacheKeyPrefix}{id}");
+        }
+
+        // -----------------------
+        // filteration branch which has more that 3 batch
+        // -----------------------
+        public async Task<IEnumerable<BranchDTO>> GetBranchesWithMoreThanThreeBatchesAsync()
+        {
+            var branches = _repo.GetAll().Where(b => b.batches.Count() > 3);
+            var result = _mapper.Map<IEnumerable<BranchDTO>>(branches);
+            return await Task.FromResult(result);
         }
 
     }

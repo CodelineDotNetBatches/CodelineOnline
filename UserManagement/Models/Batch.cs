@@ -5,9 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UserManagement.Models
 {
-    /// <summary>
-    /// Represents a training batch that groups multiple trainees.
-    /// </summary>
+   
     public class Batch
     {
         [Key]

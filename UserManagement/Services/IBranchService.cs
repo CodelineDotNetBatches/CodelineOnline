@@ -4,10 +4,11 @@ namespace UserManagement.Services
 {
     public interface IBranchService
     {
-        Task<IEnumerable<BranchDTO>> GetAllAsync();
-        Task<BranchDTO?> GetByIdAsync(int id);
         Task AddAsync(BranchDTO dto);
-        Task UpdateAsync(int id, BranchDTO dto);
         Task DeleteAsync(int id);
+        Task<IEnumerable<BranchDTO>> GetAllAsync();
+        Task<IEnumerable<BranchDTO>> GetBranchesWithMoreThanThreeBatchesAsync();
+        Task<BranchDTO?> GetByIdAsync(int id);
+        Task UpdateAsync(int id, BranchDTO dto);
     }
 }

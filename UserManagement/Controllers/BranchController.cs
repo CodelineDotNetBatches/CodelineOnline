@@ -39,6 +39,15 @@ namespace UserManagement.Api.Controllers
             return Ok(dto);
         }
 
+        // GET: api/branches/with-more-than-three-batches
+        [HttpGet("GetBranchesWithMoreThanThreeBatches")]
+        [ProducesResponseType(typeof(IEnumerable<BranchDTO>), 200)]
+        public async Task<ActionResult<IEnumerable<BranchDTO>>> GetBranchesWithMoreThanThreeBatches()
+        {
+            var data = await _service.GetBranchesWithMoreThanThreeBatchesAsync();
+            return Ok(data);
+        }
+
         // POST: api/branches
         [HttpPost("Create_Branch")]
         [ProducesResponseType(typeof(BranchDTO), 201)]
@@ -52,6 +61,7 @@ namespace UserManagement.Api.Controllers
             
             return CreatedAtRoute(nameof(GetById), new { id = dto.BranchId }, dto);
         }
+
 
         // PUT: api/branches/5
         [HttpPut("Update_Branch")]
