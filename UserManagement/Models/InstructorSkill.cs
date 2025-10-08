@@ -7,7 +7,8 @@ namespace UserManagement.Models
 {
     public class InstructorSkill
     {
-        //[Key]
+        ////[Key]
+        [Required]
         public int InstructorSkillId { get; set; }
         [Required]
         public string SkillName { get; set; }
@@ -21,7 +22,7 @@ namespace UserManagement.Models
        
 
         // Navigation property
-        public Instructor Instructor { get; set; } // one skill belongs to one instructor
+        public virtual Instructor Instructor { get; set; } // one skill belongs to one instructor
     }
 
 }

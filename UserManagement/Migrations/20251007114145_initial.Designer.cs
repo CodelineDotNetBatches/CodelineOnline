@@ -12,8 +12,8 @@ using UserManagement;
 namespace UserManagement.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20251006105251_InitAdminSeed")]
-    partial class InitAdminSeed
+    [Migration("20251007114145_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,22 +61,30 @@ namespace UserManagement.Migrations
                     b.Property<int>("AdminId")
                         .HasColumnType("int");
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
                     b.HasKey("AdminId");
+
+                    b.HasIndex("BranchId");
 
                     b.ToTable("AdminProfiles", "users");
 
                     b.HasData(
                         new
                         {
-                            AdminId = 1
+                            AdminId = 1,
+                            BranchId = 0
                         },
                         new
                         {
-                            AdminId = 2
+                            AdminId = 2,
+                            BranchId = 0
                         },
                         new
                         {
-                            AdminId = 3
+                            AdminId = 3,
+                            BranchId = 0
                         });
                 });
 
@@ -85,75 +93,28 @@ namespace UserManagement.Migrations
                     b.Property<int>("InstructorId")
                         .HasColumnType("int");
 
-                    b.Property<int>("avilabilityId")
-                        .HasColumnType("int");
+                    b.Property<TimeOnly>("time")
+                        .HasColumnType("time");
 
                     b.Property<int>("Avail_Status")
                         .HasMaxLength(20)
+                        .HasColumnType("int");
+
+                    b.Property<int>("avilabilityId")
                         .HasColumnType("int");
 
                     b.Property<int>("day_of_week")
                         .HasMaxLength(10)
                         .HasColumnType("int");
 
-                    b.Property<TimeOnly>("time")
-                        .HasColumnType("time");
-
-                    b.HasKey("InstructorId", "avilabilityId");
+                    b.HasKey("InstructorId", "time");
 
                     b.HasIndex("Avail_Status");
 
-                    b.ToTable("Availabilities", "users");
+                    b.HasIndex("avilabilityId")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            InstructorId = 101,
-                            avilabilityId = 1,
-                            Avail_Status = 1,
-                            day_of_week = 1,
-                            time = new TimeOnly(9, 0, 0)
-                        },
-                        new
-                        {
-                            InstructorId = 101,
-                            avilabilityId = 2,
-                            Avail_Status = 3,
-                            day_of_week = 3,
-                            time = new TimeOnly(14, 0, 0)
-                        },
-                        new
-                        {
-                            InstructorId = 102,
-                            avilabilityId = 3,
-                            Avail_Status = 2,
-                            day_of_week = 2,
-                            time = new TimeOnly(11, 0, 0)
-                        },
-                        new
-                        {
-                            InstructorId = 102,
-                            avilabilityId = 4,
-                            Avail_Status = 4,
-                            day_of_week = 4,
-                            time = new TimeOnly(16, 0, 0)
-                        },
-                        new
-                        {
-                            InstructorId = 103,
-                            avilabilityId = 5,
-                            Avail_Status = 1,
-                            day_of_week = 5,
-                            time = new TimeOnly(10, 0, 0)
-                        },
-                        new
-                        {
-                            InstructorId = 104,
-                            avilabilityId = 6,
-                            Avail_Status = 3,
-                            day_of_week = 6,
-                            time = new TimeOnly(13, 0, 0)
-                        });
+                    b.ToTable("Availabilities", "users");
                 });
 
             modelBuilder.Entity("UserManagement.Models.Batch", b =>
@@ -191,6 +152,9 @@ namespace UserManagement.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int>("admin_ProfileAdminId")
                         .HasColumnType("int");
 
@@ -199,14 +163,67 @@ namespace UserManagement.Migrations
                     b.HasIndex("BatchName")
                         .IsUnique();
 
+                    b.HasIndex("BranchId");
+
                     b.HasIndex("admin_ProfileAdminId");
 
                     b.ToTable("Batches", "users");
                 });
 
+            modelBuilder.Entity("UserManagement.Models.Branch", b =>
+                {
+                    b.Property<int>("BranchId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BranchId"));
+
+                    b.Property<string>("BranchName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("BranchId");
+
+                    b.ToTable("branchs", "users");
+                });
+
+            modelBuilder.Entity("UserManagement.Models.BranchPN", b =>
+                {
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PhoneNumber")
+                        .HasMaxLength(15)
+                        .HasColumnType("int");
+
+                    b.HasKey("BranchId", "PhoneNumber");
+
+                    b.ToTable("branchPNs", "users");
+                });
+
             modelBuilder.Entity("UserManagement.Models.Instructor", b =>
                 {
                     b.Property<int>("InstructorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BranchId")
                         .HasColumnType("int");
 
                     b.Property<int>("Experience_Level")
@@ -240,61 +257,20 @@ namespace UserManagement.Migrations
 
                     b.HasKey("InstructorId");
 
+                    b.HasIndex("BranchId");
+
                     b.HasIndex("Specialization");
 
                     b.ToTable("Instructors", "users");
-
-                    b.HasData(
-                        new
-                        {
-                            InstructorId = 101,
-                            Experience_Level = 1,
-                            GithubUserName = "aliceGH",
-                            InstructorCV = "https://example.com/cv/alice.pdf",
-                            ProfileImage = "https://example.com/images/alice.jpg",
-                            Specialization = 0,
-                            Teaching_Style = 0,
-                            Years_of_Experience = 5
-                        },
-                        new
-                        {
-                            InstructorId = 102,
-                            Experience_Level = 2,
-                            GithubUserName = "bobDev",
-                            InstructorCV = "https://example.com/cv/bob.pdf",
-                            ProfileImage = "https://example.com/images/bob.jpg",
-                            Specialization = 4,
-                            Teaching_Style = 1,
-                            Years_of_Experience = 8
-                        },
-                        new
-                        {
-                            InstructorId = 103,
-                            Experience_Level = 0,
-                            GithubUserName = "carolCode",
-                            InstructorCV = "https://example.com/cv/carol.pdf",
-                            ProfileImage = "https://example.com/images/carol.jpg",
-                            Specialization = 5,
-                            Teaching_Style = 2,
-                            Years_of_Experience = 3
-                        },
-                        new
-                        {
-                            InstructorId = 104,
-                            Experience_Level = 2,
-                            GithubUserName = "daveTech",
-                            InstructorCV = "https://example.com/cv/dave.pdf",
-                            ProfileImage = "https://example.com/images/dave.jpg",
-                            Specialization = 7,
-                            Teaching_Style = 3,
-                            Years_of_Experience = 10
-                        });
                 });
 
             modelBuilder.Entity("UserManagement.Models.InstructorSkill", b =>
                 {
                     b.Property<int>("InstructorId")
                         .HasColumnType("int");
+
+                    b.Property<string>("SkillName")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("InstructorSkillId")
                         .HasColumnType("int");
@@ -305,13 +281,9 @@ namespace UserManagement.Migrations
                     b.Property<string>("SkillLevel")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SkillName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.HasKey("InstructorId", "SkillName");
 
-                    b.HasKey("InstructorId", "InstructorSkillId");
-
-                    b.HasIndex("SkillName");
+                    b.HasIndex("InstructorSkillId");
 
                     b.ToTable("InstructorSkills", "users");
                 });
@@ -342,12 +314,43 @@ namespace UserManagement.Migrations
                     b.ToTable("Responsibilities", "users");
                 });
 
+            modelBuilder.Entity("UserManagement.Models.Room", b =>
+                {
+                    b.Property<string>("RoomNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("RoomType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("RoomNumber");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("rooms", "users");
+                });
+
             modelBuilder.Entity("UserManagement.Models.Trainee", b =>
                 {
                     b.Property<int>("TraineeId")
                         .HasColumnType("int");
 
                     b.Property<int>("BatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BranchId")
                         .HasColumnType("int");
 
                     b.Property<string>("EducationalBackground")
@@ -388,6 +391,8 @@ namespace UserManagement.Migrations
 
                     b.HasIndex("BatchId");
 
+                    b.HasIndex("BranchId");
+
                     b.ToTable("Trainees", "users");
                 });
 
@@ -396,8 +401,8 @@ namespace UserManagement.Migrations
                     b.Property<int>("TraineeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TraineeSkillId")
-                        .HasColumnType("int");
+                    b.Property<string>("SkillName")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("MonthsOfExperience")
                         .HasColumnType("int");
@@ -405,13 +410,12 @@ namespace UserManagement.Migrations
                     b.Property<string>("SkillLevel")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SkillName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("TraineeSkillId")
+                        .HasColumnType("int");
 
-                    b.HasKey("TraineeId", "TraineeSkillId");
+                    b.HasKey("TraineeId", "SkillName");
 
-                    b.HasIndex("SkillName");
+                    b.HasIndex("TraineeSkillId");
 
                     b.ToTable("TraineeSkills", "users");
                 });
@@ -446,6 +450,17 @@ namespace UserManagement.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UserManagement.Models.Admin_Profile", b =>
+                {
+                    b.HasOne("UserManagement.Models.Branch", "branchs")
+                        .WithMany("Admin_Profiles")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("branchs");
+                });
+
             modelBuilder.Entity("UserManagement.Models.Availability", b =>
                 {
                     b.HasOne("UserManagement.Models.Instructor", "Instructor")
@@ -459,6 +474,12 @@ namespace UserManagement.Migrations
 
             modelBuilder.Entity("UserManagement.Models.Batch", b =>
                 {
+                    b.HasOne("UserManagement.Models.Branch", "branchs")
+                        .WithMany("batches")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("UserManagement.Models.Admin_Profile", "admin_Profile")
                         .WithMany("Batchs")
                         .HasForeignKey("admin_ProfileAdminId")
@@ -466,6 +487,30 @@ namespace UserManagement.Migrations
                         .IsRequired();
 
                     b.Navigation("admin_Profile");
+
+                    b.Navigation("branchs");
+                });
+
+            modelBuilder.Entity("UserManagement.Models.BranchPN", b =>
+                {
+                    b.HasOne("UserManagement.Models.Branch", "branchs")
+                        .WithMany("branchPNs")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("branchs");
+                });
+
+            modelBuilder.Entity("UserManagement.Models.Instructor", b =>
+                {
+                    b.HasOne("UserManagement.Models.Branch", "branch")
+                        .WithMany("instructors")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("branch");
                 });
 
             modelBuilder.Entity("UserManagement.Models.InstructorSkill", b =>
@@ -490,6 +535,17 @@ namespace UserManagement.Migrations
                     b.Navigation("AdminProfile");
                 });
 
+            modelBuilder.Entity("UserManagement.Models.Room", b =>
+                {
+                    b.HasOne("UserManagement.Models.Branch", "branchs")
+                        .WithMany("rooms")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("branchs");
+                });
+
             modelBuilder.Entity("UserManagement.Models.Trainee", b =>
                 {
                     b.HasOne("UserManagement.Models.Batch", "Batch")
@@ -498,7 +554,15 @@ namespace UserManagement.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("UserManagement.Models.Branch", "branch")
+                        .WithMany("trainees")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Batch");
+
+                    b.Navigation("branch");
                 });
 
             modelBuilder.Entity("UserManagement.Models.TraineeSkill", b =>
@@ -522,6 +586,21 @@ namespace UserManagement.Migrations
             modelBuilder.Entity("UserManagement.Models.Batch", b =>
                 {
                     b.Navigation("Trainees");
+                });
+
+            modelBuilder.Entity("UserManagement.Models.Branch", b =>
+                {
+                    b.Navigation("Admin_Profiles");
+
+                    b.Navigation("batches");
+
+                    b.Navigation("branchPNs");
+
+                    b.Navigation("instructors");
+
+                    b.Navigation("rooms");
+
+                    b.Navigation("trainees");
                 });
 
             modelBuilder.Entity("UserManagement.Models.Instructor", b =>

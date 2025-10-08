@@ -66,13 +66,20 @@ namespace UserManagement.Models
         [MaxLength(80)]
         public Specializations Specialization { get; set; } // e.g., C#, Data Science, DevOps
 
+        [ForeignKey("Branch")]
+        public int BranchId { get; set; }
+
+        public virtual Branch branch { get; set; }
+
         // navigation property
-        public ICollection<Availability> Availabilities { get; set; }
+        public virtual ICollection<Availability> Availabilities { get; set; }
 
-        public ICollection<InstructorSkill> instructorSkills { get; set; } = new List<InstructorSkill>(); // one instructor can has many skills
-        public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>(); // one instructor can mentor many trainee
+        public virtual ICollection<InstructorSkill> instructorSkills { get; set; } = new List<InstructorSkill>(); // one instructor can has many skills
+        public virtual ICollection<Trainee> Trainees { get; set; } = new List<Trainee>(); // one instructor can mentor many trainee
 
-        public ICollection<Batch> Batches { get; set; } = new List<Batch>(); // one instructor can teach many batch
+        public virtual ICollection<Batch> Batches { get; set; } = new List<Batch>(); // one instructor can teach many batch
+
+
 
         
 
