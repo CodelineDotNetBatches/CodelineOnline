@@ -30,17 +30,17 @@ namespace UserManagement.Models
 
 
         // nav
-        public ICollection<BranchPN> branchPNs { get; set; }
-        public ICollection<Room> rooms { get; set; }
+        public virtual ICollection<BranchPN> branchPNs { get; set; }
+        public virtual ICollection<Room> rooms { get; set; }
 
-        public ICollection<Admin_Profile> Admin_Profiles { get; set; }
+        public virtual ICollection<Admin_Profile> Admin_Profiles { get; set; }
 
-        public ICollection<Batch> batches { get; set; }
+        public virtual ICollection<Batch> batches { get; set; }
 
 
-        public ICollection<Instructor> instructors { get; set; }
+        public virtual ICollection<Instructor> instructors { get; set; }
 
-        public ICollection<Trainee> trainees { get; set; } 
+        public virtual ICollection<Trainee> trainees { get; set; } 
     }
 
 
@@ -56,7 +56,7 @@ namespace UserManagement.Models
 
 
         //nevegation 
-        public Branch branchs { get; set; }
+        public virtual Branch branchs { get; set; }
     }
  
 

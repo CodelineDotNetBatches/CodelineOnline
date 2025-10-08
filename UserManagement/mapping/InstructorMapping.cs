@@ -10,7 +10,6 @@ namespace UserManagement.mapping
         {
             CreateMap<Instructor, InstructorReadDto>().ReverseMap();
             CreateMap<InstructorCreateDto, Instructor>();
-            CreateMap<InstructorUpdateDto, Instructor>();
         }
     }
 

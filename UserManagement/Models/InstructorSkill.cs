@@ -22,7 +22,7 @@ namespace UserManagement.Models
        
 
         // Navigation property
-        public Instructor Instructor { get; set; } // one skill belongs to one instructor
+        public virtual Instructor Instructor { get; set; } // one skill belongs to one instructor
     }
 
 }

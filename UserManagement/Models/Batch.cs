@@ -5,9 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UserManagement.Models
 {
-    /// <summary>
-    /// Represents a training batch that groups multiple trainees.
-    /// </summary>
+   
     public class Batch
     {
         [Key]
@@ -41,15 +39,15 @@ namespace UserManagement.Models
         [MaxLength(500)]
         public string? BatchDescription { get; set; }
 
-        public Branch branchs { get; set; } 
+        public virtual Branch branchs { get; set; } 
 
         // navigation property
 
 
-        public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>(); // one batch can has many trainee
+        public virtual ICollection<Trainee> Trainees { get; set; } = new List<Trainee>(); // one batch can has many trainee
 
-        public Admin_Profile admin_Profile { get; set; } //batch can managed by one admin
+        public virtual Admin_Profile admin_Profile { get; set; } //batch can managed by one admin
 
-        public ICollection<Instructor> Instructors { get; set; } = new List<Instructor>(); // one batch can has many instructor
+        public virtual ICollection<Instructor> Instructors { get; set; } = new List<Instructor>(); // one batch can has many instructor
     } 
 }

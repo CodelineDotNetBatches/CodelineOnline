@@ -21,7 +21,7 @@ namespace UserManagement.Models
 
 
         // Navigation property
-        public Trainee Trainee { get; set; } // one skill belongs to one trainee
+        public virtual Trainee Trainee { get; set; } // one skill belongs to one trainee
     }
 
 }
