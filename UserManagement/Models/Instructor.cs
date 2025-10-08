@@ -74,6 +74,7 @@ namespace UserManagement.Models
 
         public ICollection<Batch> Batches { get; set; } = new List<Batch>(); // one instructor can teach many batch
 
+        
 
     }
 
