@@ -195,8 +195,9 @@ namespace CoursesManagement.Services
         // Get All enrollments for a program
         public async Task<ProgramsWithEnrollmentDto?> GetProgramWithEnrollmentsAsync(Guid programId)
         {
-            var entity = await _repo.GetAllEnrollmentsInProgramAsync(programId);
-            return _mapper.Map<ProgramsWithEnrollmentDto?>(entity);
+            var program = await _repo.GetProgramWithEnrollmentsAsync(programId);
+            if (program == null) return null;
+            return _mapper.Map<ProgramsWithEnrollmentDto?>(program);
         }
 
 

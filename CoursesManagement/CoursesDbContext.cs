@@ -117,7 +117,22 @@ namespace CoursesManagement
             mb.Entity<Programs>()
               .HasMany(p => p.Courses)
               .WithMany(c => c.Programs)
-              .UsingEntity(j => j.ToTable("ProgramCourses"));
+               .UsingEntity<Dictionary<string, object>>(
+                  "ProgramCourses",
+                  j => j.HasOne<Course>()
+                        .WithMany()
+                        .HasForeignKey("CoursesCourseId")       //  FK -> Course
+                        .HasPrincipalKey(c => c.CourseId),
+                  j => j.HasOne<Programs>()
+                        .WithMany()
+                        .HasForeignKey("ProgramsProgramId")     //  FK -> Programs
+                        .HasPrincipalKey(p => p.ProgramId),
+                  j =>
+                  {
+                      j.HasKey("ProgramsProgramId", "CoursesCourseId"); // composite key
+                      j.ToTable("ProgramCourses");                      // join table name
+                  }
+              );
 
             base.OnModelCreating(mb);
 

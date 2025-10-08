@@ -154,7 +154,7 @@ namespace CoursesManagement.Controllers
         [HttpGet("GetProgramWithCoursesByProgramId{id:guid}")]
         [ProducesResponseType(204)] // Represents a successful deletion response with no content
         [ProducesResponseType(404)] // Represents a not found response
-        public async Task<IActionResult> GetProgramWithCourses(Guid id)
+        public async Task<IActionResult> GetProgramWithCoursesAsync(Guid id)
         {
             try
             {
@@ -213,6 +213,8 @@ namespace CoursesManagement.Controllers
             try
             {
                 var result = await _service.GetProgramWithEnrollmentsAsync(id);
+                if (result == null)
+                    return NotFound("Program not found.");
                 return Ok(result);
             }
             catch (Exception ex)

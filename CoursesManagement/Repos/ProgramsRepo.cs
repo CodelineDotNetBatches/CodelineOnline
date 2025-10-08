@@ -96,21 +96,12 @@ namespace CoursesManagement.Repos
         }
 
         // Get All Enrolled  in a Program
-        public async Task<List<Enrollment>> GetAllEnrollmentsInProgramAsync(Guid programId)
+        public async Task<Programs?> GetProgramWithEnrollmentsAsync(Guid programId)
         {
-            var program = await _context.Programs
-        .Include(p => p.Courses)
-            .ThenInclude(c => c.Enrollments)
-        .FirstOrDefaultAsync(p => p.ProgramId == programId);
-
-            if (program?.Courses == null)
-                return new List<Enrollment>();
-
-            var enrollments = program.Courses
-                .SelectMany(c => c.Enrollments ?? Enumerable.Empty<Enrollment>())
-                .ToList();
-
-            return enrollments;
+            return await _context.Programs
+               .Include(p => p.Courses)
+                   .ThenInclude(c => c.Enrollments)
+               .FirstOrDefaultAsync(p => p.ProgramId == programId);
         }
 
 
